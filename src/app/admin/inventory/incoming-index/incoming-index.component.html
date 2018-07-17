@@ -1,0 +1,50 @@
+<div class="topbar-controls patient-management">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Incoming</h2>
+        <button md-button class="btn tertiary blue flex-right btn-export" (click)="export()" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-select2 *ngIf="supplierSelect2Options"
+                     [options]="supplierSelect2Options"
+                     [(ngModel)]="selectedSupplierId"
+                     [renderOptionsAsHTML]="true">
+        </app-select2>
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-products-table sticky">
+        <thead>
+            <tr>
+                <th>Not Received</th>
+                <th>Manifest Number</th>
+                <th>Supplier</th>
+                <th sortBy="DeliveryPackageCount" [(ngModel)]="sortByModel">Delivery Package Count</th>
+                <th sortBy="DeliveryReceivedPackageCount" [(ngModel)]="sortByModel">Received Package Count</th>
+                <th sortBy="EstimatedArrivalDateTime" [(ngModel)]="sortByModel">Estimated Arrival Date</th>
+                <th sortBy="ReceivedDateTime" [(ngModel)]="sortByModel">Received Date</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let transfer of objects | async" (click)="onRowClick($event, transfer)">
+                <td class="color-blush"><span *ngIf="!transfer.ReceivedDateTime" title="This transfer hasn't arrived yet">{{(!transfer.ReceivedDateTime ? '!!!!!' : '')}}</span></td>
+                <td>{{transfer.ManifestNumber}}</td>
+                <td>{{transfer.Supplier.name}}</td>
+                <td>{{transfer.DeliveryPackageCount}}</td>
+                <td>{{transfer.DeliveryReceivedPackageCount}}</td>
+                <td>{{(transfer.EstimatedArrivalDateTime | date:'shortDate') + ' ' + (transfer.EstimatedArrivalDateTime | date:'shortTime')}}</td>
+                <td>{{transfer.ReceivedDateTime ? ((transfer.ReceivedDateTime | date:'shortDate') + ' ' + (transfer.ReceivedDateTime | date:'shortTime')) : ''}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)]="pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listItems()"></div>
+
+<router-outlet></router-outlet>

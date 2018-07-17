@@ -1,0 +1,45 @@
+<div class="overlay-closearea second" (click)="startLeaving()"></div>
+<div class="overlay right second active not-hidden-block" [@leave]="animationStatus" (@leave.done)="cancel()" *ngIf="item">
+
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+
+    <div class="section-heading">
+        <div class="svg-icon"><img src="/assets/svg/inventory.svg"/></div>
+        <div>
+            <h5 class="subtitle">{{item.name}}</h5>
+            <h1 class="section-title">Package List</h1>
+        </div>
+    </div>
+
+
+    <ng-container *ngIf="item">
+        <md-button-toggle (change)="showFinishedPackages = !showFinishedPackages" style="display:flex;">Show Finished</md-button-toggle>
+
+        <div class="input-row" style="margin-top: 1rem">
+            <table>
+                <thead>
+                <tr>
+                    <th>RFID Label</th>
+                    <th class="align-right">Received</th>
+                    <th class="align-right">Remaining</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr *ngFor="let _package of filteredPackages" (click)="onRowClick(_package)">
+                    <td>{{_package.Label}}</td>
+                    <td class="align-right">{{_package.ReceivedQuantity ? _package.ReceivedQuantity.toFixed(2) : '0.00'}}&nbsp;{{_package.UnitOfMeasureAbbreviation}}</td>
+                    <td class="align-right">{{_package.Quantity ? _package.Quantity.toFixed(2) : '0.00'}}&nbsp;{{_package.UnitOfMeasureAbbreviation}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </ng-container>
+
+    <div class="overlay-action-buttons" *ngIf="item.ProductType && item.ProductType.category == 'non-cannabis' && user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditItems">
+        <button class="btn secondary blue" (click)="addPackage()"><i class="icon icon-add"></i>Add Non-Cannabis Package</button>
+    </div>
+</div>
+
+
+<router-outlet></router-outlet>

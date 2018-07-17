@@ -1,0 +1,108 @@
+@mixin max-width($width) {
+    @media screen and (max-width: $width) {
+        @content;
+    }
+}
+
+@mixin min-width($width) {
+    @media screen and (min-width: $width) {
+        @content;
+    }
+}
+
+@mixin select-text($pr) {
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        padding-right: $pr;
+    }
+}
+
+@mixin ipad-portrait {
+    @media all and (device-width: 768px) and (device-height: 1024px) and (orientation: portrait) {
+        @content;
+    }
+}
+
+@mixin circle($size) {
+    width: $size;
+    min-width: $size;
+    height: $size;
+    min-height: $size;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 200ms ease,
+    color 200ms ease;
+}
+
+@mixin blockcircle($size) {
+    width: $size;
+    min-width: $size;
+    height: $size;
+    min-height: $size;
+    border-radius: 50%;
+}
+
+@mixin active($size, $transparency: .5) {
+    &:active {
+        box-shadow: inset 0 0 $size rgba(0, 0, 0, $transparency);
+    }
+}
+
+@mixin darken-btn($col) {
+    background-color: $col;
+    transition: background-color 200ms ease;
+
+    &:hover {
+        background-color: darken($col, 7%);
+    }
+}
+
+%transition {
+    transition: all 160ms ease;
+}
+
+@mixin trans($timing, $fn, $prop3: null, $prop: null, $prop1: null, $prop2: null) {
+    transition: $prop $timing $fn,
+    $prop1 $timing $fn,
+    $prop2 $timing $fn;
+}
+
+@mixin icon-hover($nonactive, $active) {
+    @extend %transition;
+    color: $nonactive;
+
+    .icon {
+        @extend %transition;
+        color: $nonactive;
+    }
+
+    &:hover {
+        color: $active;
+
+        .icon {
+            color: $active;
+        }
+    }
+}
+
+@mixin icon-size($size) {
+    font-size: $size;
+    width: $size;
+    height: $size;
+}
+
+@mixin placeholder {
+    &::-webkit-input-placeholder {
+        @content
+    }
+    &:-moz-placeholder {
+        @content
+    }
+    &::-moz-placeholder {
+        @content
+    }
+    &:-ms-input-placeholder {
+        @content
+    }
+}

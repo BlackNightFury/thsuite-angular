@@ -1,0 +1,284 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Drawer Breakdown For {{ date | date:'MM/dd/yyyy' }}</h2>
+        
+        <div class="input-has-icon datepick">
+            <input [owlDateTime]="dtReportDate" [owlDateTimeTrigger]="dtReportDate" [(ngModel)]="date" placeholder="mm/dd/yyyy">
+            <i class="icon icon-calendar"></i>                
+            <owl-date-time #dtReportDate [pickerType]="'calendar'"></owl-date-time>
+        </div>
+        
+        <button class="btn tertiary blue btn-export" (click)="onClickExport()" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-button-toggler [options]="modeOptions" [(ngModel)]="mode"></app-button-toggler>
+    </div>
+</div>
+
+<main class="content" id="drawerReportBreakdown" *ngIf="mode == 'breakdown'">
+    <table class="nohover drawer-breakdown-table" *ngFor="let info of drawerInfo">
+        <thead>
+        <tr>
+            <th class="text-left semibold">Store</th>
+            <th class="color-grey">{{ info.header.store.licenseNumber }}</th>
+
+            <th class="text-left semibold">Device</th>
+            <th class="color-grey">{{ info.header.device && info.header.device.name }}</th>
+
+            <th class="text-left semibold">Drawer Session</th>
+            <th colspan="4" class="color-grey">{{ info.header.drawer && info.header.drawer.id }}</th>
+        </tr>
+        <tr class="top-border">
+            <th class="text-left semibold">User</th>
+            <th class="color-grey">{{ info.header.user && info.header.user.firstName }} {{ info.header.user && info.header.user.lastName }}</th>
+
+            <th class="text-left semibold">Post date</th>
+            <th class="color-grey">{{  date | date:'MM/dd/yyyy' }}</th>
+
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <thead>
+        <tr class="bottom-border">
+            <th colspan="2" class="right-border semibold">Cash</th>
+            <th colspan="2" class="right-border semibold">Gift Card</th>
+            <th colspan="5" class="semibold">Tender</th>
+        </tr>
+        <tr>
+            <th class="text-left light">Type</th>
+            <th class="text-right light right-border">Amount</th>
+
+            <th class="text-left light">Type</th>
+            <th class="text-right light right-border">Amount</th>
+
+            <th class="light">Description</th>
+            <th class="text-center light">Begin amt</th>
+            <th class="text-center light">Trx amt</th>
+            <th class="text-center light">Removed</th>
+            <th class="text-center light">Over/Short</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+            <td class="color-grey semibold">Sales</td>
+            <td class="color-grey text-right right-border">{{ info.merchandise.totalSale.toFixed(2) }}</td>
+
+            <td class="color-grey semibold">Gift Card</td>
+            <td class="color-grey text-right right-border">0.00</td>
+
+            <td class="color-grey semibold">Cash</td>
+            <td class="color-grey text-center">{{ info.header.drawer.startingAmount.toFixed(2) }}</td>
+            <td class="color-grey text-center">{{ info.tender.cash.toFixed(2) }}</td>
+            <td class="color-grey text-center">{{ info.header.drawer.endingAmount && info.header.drawer.endingAmount.toFixed(2) }}</td>
+            <td class="color-grey text-center">{{ ((info.header.drawer.endingAmount || 0) - (info.header.drawer.startingAmount + info.tender.cash)).toFixed(2) }}</td>
+        </tr>
+        <tr>
+            <td class="color-grey semibold">Returns</td>
+            <td class="color-grey text-right right-border">{{ info.merchandise.returns.toFixed(2) }}</td>
+
+            <td class="color-grey semibold">Stored Val Cards</td>
+            <td class="color-grey text-right right-border">0.00</td>
+
+            <td class="color-grey semibold">Gift Card</td>
+            <td class="color-grey text-center">0</td>
+            <td class="color-grey text-center">{{ info.tender.giftCard.toFixed(2) }}</td>
+            <td class="color-grey text-center">{{ info.tender.giftCard.toFixed(2) }}</td>
+            <td class="color-grey text-center">0</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="right-border"></td>
+
+            <td class="color-grey semibold">Misc Charges</td>
+            <td class="color-grey text-right right-border">0.00</td>
+
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="right-border"></td>
+
+            <td class="color-grey semibold">Tax</td>
+            <td class="color-grey text-right right-border">0.00</td>
+
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="right-border"></td>
+
+            <td class="color-grey semibold">Cash drop</td>
+            <td class="color-grey text-right right-border">0.00</td>
+
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="right-border"></td>
+
+            <td class="color-grey semibold">Cash loan</td>
+            <td class="color-grey text-right right-border">0.00</td>
+
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+<main class="content" id="drawerReportClosing" *ngIf="mode == 'closing'">
+    <div *ngFor="let reportData of drawerClosingReport" style="width: 600px; margin: 40px auto; padding: 1rem; ">
+        <h3 *ngIf="reportData.openedAt">Drawer Opened: {{reportData.openedAt | storeTimeZone: store.timeZone: 'short'}} by {{reportData.userName}}</h3>
+        <h3 *ngIf="!reportData.openedAt" style="font-weight: bold">All Drawers</h3>
+        <table class="nohover">
+            <thead>
+            <tr>
+                <th colspan="3">
+                    Sales Breakdown
+                </th>
+            </tr>
+            <tr class="table-subheading">
+                <th>Type</th>
+                <th>Count</th>
+                <th class="text-right">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Total With Taxes</td>
+                <td>{{reportData.count}}</td>
+                <td class="text-right">{{reportData.total | currency:'USD':true}}</td>
+            </tr>
+            <tr>
+                <td>Total Taxes</td>
+                <td></td>
+                <td class="text-right">{{reportData.totalTaxes | currency:'USD':true}}</td>
+            </tr>
+            <tr>
+                <td>Total W/O Taxes</td>
+                <td></td>
+                <td class="text-right">{{reportData.totalWithoutTaxes | currency:'USD':true}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <table class="nohover">
+            <thead>
+            <tr>
+                <th colspan="3">
+                    MJ Item Category Breakdown
+                </th>
+            </tr>
+            <tr class="table-subheading">
+                <th>Type</th>
+                <th>Count</th>
+                <th class="text-right">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let category of reportData.totalByProductType">
+                <td>{{category.name}}</td>
+                <td>{{category.total.count}}</td>
+                <td class="text-right">{{category.total.amount | currency:'USD':true}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <table class="nohover">
+            <thead>
+            <tr>
+                <th colspan="3">
+                    Tax Category Breakdown
+                </th>
+            </tr>
+            <tr class="table-subheading">
+                <th>Type</th>
+                <th>Count</th>
+                <th class="text-right">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let category of reportData.totalByCannabisType">
+                <td>{{category.name}}</td>
+                <td>{{category.total.count}}</td>
+                <td class="text-right">{{category.total.amount | currency:'USD':true}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <table class="nohover">
+            <thead>
+            <tr>
+                <th colspan="3">
+                    Tax Type Breakdown
+                </th>
+            </tr>
+            <tr class="table-subheading">
+                <th>Type</th>
+                <th>Count</th>
+                <th class="text-right">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let category of reportData.totalByTax">
+                <td>{{category.name}}</td>
+                <td>{{category.total.count}}</td>
+                <td class="text-right">{{category.total.amount | currency:'USD':true}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <table class="nohover">
+            <thead>
+            <tr>
+                <th colspan="3">
+                    Payment Type Breakdown
+                </th>
+            </tr>
+            <tr class="table-subheading">
+                <th>Type</th>
+                <th>Count</th>
+                <th class="text-right">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let category of reportData.totalByPaymentType">
+                <td>{{category.name}}</td>
+                <td>{{category.total.count}}</td>
+                <td class="text-right">{{category.total.amount | currency:'USD':true}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>

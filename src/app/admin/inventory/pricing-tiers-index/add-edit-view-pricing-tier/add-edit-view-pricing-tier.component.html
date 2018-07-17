@@ -1,0 +1,214 @@
+
+
+<div #root class="overlay right active not-hidden-block">
+    <i class="icon icon-close overlay-close" (click)="cancel()"></i>
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><img src="/assets/svg/product_details.svg"/></div>
+        <div>
+            <h5 class="subtitle">Pricing Tier Details</h5>
+            <h1 class="section-title">{{object?.name}}</h1>
+        </div>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'edit'">
+        <div class="svg-icon"><img src="/assets/svg/edit_product.svg"/></div>
+        <h1 class="section-title">Edit Pricing Tier</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'add'">
+        <div class="svg-icon"><img src="/assets/svg/add_new_product.svg"/></div>
+        <h1 class="section-title">Add New Pricing Tier</h1>
+    </div>
+    <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+        <li *ngFor="let error of errors">{{error}}</li>
+    </ul>
+
+    <ng-container *ngIf="object">
+
+        <ng-container *ngIf="mode == 'view'">
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Name</span>
+                    <h5 class="product-info">{{object.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Description</span>
+                    <h5 class="product-info">{{object.description}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Tier Mode</span>
+                    <h5 class="product-info">{{modeDisplayNames[object.mode]}}</h5>
+                    <a class="input-note no-margin" (click)="toggleExplanation()" style="cursor: pointer;">Explanation of Pricing Tier Modes (click to toggle)</a>
+                    <ng-container *ngIf="explanationShowing">
+                        <p class="input-note no-margin">Assumption for Explanation: Product A and Product B use the same pricing tier with the following weight tiers:</p>
+                        <ul class="input-note no-margin less-padding">
+                            <li>1g - $20.00 per gram</li>
+                            <li>2g - $15.00 per gram</li>
+                            <li>3g - $10.00 per gram</li>
+                        </ul>
+                        <span class="input-note no-margin"><span class="input-note no-margin" style="font-weight: bold">Mix and Match</span> - Products with the same pricing tier, regardless of variation, will always combine to use the higher weight tiers:</span>
+                        <ul class="input-note no-margin less-padding">
+                            <li>Ex 1: 1g of A ($20/g) + 2g of A ($15/g) trips 3g weight tier ($10/g) = $30 total</li>
+                            <li>Ex 2: 1g of A ($20/g) + 1g of B ($20/g) trips 2g weight tier ($15/g) = $30 total</li>
+                        </ul>
+                        <span class="input-note no-margin"><span class="input-note no-margin" style="font-weight: bold">Matching Products Only</span> - Only identical products with the same pricing tier will combine. Two different products with the same tier will not combine:</span>
+                        <ul class="input-note no-margin less-padding">
+                            <li>Ex 1: 1g of A ($20/g) + 1g of A ($20/g) trips 2g weight tier ($15/g) = $30 total</li>
+                            <li>Ex 2: 1g of A ($20/g) + 1g of B ($20/g) doesn't combine = $40 total</li>
+                        </ul>
+                        <span class="input-note no-margin"><span class="input-note no-margin" style="font-weight: bold">Each</span> - No combination at all. All products, even those with identical types and variations will be treated as separate items when calculating price:</span>
+                        <ul class="input-note no-margin less-padding">
+                            <li>Ex 1: 1g of A ($20/g) + 2g of A ($15/g) doesn't combine = $50 total</li>
+                            <li>Ex 2: 1g of A ($20/g) + 1g of B ($20/g) doesn't combine = $40 total</li>
+                        </ul>
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="input-row">
+
+                <label class="input-label">Weight Tiers</label>
+                <table class="nohover">
+                    <thead>
+                    <tr>
+                        <th class="align-right">Weight</th>
+                        <th class="align-right">Price per Gram</th>
+                        <th class="align-right" style="width: 40%;">Total Price</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr *ngFor="let tierWeight of object.PricingTierWeights">
+                        <td>
+                            <div style="display: flex; float: right;">
+                                <span class="align-right" style="width: 60px; padding-left: 0;">{{tierWeight.weight + ' g'}}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; float: right;">
+                                <span class="align-right" style="width: 60px; padding-left: 0;">{{tierWeight.price | currency:'USD':true}}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; float: right;">
+                                <span style="width: 60px; padding-left: 0;">{{(tierWeight.weight * tierWeight.price) | currency:'USD':true}}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p class="input-note">Note: The 0g weight tier represents a catch-all tier. If a product variation weight falls below the lowest pricing tier weight, the 0g price will be applied.</p>
+            </div>
+
+            <div class="overlay-action-buttons" *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditPricingTiers">
+                <button class="btn secondary grey" (click)="remove()"><i class="icon icon-remove"></i>Remove</button>
+                <button class="btn secondary blue" (click)="edit(this.object)"><i class="icon icon-edit"></i>Edit</button>
+            </div>
+
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input mdInput placeholder="Name" [class.error]="errorFlags.name" [(ngModel)]="object.name"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input mdInput placeholder="Description" [(ngModel)]="object.description"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">Tier Mode</label>
+                <app-button-toggler class="multiple" [options]="modeOptions" [(ngModel)]="object.mode" [fontSize]="12"></app-button-toggler>
+                <a class="input-note no-margin" (click)="toggleExplanation()" style="cursor: pointer;">Explanation of Pricing Tier Modes (click to toggle)</a>
+                <ng-container *ngIf="explanationShowing">
+                    <p class="input-note no-margin">Assumption for Explanation: Product A and Product B use the same pricing tier with the following weight tiers:</p>
+                    <ul class="input-note no-margin less-padding">
+                        <li>1g - $20.00 per gram</li>
+                        <li>2g - $15.00 per gram</li>
+                        <li>3g - $10.00 per gram</li>
+                    </ul>
+                    <span class="input-note no-margin"><span class="input-note no-margin" style="font-weight: bold">Mix and Match</span> - Products with the same pricing tier, regardless of variation, will always combine to use the higher weight tiers:</span>
+                    <ul class="input-note no-margin less-padding">
+                        <li>Ex 1: 1g of A ($20/g) + 2g of A ($15/g) trips 3g weight tier ($10/g) = $30 total</li>
+                        <li>Ex 2: 1g of A ($20/g) + 1g of B ($20/g) trips 2g weight tier ($15/g) = $30 total</li>
+                    </ul>
+                    <span class="input-note no-margin"><span class="input-note no-margin" style="font-weight: bold">Matching Products Only</span> - Only identical products with the same pricing tier will combine. Two different products with the same tier will not combine:</span>
+                    <ul class="input-note no-margin less-padding">
+                        <li>Ex 1: 1g of A ($20/g) + 1g of A ($20/g) trips 2g weight tier ($15/g) = $30 total</li>
+                        <li>Ex 2: 1g of A ($20/g) + 1g of B ($20/g) doesn't combine = $40 total</li>
+                    </ul>
+                    <span class="input-note no-margin"><span class="input-note no-margin" style="font-weight: bold">Each</span> - No combination at all. All products, even those with identical types and variations will be treated as separate items when calculating price:</span>
+                    <ul class="input-note no-margin less-padding">
+                        <li>Ex 1: 1g of A ($20/g) + 2g of A ($15/g) doesn't combine = $50 total</li>
+                        <li>Ex 2: 1g of A ($20/g) + 1g of B ($20/g) doesn't combine = $40 total</li>
+                    </ul>
+                </ng-container>
+            </div>
+
+            <div class="input-row">
+
+                <label class="input-label">Weight Tiers</label>
+                <table>
+                    <thead>
+                    <tr>
+                        <th class="align-right">Weight</th>
+                        <th class="align-right">Price per Gram</th>
+                        <th class="align-right" style="width: 40%;">Total Price</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr *ngFor="let tierWeight of object.PricingTierWeights" [class.error]="errorFlags.tiers">
+                        <td>
+                            <div style="display: flex; float: right;">
+                                <input (keyup)="onWeightUpdate(tierWeight, $event.target.value)" type="number" [(ngModel)]="tierWeight.weight" class="align-right" style="width: 60px; padding-left: 0;" *ngIf="!tierWeight.readOnly"/>
+                                <input type="number" [(ngModel)]="tierWeight.weight" class="align-right" style="width: 60px; padding-left: 0; background-color: #d7dcda;" readonly *ngIf="tierWeight.readOnly"/>
+                                <span style="margin-top: 15px; margin-left: 3px;">g</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; float: right;">
+                                <span style="margin-top: 15px; margin-right: 5px;">$</span>
+                                <input type="number" [ngModel]="tierWeight.price | toNumberOrZero | number:'1.2-2'" class="align-right" style="width: 60px; padding-left: 0; background-color: #d7dcda;" readonly/>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; float: right;">
+                                <span style="margin-top: 15px; margin-right: 5px;">$</span>
+                                <input type="number" [(ngModel)]="tierWeight.totalPrice"
+                                (keyup)="onTotalPriceUpdate(tierWeight, $event.target.value)" class="align-right" style="width: 60px; padding-left: 0;"/>
+                            </div>
+                        </td>
+                        <td><div *ngIf="!tierWeight.readOnly" class="clear-code" (click)="deleteTier(tierWeight)">X</div></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div>
+                    <button class="btn secondary blue" style="margin: 10px auto; display: block;" (click)="addTier()">Add Weight Tier</button>
+                </div>
+                <p class="input-note">Note: The 0g weight tier represents a catch-all tier. If a product variation weight falls below the lowest pricing tier weight, the 0g price will be applied.</p>
+            </div>
+
+            <div class="overlay-action-buttons">
+                <button class="btn secondary grey" (click)="cancel()"><i class="icon icon-cancel"></i>Cancel
+                </button>
+                <button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>Save</button>
+            </div>
+        </ng-container>
+
+
+
+    </ng-container>
+</div>
+
+<router-outlet></router-outlet>

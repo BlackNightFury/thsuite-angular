@@ -1,0 +1,58 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Visitors</h2>
+
+        <input type="text" class="controls-input-search" #searchBar (keyup)="doSearch(searchBar.value)" placeholder="Search Visitors..."/>
+
+        <button md-button class="btn tertiary green" (click)="createNewVisitor()"><i class="icon icon-add"></i>Visitor</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-products-table nohover">
+        <thead>
+        <tr>
+            <th sortBy="firstName" [(ngModel)]="sortByModel">First Name</th>
+            <th sortBy="lastName" [(ngModel)]="sortByModel">Last Name</th>
+            <th style="text-align:center;" sortBy="clockIn" [(ngModel)]="sortByModel">Date/Time Checked In</th>
+            <th style="text-align:center;" sortBy="clockOut" [(ngModel)]="sortByModel">Date/Time Checked Out</th>
+            <th style="text-align:center;" sortBy="visitReason" [(ngModel)]="sortByModel">Reason for Visit</th>
+            <th style="text-align:center;">Photo ID/Signature</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let visitor of objects | async">
+
+            <td>{{visitor.firstName}}</td>
+            <td>{{visitor.lastName}}</td>
+            <td style="text-align:center;">{{visitor.clockIn | date:'short'}}</td>
+            <td style="text-align:center;">
+                <span *ngIf="visitor.clockOut">{{visitor.clockOut | date:'short'}}</span>
+                <span *ngIf="visitor.clockOut && visitor.autoClockedOut" class="auto-clocked-out">Auto</span>
+                <button *ngIf="!visitor.clockOut" class="btn primary green" (click)="checkOut(visitor)" style="width:100%;max-width:150px;">Check Out</button>
+            </td>
+            <td style="text-align:center;">{{visitor.visitReason}}</td>
+            <td style="text-align:center;">
+                <button *ngIf="!visitor.idImage" class="btn primary green" (click)="uploadId(visitor)" style="width:100%;max-width:150px;">Upload</button>
+                <button *ngIf="visitor.idImage" class="btn primary blue view-visitor-button" (click)="viewId(visitor)" style="width:100%;max-width:150px;">View</button>              
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isAddEditVisitorModalShowing || isIdModalShowing || isCheckoutModalShowing" (click)="listVisitors()"></div>
+<app-add-edit-visitor-modal *ngIf="isAddEditVisitorModalShowing"></app-add-edit-visitor-modal>
+<app-visitor-id-modal *ngIf="isIdModalShowing"></app-visitor-id-modal>
+<app-visitor-checkout-modal *ngIf="isCheckoutModalShowing"></app-visitor-checkout-modal>
+
+<router-outlet></router-outlet>

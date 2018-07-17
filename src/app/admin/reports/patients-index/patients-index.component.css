@@ -1,0 +1,12 @@
+.topbar-controls {
+    border: 1px solid #e2e7eb;
+    border-bottom: 0;
+    box-shadow: none;
+}
+
+#line_chart {
+    max-width: 100%;
+}
+
+thead { display: table-row-group; }
+tr {page-break-inside: avoid; }

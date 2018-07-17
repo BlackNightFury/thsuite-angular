@@ -1,0 +1,44 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Taxes</h2>
+        <button md-button class="btn tertiary green" (click)="createNewTax()"><i class="icon icon-add"></i>Tax</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <ng-container *ngIf="store">
+            <label class="input-label">Tax Included on Items in POS</label>
+
+            <app-button-toggler class="multiple" [options]="taxIncludedOptions" [(ngModel)]="store.taxesIncluded" (ngModelChange)="taxToggle()"></app-button-toggler>
+
+            <span class="input-label" style="margin-left: 1rem; margin-bottom: 0;" *ngIf="savedIndicator">Saved!</span>
+        </ng-container>
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-products-table green-hl-tr">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th class="align-right">Applies To Cannabis Products?</th>
+            <th class="align-right">Applies To Non Cannabis Products?</th>
+            <th class="align-right">Percentage</th>
+        </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let tax of objects | async" (click)="onRowClick($event, tax)">
+                <td>{{tax.name}}</td>
+                <td class="align-right">{{tax.appliesToCannabis ? 'Yes' : 'No'}}</td>
+                <td class="align-right">{{tax.appliesToNonCannabis ? 'Yes' : 'No'}}</td>
+                <td class="align-right">{{tax.percent}}%</td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listTaxes()"></div>
+
+<router-outlet></router-outlet>

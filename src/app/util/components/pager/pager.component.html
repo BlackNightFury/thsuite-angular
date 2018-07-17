@@ -1,0 +1,28 @@
+<div class="table-pagination" *ngIf="numPages">
+    <div class="table-pagination-content">
+        <a class="first-page-link" *ngIf="currentPage != 0" (click)="onPageClick(0, $event)">
+            First Page
+        </a>
+
+        <a class="prev-page-link" *ngIf="currentPage != 0" (click)="onPageClick(currentPage - 1, $event)">
+            <i class="icon icon-search_back"></i>
+        </a>
+
+        <p>Page</p>
+        <div class="table-pagination-items">
+            <a class="table-pagination-item" *ngFor="let page of pages" [class.active]="page == currentPage"
+               (click)="onPageClick(page, $event)">
+                {{page + 1}}
+            </a>
+        </div>
+        <p>of {{_numPages}}</p>
+
+        <a class="next-page-link" *ngIf="currentPage != (numPages - 1)" (click)="onPageClick(currentPage + 1, $event)">
+            <i class="icon icon-search_back"></i>
+        </a>
+
+        <a class="last-page-link" *ngIf="currentPage != (numPages - 1)" (click)="onPageClick(numPages - 1, $event)">
+            Last Page
+        </a>
+    </div>
+</div>

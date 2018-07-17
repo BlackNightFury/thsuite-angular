@@ -1,0 +1,30 @@
+<div>
+    <span>{{showBirthdaySelector ? "Please enter the birthday listed on the ID" : "Have you checked the customer's ID and age?"}}</span>
+    <div style="margin-top: 2rem; margin-bottom: 1.5rem;">
+        <ng-container *ngIf="!showBirthdaySelector">
+            <button class="btn secondary green aligned" (click)="yes()">Yes</button>
+            <button class="btn secondary aligned" style="background: red" (click)="no()">No</button>
+        </ng-container>
+        <ng-container *ngIf="showBirthdaySelector">
+            <div class="modal-row">
+                <div class="modal-row-column" (keyup)="focusNextInput($event)">
+                    <label>Month</label>
+                    <input class="modal-birthday-input" type="tel" maxlength="2" [(ngModel)]="month">
+                </div>
+                <span>/</span>
+                <div class="modal-row-column" (keyup)="focusNextInput($event)">
+                    <label>Day</label>
+                    <input class="modal-birthday-input" type="tel" maxlength="2" [(ngModel)]="day">
+                </div>
+                <span>/</span>
+                <div class="modal-row-column" (keyup)="focusNextInput($event)">
+                    <label>Year</label>
+                    <input class="modal-birthday-input" type="tel" maxlength="4" [(ngModel)]="year">
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    <button *ngIf="showBirthdaySelector" class="btn secondary green aligned" style="margin-left: 0; margin-bottom: 1rem;" (click)="verifyBirthday()">Confirm</button>
+    <p *ngIf="birthdayInvalid" class="notice--error">This is not a valid date.</p>
+    <p *ngIf="tooYoung" class="notice--error">This customer is too young to purchase anything</p>
+</div>

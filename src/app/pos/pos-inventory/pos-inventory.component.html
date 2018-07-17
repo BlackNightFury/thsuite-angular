@@ -1,0 +1,47 @@
+<div class="container container-pos-settings pos-drawer" id="mainPanel">
+
+  <div class="topbar-controls inventory">
+    <div class="control-input">
+        <h2 class="page-subtitle">Inventory</h2>
+
+        <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search barcode or search by package, product or variation" [ngModel]="localSearchTerms">
+    </div>
+  </div>
+
+  <main class="content">
+      <table class="inventory-packages-table inventory-table sticky">
+          <thead>
+          <tr>
+              <th>Package</th>
+              <th>Barcode</th>
+              <th>Product and Variation</th>
+              <th>Product Type</th>
+              <th sortBy="Quantity" [(ngModel)]="sortByModel">QTY REM</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngFor="let item of packages | async">
+              <td>{{item.object.Label}} </td>
+              <td style="width: 10%;">
+                  <div *ngFor="let barcode of item.barcode">
+                      {{barcode?.barcode | uppercase}}
+                  </div>
+              </td>
+              <td>
+                    <div *ngFor="let productVariation of item.productVariations">
+                        {{item.productName}} {{productVariation.name}}
+                    </div>
+              </td>
+              <td>{{item.object.Item.ProductType.name}}</td>
+              <td >{{item.object.Quantity}} <span *ngIf="item.object.Item.UnitOfMeasureAbbreviation !== 'ea'">{{item.object.Item.UnitOfMeasureAbbreviation}}</span> <span class="red" *ngIf="item.object.Quantity <= 0">!!!</span></td>
+          </tr>
+          </tbody>
+      </table>
+
+      <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+  </main>
+
+  <router-outlet></router-outlet>
+
+</div>

@@ -1,0 +1,23 @@
+<div class="drawer-start-modal" *ngIf="drawer" >
+    <h4>Enter starting cash quantities for all denominations</h4>
+    <ng-container *ngIf="mode == 'denominations'">
+        <div class="coins">
+            <div *ngFor="let coin of coinList">
+                <input id="{{coin}}" placeholder="{{coin.charAt(0).toUpperCase() + coin.slice(1)}}" type="text" (blur)="updateTotals($event.target)" (keyup)="updateTotals($event.target)"/>
+                <span class="total">{{meta[coin].total | currency:'USD':true:'1.0-2'}}</span>
+            </div>
+        </div>
+        <div class="cash">
+            <div *ngFor="let note of noteList">
+                <input id="{{note}}" placeholder="{{note.charAt(0).toUpperCase() + note.slice(1)}}" type="text" (blur)="updateTotals($event.target)" (keyup)="updateTotals($event.target)" />
+                <span class="total">{{meta[note].total | currency:'USD':true:'1.0-2'}}</span>
+            </div>
+        </div>
+    </ng-container>
+    <div class="starting-amount">
+        <span>Starting Drawer Amount:</span>
+        <span *ngIf="mode == 'denominations'">{{startingAmount | currency:'USD':true}}</span>
+        <input placeholder="Starting Amount" type="number" [(ngModel)]="startingAmount" *ngIf="mode == 'totalOnly'" />
+    </div>
+    <textarea #notesForCloser (keydown)="updateNotesForCloser(notesForCloser.value)" rows="4" placeholder="Any notes for closing of drawer...">{{drawer.notesForCloser}}</textarea>
+</div>

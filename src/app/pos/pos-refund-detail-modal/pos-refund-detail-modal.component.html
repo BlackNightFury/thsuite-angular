@@ -1,0 +1,78 @@
+<div class="input-row" style="margin: 0; display: flex; flex-direction: row; height: 100%;" *ngIf="receipt">
+    <div style="width: 50%; border-right: solid gray 1px; padding-right: 5px;">
+        <div class="modal-detail-refund-row">
+            <input value="{{receipt.barcode}}"style="width: 70%; margin-right: 10px;" placeholder="Scan or Enter Receipt ID" #receiptBarcode>
+            <button (click)="loadNewReceipt(receiptBarcode.value)">Lookup</button>
+        </div>
+        <div class="modal-detail-refund-row">
+            <div class="modal-row-column" style="width: 25%"><span style="font-weight: bold">Receipt</span><span>{{receipt.barcode}}</span></div>
+            <div class="modal-row-column" style="width: 25%"><span style="font-weight: bold">Date</span><span>{{receipt.createdAt | date:'shortDate'}}</span></div>
+            <div class="modal-row-column" style="width: 25%"><span style="font-weight: bold">Time</span><span>{{receipt.createdAt | date:'shortTime'}}</span></div>
+            <div class="modal-row-column" style="width: 25%"><span style="font-weight: bold">Total</span><span>{{receipt.total | currency:'USD':true}}</span></div>
+        </div>
+        <div class="modal-detail-refund-row">
+            <div class="modal-row-column">
+                <span style="text-align: left; font-weight: bold">Patient</span>
+                <div style="display: flex; flex-direction: row;margin-top:5px;">
+                    <div class="avatar">
+                        <img *ngIf="!receipt.Patient.idImage" src="/assets/img/-50.png" alt="">
+                        <img *ngIf="receipt.Patient.idImage" [src]="receipt.Patient.idImage" alt="">
+                    </div>
+                    <div style="text-align: left;" class="modal-row-column">
+                        <span *ngIf="!receipt.Patient.firstName">Guest</span>
+                        <div *ngIf="receipt.Patient.firstName">
+                            <span>{{receipt.Patient.firstName}} {{receipt.Patient.lastName}}</span>
+                        </div>
+                        <div *ngIf="receipt.Patient.medicalStateId">
+                                {{receipt.Patient.medicalStateId | toMedID}}
+                            </div>
+                        <div *ngIf="receipt.Patient.medicalStateId">
+                            Birthday: <span>{{receipt.Patient.birthday | date:short}}</span>
+                        </div>
+                        <div>Payment Method: {{receipt.paymentMethod}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-detail-refund-row">
+            <div class="modal-row-column">
+                <span style="text-align:left;font-weight: bold;">Budtender/Register</span>
+                <div style="display: flex; flex-direction: row; margin-top:5px;">
+                    <div class="avatar">
+                        <img *ngIf="!receipt.User.image" src="/assets/img/avatar-50.png" alt="">
+                        <img *ngIf="receipt.User.image" [src]="receipt.User.image" alt="">
+                    </div>
+                    <div class="modal-row-column" style="text-align:left">
+                        <span *ngIf="receipt.User">{{receipt.User.firstName}} {{receipt.User.lastName}}</span>
+                        <span *ngIf="receipt.Drawer && receipt.Drawer.Device">Drawer: {{receipt.Drawer.Device.name}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="width: 50%; overflow-y: scroll; padding-left: 5px;">
+        <div class="modal-detail-refund-row">
+            <span style="width: 50% padding-left: .5rem;">{{receipt.totalItemQuantity}} Items From This Order</span>
+            <span style="width: 50%; text-align: right;">Price w/ Tax</span>
+        </div>
+        <div class="modal-detail-refund-line-item" *ngFor="let item of receipt.LineItems">
+            <div class="top">
+                <img class="product-image" src="{{item.ProductVariation.Product.image}}"/>
+                <div>{{item.isReturn ? 0 : item.quantity - item.returnedQuantity}}</div>
+                <div class="detail">
+                   <div [ngClass]="{gray: !item.canReturn}" >{{item.ProductVariation.Product.name}} ({{item.ProductVariation.name}})</div>
+                    <div>{{item.ProductVariation.Product.ProductType.name}}</div>
+                    <section class="package-label">
+                        <div *ngFor="let transaction of item.Transactions">Label: {{transaction.Package.Label}}</div>
+                    </section>
+                </div>
+                <div class="total">
+                    <div [ngClass]="{gray: !item.canReturn, return: item.isReturn}" >{{item.total | currency:'USD':true}}</div>
+                    <button *ngIf="item.canReturn" md-button class="btn primary green" (click)="onReturnBtnClick( $event.target, item )" [ngClass]="{selected: item.isReturning}" ></button>
+                    <span *ngIf="!item.canReturn" class="red">RETURNED</span>
+                </div>
+            </div>
+            <div *ngIf="item.wasReturned">{{item.returnedQuantity}} quantity returned</div>
+        </div>
+    </div>
+</div>

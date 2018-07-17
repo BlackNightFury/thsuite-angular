@@ -1,0 +1,40 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Tags</h2>
+
+        <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search Tags...">
+
+        <button md-button class="btn tertiary green" (click)="createTag()" *ngIf="user.Permissions.storeManagement == 'edit'"><i
+            class="icon icon-add"></i>Tag
+        </button>
+    </div>
+</div>
+
+<main class="content">
+    <table class="tags-table green-hl-tr sticky">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th *ngIf="user.Permissions.storeManagement == 'edit'"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <ng-container *ngFor="let object of objects | async">
+            <tr (click)="onRowClick($event, object)">
+
+                <td>{{object.value}}</td>
+                <td class="table-action" *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditLoyaltyRewards">
+                    <i class="icon icon-edit" (click)="editTag(object)"></i>
+                </td>
+            </tr>
+        </ng-container>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listTags()"></div>
+
+<router-outlet></router-outlet>

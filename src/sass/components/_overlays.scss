@@ -1,0 +1,275 @@
+$ov-vert: 56px;
+$ov-vert-compact: 32px;
+$ov-hor: 38px;
+$ov-hor-compact: 22px;
+$overlay-width: 540px;
+
+.overlay {
+    width: $overlay-width;
+    background-color: #fff;
+    padding: $ov-vert $ov-hor;
+    transition: opacity 200ms ease, transform 200ms ease;
+    animation: slide 0.25s ease-out forwards;
+    opacity: 0;
+    display: none;
+
+    top: $topnav-height;
+    position: fixed;
+    bottom: 0;
+    overflow-y: auto;
+    
+    @include max-width($compact) {
+        top: $topnav-height-compact;
+    }
+
+    @include max-width($tablet) {
+        top: $topnav-height-tablet;
+    }
+
+    &.overlay-vertical-auto {
+        display: flex;
+        flex-direction: column;
+
+        &.pos-overlay {
+
+            &.faded {
+                &.active {
+                    &:before {
+                        display: none;
+                    }
+                }
+            }
+
+            &:not(.has-padding) {
+                padding: 0;
+            }
+
+            &.paired-overlay {
+                right: 340px;
+            }
+
+            .detail-row {
+                margin-bottom: 16px;
+
+                .product-info {
+                    font-size: 21px;
+                }
+            }
+        }
+    }
+
+    &.right {
+        right: 0;
+        box-shadow: -21.786px -3.062px 22px 0px rgba(24, 60, 95, .08);
+        transform: translateX($overlay-width);
+
+        &.active {
+            transform: translateX(0);
+            opacity: 1;
+            z-index: 10;
+
+            &.faded {
+                &:before {
+                    @extend %pseudo;
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    width: 100%;
+                    background-color: #fff;
+                    opacity: 0.6;
+                }
+            }
+        }
+
+        &.paired-overlay {
+            right: $overlay-width;
+            border-right: 1px solid #d8dfe4;
+        }
+
+        &.second {
+            top: calc(#{$topnav-height} + 4em);
+            z-index: 11;
+
+            @include max-width($compact) {
+                top: calc(#{$topnav-height-compact} + 4em);
+            }
+
+            @include max-width($tablet) {
+                top: calc(#{$topnav-height-tablet} + 4em);
+            }
+
+            &.double-width {
+                width: 960px;
+                z-index: 1001;
+            }
+        }
+
+        &.third {
+            top: calc(#{$topnav-height} + 8em);
+            z-index: 1001;
+
+            @include max-width($compact) {
+                top: calc(#{$topnav-height-compact} + 8em);
+            }
+
+            @include max-width($tablet) {
+                top: calc(#{$topnav-height-tablet} + 8em);
+            }
+        }
+
+        &.second,
+        &.third {
+            .icon-close {
+                display: block;
+                position: absolute;
+                top: -4em;
+                left: 0;
+                right: 0;
+                height: 4em;
+
+                &:before {
+                    position: absolute;
+                    right: 2em;
+                    bottom: -2.5em;
+                }
+            }
+        }
+    }
+
+    .section-heading {
+        margin-bottom: 50px;
+
+        &.above {
+            margin-top: 25px;
+            margin-left: 10px;
+        }
+
+        img {
+            @include blockcircle(60px);
+        }
+
+        .svg-icon {
+            img {
+                @include blockcircle(40px);
+                border-radius: 0;
+            }
+        }
+
+        @include max-width($tablet) {
+            &.above {
+                margin-top: 0;
+                margin-bottom: 15px;
+            }
+        }
+    }
+
+    @include max-width($compact) {
+        padding: $ov-vert-compact $ov-hor-compact;
+
+        .section-heading {
+            margin-bottom: 30px;
+        }
+    }
+}
+
+.overlay-close {
+    position: absolute;
+    top: 32px;
+    right: $ov-hor;
+    color: #a5b1bc;
+    font-size: 20px;
+    transition: color 200ms ease;
+    cursor: pointer;
+
+    &:hover {
+        color: $green;
+    }
+}
+
+.overlay-closearea {
+    width: $overlay-width;
+    position: fixed;
+    right: 0;
+    height: 4em;
+    z-index: 1500;
+
+    &.second {
+        top: $topnav-height;
+
+        @include max-width($compact) {
+            top: $topnav-height-compact;
+        }
+
+        @include max-width($tablet) {
+            top: $topnav-height-tablet;
+        }
+    }
+
+    &.third {
+        top: calc(#{$topnav-height} + 4em);
+
+        @include max-width($compact) {
+            top: calc(#{$topnav-height-compact} + 4em);
+        }
+
+        @include max-width($tablet) {
+            top: calc(#{$topnav-height-tablet} + 4em);
+        }
+    }
+
+    &.double-width {
+        width: 960px;
+    }
+}
+
+.overlay-action-buttons {
+    display: flex;
+    margin-top: 24px;
+
+    > * {
+        flex: 1;
+        margin-right: 15px !important;
+
+        &:last-child {
+            margin-right: 0 !important;
+        }
+    }
+}
+
+.detail-row {
+    margin-bottom: 32px;
+    display: flex;
+
+    > * {
+        flex: 1;
+    }
+
+    &.simple {
+        display: block;
+    }
+}
+
+app-add-edit-employee .input-has-icon.datepick .icon {
+    top:20px;
+}
+
+.overlay-shadow {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+@keyframes slide {
+    0% {
+        opacity: 0;
+        transform: translateX(150px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

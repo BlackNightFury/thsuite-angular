@@ -1,0 +1,40 @@
+<div class="topbar-controls patient-management">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Locations</h2>
+
+        <!--<button md-button class="btn secondary green" (click)="createNewLocation()"><i class="icon icon-add"></i>Location</button>-->
+        <!--<button md-button class="btn secondary blue btn-export"><i class="icon icon-export"></i>Export</button>-->
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-products-table green-hl-tr">
+        <thead>
+        <tr>
+            <th sortBy="name" [(ngModel)]="sortByModel">Store Name</th>
+            <th sortBy="city" [(ngModel)]="sortByModel">City</th>
+            <th sortBy="state" [(ngModel)]="sortByModel">State</th>
+            <th sortBy="storeManager" [(ngModel)]="sortByModel">Store Manager</th>
+            <th *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditStores"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let store of objects | async" (click)="onRowClick($event, store)">
+            <td>{{store.name}}</td>
+            <td>{{store.city}}</td>
+            <td>{{store.state}}</td>
+            <td>{{store.storeManager}}</td>
+            <td class="table-action" *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditStores">
+                <i class="icon icon-edit" (click)="editLocation(store)"></i>
+                <!--<i class="icon icon-my-account" (click)="viewLocation(store)"></i>-->
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listLocations()"></div>
+
+<router-outlet></router-outlet>

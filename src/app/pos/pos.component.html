@@ -1,0 +1,28 @@
+<!-- Top Nav -->
+<app-pos-top-nav
+    [isNavShowing]="isNavShowing"
+    (onShowNav)="showNav()"
+    class="topnav"></app-pos-top-nav>
+
+
+<router-outlet></router-outlet>
+
+<app-pos-refund-detail-modal *ngIf="isRefundDetailModalShowing"></app-pos-refund-detail-modal>
+<app-pos-manager-approval-modal *ngIf="isManagerApprovalModalShowing"></app-pos-manager-approval-modal>
+<app-pos-age-verification-modal *ngIf="isAgeVerificationModalShowing"></app-pos-age-verification-modal>
+<app-pos-void-detail-modal *ngIf="isVoidDetailModalShowing"></app-pos-void-detail-modal>
+<app-pos-drawer-start-modal *ngIf="isDrawerStartModalShowing"></app-pos-drawer-start-modal>
+<app-pos-drawer-end-modal *ngIf="isDrawerEndModalShowing"></app-pos-drawer-end-modal>
+<app-pos-oversale-modal *ngIf="isOversaleLimitModalShowing"></app-pos-oversale-modal>
+<app-pos-patient-oversale-modal *ngIf="isPatientOversaleLimitModalShowing"></app-pos-patient-oversale-modal>
+<app-pos-device-registration-modal *ngIf="isDeviceRegistrationModalShowing"></app-pos-device-registration-modal>
+<app-pos-transaction-completed-modal *ngIf="isTransactionCompletedModalShowing"></app-pos-transaction-completed-modal>
+<app-pos-explain-drawer-navigation-modal *ngIf="isExplainDrawerNavigationModalShowing"></app-pos-explain-drawer-navigation-modal>
+<app-pos-custom-discount-modal *ngIf="isCustomDiscountModalShowing"></app-pos-custom-discount-modal>
+<app-previous-purchases-modal *ngIf="isPreviousPurchasesModalShowing"></app-previous-purchases-modal>
+<app-patient-id-modal *ngIf="isPatientIDModalShowing"></app-patient-id-modal>
+<app-patient-notes-modal *ngIf="isPatientNotesModalShowing"></app-patient-notes-modal>
+<app-pos-bulk-flower-modal *ngIf="isBulkFlowerModalShowing"></app-pos-bulk-flower-modal>
+<app-pos-receipt-void-modal *ngIf="isReceiptVoidModalShowing"></app-pos-receipt-void-modal>
+<app-pos-assign-patient-to-patient-group-modal *ngIf="isAssignPatientToPatientGroupModalShowing"></app-pos-assign-patient-to-patient-group-modal>
+<app-pos-pin-entry-modal *ngIf="isPinEntryModalShowing"></app-pos-pin-entry-modal>

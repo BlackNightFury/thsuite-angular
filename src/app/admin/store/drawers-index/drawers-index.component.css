@@ -1,0 +1,8 @@
+.hide, .filter-out {
+    display: none;
+}
+
+app-button-toggler {
+    flex: 1;
+    flex-grow: .2;
+}    

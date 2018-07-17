@@ -1,0 +1,281 @@
+.btn {
+    .mat-button-wrapper {
+        font-family: $font-family;
+        color: #fff;
+        line-height: initial;
+    }
+
+    &.mat-button {
+        line-height: initial;
+    }
+}
+
+.mat-button,
+.mat-button-ripple {
+    font-family: $font-family;
+    line-height: initial;
+
+    .mat-button-wrapper {
+        font-family: $font-family;
+    }
+}
+
+.topnav-menu-item {
+    .mat-button-wrapper {
+        width: 100%;
+    }
+}
+
+//MD-TOGGLE
+
+.mat-button-toggle {
+    font-family: $font-family;
+    color: $text-color;
+    transition: box-shadow 5ms ease,
+                background-color 200ms ease,
+                border-color 200ms ease;
+
+    //@TEMP
+    @include active(8px);
+}
+
+.mat-button-toggle-group.default {
+    box-shadow: none;
+    display: flex;
+
+    .mat-button-toggle {
+        flex: 1;
+        color: #c4cad0;
+        font-family: $font-family;
+        &:first-child {
+            border-right-color: transparent;
+        }
+
+        &.mat-button-toggle-checked {
+            color: $text-color;
+            &:first-child {
+                border-right-color: transparent;
+
+                + .mat-button-toggle {
+                    border-left-color: #28bd8b;
+                }
+            }
+
+            &:hover {
+                background-color: #e4f5fc;
+            }
+        }
+
+        &:hover {
+            color: $text-color;
+            background-color: #f5f5f5;
+        }
+    }
+}
+
+.mat-button-toggle-group.blue {
+    .mat-button-toggle-checked {
+        background-color: #e4f5fc;
+        border-color: $select-highlight;
+        color: $text-color;
+    }
+}
+
+.mat-button-toggle-group.inside-topbar {
+    width: 370px;
+}
+
+.mat-button-toggle-group.multiple {
+    .mat-button-toggle {
+        border-right-color: transparent;
+        padding-left: 0;
+        padding-right: 0;
+
+        &.active {
+            + .mat-button-toggle {
+                border-left-color: #28bd8b;
+            }
+        }
+
+        &:last-child {
+            border-right-color: #d8dfe6;
+
+            &.active {
+                border-right-color: #28bd8b;
+            }
+        }
+    }
+}
+
+.mat-button-toggle-group.padded {
+    flex-grow: 0.3;
+
+    .mat-button-toggle {
+        flex: 1;
+    }
+}
+
+// MD-INPUT
+.mat-input-container.default {
+    padding-top: 20px;
+
+    input {
+        box-shadow: none;
+        width: 100%;
+        outline: none;
+        padding-left: 12px;
+        padding-right: 12px;
+        height: $input-height;
+        line-height: $input-height;
+        background-color: #fff;
+        border: 1px solid $input-border;
+        transition: border-color 200ms ease;
+        color: $text-color;
+
+        &:focus {
+            box-shadow: none;
+            outline: none;
+            border-color: $select-highlight;
+        }
+    }
+
+    .mat-input-wrapper {
+        margin: 0;
+    }
+
+    .mat-input-placeholder {
+        line-height: 1;
+        padding-top: 0;
+        top: 0;
+        font-size: 12px;
+        color: #4c6379;
+        font-weight: $bold;
+        text-transform: uppercase;
+        margin-bottom: 9px;
+        font-family: $font-family;
+    }
+
+    .mat-input-placeholder-wrapper {
+        top: -22px;
+        padding-top: 0;
+    }
+
+    .mat-input-underline {
+        display: none;
+    }
+
+    &.mat-focused {
+        .mat-input-placeholder.mat-float {
+            transform: none;
+            width: 100%;
+        }
+    }
+
+    @include max-width($compact) {
+        input {
+            height: 45px;
+            line-height: 45px;
+        }
+    }
+}
+
+.mat-input-container.single {
+    width: 100%;
+}
+
+.mat-checkbox.default {
+    .mat-checkbox-checked.mat-accent {
+        background-color: #fff;
+    }
+}
+
+.mat-checkbox.small-label {
+    .mat-checkbox-label {
+        font-size: 13px;
+    }
+}
+
+.mat-input-placeholder.mat-float {
+    transform: none !important;
+    width: 100% !important;
+}
+
+.mat-select-placeholder {
+    transition: color 200ms ease;
+}
+
+.mat-select {
+  &:hover {
+    .mat-select-placeholder,
+    .mat-select-arrow {
+        color: $green;
+    }
+
+    .mat-select-underline {
+        background-color: rgba(0,0,0,.35);
+    }
+  }
+
+  .mat-select-underline {
+      transition: background-color 200ms ease;
+  }
+}
+
+.mat-button-toggle-standalone {
+    width: 55%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex !important;
+
+    &:hover {
+        color: $text-color;
+        background-color: #f5f5f5;
+    }
+
+    &.mat-button-toggle-checked {
+      &:hover {
+        border-color: transparent;
+      }
+    }
+
+    @include active(6px, .3);
+}
+
+label {
+    &.upload.button {
+        transition: background-color 200ms ease;
+
+        &:hover {
+            background-color: darken(#33CC99, 7%);
+        }
+    }
+
+    &.clear.button {
+        transition: background-color 200ms ease;
+
+        &:hover {
+            background-color: darken(#FF0000, 7%);
+        }
+    }
+}
+
+.white-stepper-icons .mat-step-header .mat-step-icon,
+.white-stepper-icons .mat-step-header .mat-step-icon-not-touched {
+    color:white;
+}
+
+/* workaround for material design compatibility with non angular forms */
+.mat-horizontal-stepper-header{
+    pointer-events: none !important;
+}
+
+.limited-width-stepper .mat-horizontal-content-container {
+    max-width:1000px;
+    margin:auto;
+}
+
+/* Rules for sizing the icon. */
+.material-icons.md-18 { font-size: 18px; width:18px; height:18px; }
+.material-icons.md-24 { font-size: 24px; width:24px; height:24px; }
+.material-icons.md-36 { font-size: 36px; width:36px; height:36px; }
+.material-icons.md-48 { font-size: 48px; width:48px; height:48px; }

@@ -1,0 +1,21 @@
+.register {
+    width: 100%;
+}
+
+.register h2 {
+    text-align: center;
+}
+
+.register .input-wrap {
+    align-items: center;
+    display: flex;
+    margin: 3rem 0rem;
+}
+
+.register .input-wrap label {
+    flex: 1;
+}
+
+.register .input-wrap input {
+    flex: 4;
+}

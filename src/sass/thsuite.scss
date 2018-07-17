@@ -1,0 +1,91 @@
+@import '~@angular/material/theming';
+@import 'variables';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+$th-blue: (
+    50 : #e3f5fc,
+    100 : #bae5f6,
+    200 : #8cd4f1,
+    300 : #5dc3eb,
+    400 : #3bb6e6,
+    500 : $select-highlight,
+    600 : #15a2df,
+    700 : #1198da,
+    800 : #0e8fd6,
+    900 : #087ecf,
+    A100 : #f8fcff,
+    A200 : #c5e5ff,
+    A400 : #92cfff,
+    A700 : #79c3ff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$th-green: (
+    50 : #e5f7f1,
+    100 : #bfebdc,
+    200 : #94dec5,
+    300 : #69d1ae,
+    400 : #48c79c,
+    500 : #28bd8b,
+    600 : #24b783,
+    700 : #1eae78,
+    800 : #18a66e,
+    900 : #0f985b,
+    A100 : #c9ffe5,
+    A200 : #96ffcc,
+    A400 : #63ffb3,
+    A700 : #49ffa7,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue.
+$thsuite-green: mat-palette($th-green);
+$thsuite-blue: mat-palette($th-blue, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$thsuite-red: mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$candy-app-theme: mat-light-theme($thsuite-green, $thsuite-blue, $thsuite-red);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($candy-app-theme);

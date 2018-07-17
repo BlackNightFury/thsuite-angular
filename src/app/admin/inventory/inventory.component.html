@@ -1,0 +1,18 @@
+<div class="container-separate has-left-sidebar" id="mainPanel">
+    <div class="left-sidebar">
+        <a routerLink="/admin/inventory/packages/dashboard" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">packages</a>
+        <a routerLink="/admin/inventory/products" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">products</a>
+        <a routerLink="/admin/inventory/items" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">items</a>
+        <a routerLink="/admin/inventory/product-types" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">product types</a>
+        <a routerLink="/admin/inventory/suppliers" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">suppliers</a>
+        <a routerLink="/admin/inventory/incoming" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">incoming</a>
+        <a routerLink="/admin/inventory/outgoing" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">outgoing</a>
+        <a routerLink="/admin/inventory/barcodes" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">barcodes</a>
+        <a routerLink="/admin/inventory/pricing-tiers" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">pricing tiers</a>
+        <a routerLink="/admin/inventory/alerts" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">alerts</a>
+    </div>
+
+    <router-outlet></router-outlet>
+</div>
+
+<app-upload-package-ids-modal *ngIf="isUploadIdsModalShowing"></app-upload-package-ids-modal>

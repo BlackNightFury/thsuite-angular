@@ -1,0 +1,163 @@
+<div #root class="overlay right active not-hidden-block">
+    <i class="icon icon-close overlay-close" (click)="cancel()"></i>
+    <div class="section-heading" *ngIf="mode == 'edit'">
+        <div class="svg-icon"><img src="/assets/svg/edit_product.svg"/></div>
+        <h1 class="section-title">Edit Supplier</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'add'">
+        <div class="svg-icon"><img src="/assets/svg/add_new_product.svg"/></div>
+        <h1 class="section-title">Add New Supplier</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><img src="/assets/svg/product_details.svg"/></div>
+        <h1 class="section-title">Supplier Details</h1>
+    </div>
+
+    <ng-container *ngIf="object">
+
+        <ng-container *ngIf="mode == 'view'">
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Supplier Name</span>
+                    <h5 class="product-info">{{object.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">License Number</span>
+                    <h5 class="product-info">{{object.licenseNumber}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Street Address</span>
+                    <h5 class="product-info">{{object.streetAddress}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">City</span>
+                    <h5 class="product-info">{{object.city}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">State</span>
+                    <h5 class="product-info">{{object.state}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Zip Code</span>
+                    <h5 class="product-info">{{object.zip}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Phone Number</span>
+                    <h5 class="product-info">{{object.phone}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Contact Name</span>
+                    <h5 class="product-info">{{object.contactName}}</h5>
+                </div>
+            </div>
+
+
+            <div class="overlay-action-buttons" *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditSuppliers">
+                <!-- Cannot delete suppliers -->
+                <!--<button class="btn secondary grey"><i class="icon icon-remove"></i>Remove</button>-->
+                <button class="btn secondary blue" (click)="edit()"><i class="icon icon-edit"></i>Edit</button>
+            </div>
+
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <div class="input-row">
+                <label class="input-label">Supplier Name</label>
+                <input *ngIf="!errorFlags.name" type="text" [(ngModel)]="object.name">
+                <input *ngIf="errorFlags.name" style="border: 1px solid red" type="text" [(ngModel)]="object.name">
+            </div>
+
+            <div class="input-row">
+                <div>
+                    <label class="input-label">Street Address</label>
+                    <input *ngIf="!errorFlags.streetAddress" type="text" [(ngModel)]="object.streetAddress">
+                    <input *ngIf="errorFlags.streetAddress" style="border: 1px solid red" type="text" [(ngModel)]="object.streetAddress">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div>
+                    <label class="input-label">City</label>
+                    <input *ngIf="!errorFlags.city" type="text" [(ngModel)]="object.city">
+                    <input *ngIf="errorFlags.city" style="border: 1px solid red" type="text" [(ngModel)]="object.city">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div>
+                    <label class="input-label">State</label>
+                    <input *ngIf="!errorFlags.state" type="text" [(ngModel)]="object.state">
+                    <input *ngIf="errorFlags.state" style="border: 1px solid red" type="text" [(ngModel)]="object.state">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div>
+                    <label class="input-label">Zip Code</label>
+                    <input *ngIf="!errorFlags.zip" type="text" [(ngModel)]="object.zip">
+                    <input *ngIf="errorFlags.zip" style="border: 1px solid red" type="text" [(ngModel)]="object.zip">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div>
+                    <label class="input-label">Phone Number</label>
+                    <input *ngIf="!errorFlags.phone" type="text" [(ngModel)]="object.phone" (keyup)="formatPhoneNumber($event)">
+                    <input *ngIf="errorFlags.phone" style="border: 1px solid red" type="text" [(ngModel)]="object.phone" (keyup)="formatPhoneNumber($event)">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div>
+                    <label class="input-label">Contact Name</label>
+                    <input *ngIf="!errorFlags.contactName" type="text" [(ngModel)]="object.contactName">
+                    <input *ngIf="errorFlags.contactName" style="border: 1px solid red" type="text" [(ngModel)]="object.contactName">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div>
+                    <label class="input-label">License</label>
+                    <input *ngIf="!errorFlags.licenseNumber" type="text" [(ngModel)]="object.licenseNumber">
+                    <input *ngIf="errorFlags.licenseNumber" style="border: 1px solid red" type="text" [(ngModel)]="object.licenseNumber">
+                </div>
+            </div>
+
+            <div class="overlay-action-buttons">
+                <button class="btn secondary grey" (click)="cancel()"><i class="icon icon-cancel"></i>Cancel</button>
+                <button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>Save</button>
+            </div>
+
+        </ng-container>
+
+    </ng-container>
+
+
+</div>

@@ -1,0 +1,53 @@
+<div *ngIf="loggingInWithToken">
+    <main class="single-padded">
+        <section class="padded">
+            <div class="padded-title">
+                <div class="padded-icon"><img src="/assets/svg/logo.svg"/></div>
+                <h2 class="bold-title">Log in to your THSuite account</h2>
+                <p class="descr">Glad to see you back. Have a fantastic day!</p>
+            </div>
+            <div class="input-row">
+                Logging in...
+            </div>
+        </section>
+    </main>
+</div>
+<div *ngIf="!loggingInWithToken">
+    <main class="single-padded" (keyup.enter)="doLogin(true)" >
+        <div class="page-topbar">
+            <!--<div class="right">-->
+                <!--Don't have an account?-->
+                <!--<a href="#" class="btn tertiary green">Get Started</a>-->
+            <!--</div>-->
+        </div>
+        <section class="padded">
+            <div class="padded-title">
+                <div class="padded-icon"><img src="/assets/svg/logo.svg"/></div>
+                <h2 class="bold-title">Log in to your THSuite account</h2>
+                <p class="descr">Glad to see you back. Have a fantastic day!</p>
+            </div>
+            <div class="input-row">
+                <label class="input-label">Your Username</label>
+                <input type="text" placeholder="Enter your username" [(ngModel)]="username" (keyup)="error=undefined">
+            </div>
+
+            <div class="input-row note-below">
+                <label class="input-label">Your Password</label>
+                <input type="password" placeholder="Enter your password" [(ngModel)]="password" (keyup)="error=undefined" >
+            </div>
+
+            <div class="password-actions">
+                <!--<div class="cb">-->
+                    <!--<md-checkbox class="small-label">Remember Me</md-checkbox>-->
+                <!--</div>-->
+                <div class="link"><a routerLink="/auth/forgot" routerLinkActive="active" class="blue">Forgot password?</a></div>
+            </div>
+
+            <div *ngIf="error" class="error" style="color: red; font-size: smaller; text-align: center;">{{error}}</div>
+
+            <div class="section-action center">
+                <button class="btn secondary blue"  (click)="doLogin()">Login</button>
+            </div>
+        </section>
+    </main>
+</div>

@@ -1,0 +1,60 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Time Clocks</h2>
+
+        <button md-button class="btn tertiary green" (click)="createTimeClock()" *ngIf="user.Permissions.storeManagement == 'edit'"><i
+            class="icon icon-add"></i>Time Clock
+        </button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+
+        <ng-container *ngIf="employeeSelect2Options">
+            <app-select2 [options]="employeeSelect2Options" [(ngModel)]="selectedEmployees"></app-select2>
+        </ng-container>
+
+
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-products-table green-hl-tr">
+        <thead>
+        <tr>
+            <th>User</th>
+            <th>Clock In Time</th>
+            <th>Clock Out Time</th>
+            <th>Time Worked</th>
+            <th *ngIf="user.Permissions.storeManagement == 'edit'"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <ng-container *ngFor="let object of objects | async">
+            <tr (click)="onRowClick($event, object)">
+
+                <td>{{object.User.firstName + ' ' + object.User.lastName}}</td>
+                <td>{{object.clockIn | storeTimeZone:store.timeZone:'short'}}</td>
+                <td>
+                    {{ object.clockOut ? (object.clockOut | storeTimeZone:store.timeZone:'short') : ''}}
+                    <span class="auto-clocked-out" *ngIf="object.clockOut && object.autoClockedOut">
+                        Auto
+                    </span>
+                </td>
+                <td>{{calculateTimeWorked(object)}}</td>
+                <td class="table-action" *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditLoyaltyRewards">
+                    <i class="icon icon-edit" (click)="editTimeClock(object)"></i>
+                </td>
+            </tr>
+        </ng-container>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listTimeClocks()"></div>
+
+<router-outlet></router-outlet>

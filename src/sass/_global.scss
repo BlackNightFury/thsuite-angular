@@ -1,0 +1,89 @@
+*,
+*:after,
+*:before {
+    box-sizing: border-box;
+}
+
+.show-mobile {
+    display: none;
+
+    @include max-width($mobile) {
+        display: block;
+    }
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.icon {
+    transition: color 200ms ease;
+}
+
+.slideout-menu {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 150px;
+    min-height: 100vh;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    z-index: 0;
+    display: none;
+}
+
+.slideout-menu-left {
+    left: 0;
+}
+
+.slideout-menu-right {
+    right: 0;
+}
+
+.slideout-panel {
+    position: relative;
+    z-index: 1005;
+    will-change: transform;
+    background-color: $body-bg; /* A background-color is required */
+    min-height: 100vh;
+}
+
+.slideout-open,
+.slideout-open body,
+.slideout-open .slideout-panel {
+    overflow: hidden;
+}
+
+.slideout-open .slideout-menu {
+    display: flex;
+}
+
+.index-in-circle {
+    border-color:black;
+    border-width:1.5px;
+    border-radius:13px;
+    border-style:solid;
+    width:26px;
+    height:26px;
+    display:flex;
+    align-items:center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.fade {
+    opacity: 0.5;
+}
+
+.align-left {
+    text-align:left;
+}
+.align-center {
+    text-align:center;
+}
+.align-right {
+    text-align:right;
+}

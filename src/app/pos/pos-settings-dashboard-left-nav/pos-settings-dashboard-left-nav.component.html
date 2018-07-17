@@ -1,0 +1,32 @@
+<a md-button routerLink="/pos/all" routerLinkActive="active" class="leftnav-item">
+    <i class="material-icons">important_devices</i>
+    <div>Register</div>
+</a>
+<a md-button routerLink="/pos/settings/receipts" routerLinkActive="active" class="leftnav-item">
+    <i class="material-icons">receipt</i>
+    <div>Receipts</div>
+</a>
+<a md-button routerLink="/pos/settings/inventory" routerLinkActive="active" class="leftnav-item">
+    <i class="material-icons">inventory</i>
+    <div>Inventory</div>
+</a>
+<a md-button routerLink="/pos/settings/drawer" routerLinkActive="active" class="leftnav-item">
+    <i class="material-icons">toc</i>
+    <div>Manage Drawer</div>
+</a>
+<a md-button routerLink="/pos/settings/time-clock" routerLinkActive="active" class="leftnav-item">
+    <i class="material-icons">query_builder</i>
+    <div>Time Clocks</div>
+</a>
+<a md-button routerLink="/pos/settings/settings" routerLinkActive="active" class="leftnav-item">
+    <i class="icon icon-concetrated"></i>
+    <div>Settings</div>
+</a>
+<a md-button (click)="adminMenuClicked()" routerLink="/admin/home" routerLinkActive="active" class="leftnav-item" *ngIf="canAccessAdmin">
+    <i class="material-icons">dvr</i>
+    <div>Admin Panel</div>
+</a>
+<a md-button class="leftnav-item" (click)="logout()">
+    <i class="material-icons">power_settings_new</i>
+    <div>Sign Out</div>
+</a>

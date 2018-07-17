@@ -1,0 +1,16 @@
+<div class="container-separate has-left-sidebar" id="mainPanel">
+    <div class="left-sidebar">
+        <a routerLink="/admin/patients/index" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Patients</a>
+        <a routerLink="/admin/patients/patient-groups" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Patient Groups</a>
+        <a *ngIf="environment.shouldShowPatientQueue && user.Permissions.canDoPatientCheck" routerLink="/admin/patients/check-in" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Patient Check-in</a>
+        <a *ngIf="environment.shouldShowPhysicians && user.Permissions.canAccessPhysiciansDashboard" routerLink="/admin/patients/physicians" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Physicians</a>
+        <a *ngIf="environment.shouldShowCaregivers && user.Permissions.canAccessCaregiverDashboard" routerLink="/admin/patients/caregivers" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Caregivers</a>
+        <a *ngIf="environment.shouldShowVisitors && user.Permissions.canAccessVisitorDashboard" routerLink="/admin/patients/visitors" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Visitors</a>
+    </div>
+
+    <router-outlet></router-outlet>
+</div>
+
+<app-check-in-modal *ngIf="isPatientCheckInModalShowing"></app-check-in-modal>
+<app-verify-add-modal *ngIf="isVerifyAddModalShowing"></app-verify-add-modal>
+<app-patient-notes-modal *ngIf="isPatientNotesModalShowing"></app-patient-notes-modal>

@@ -1,0 +1,395 @@
+<div class="overlay-closearea third" (click)="startLeaving()"></div>
+<div #root class="overlay right third active not-hidden-block" [@leave]="animationStatus" (@leave.done)="cancel()" *ngIf="_package">
+
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+
+    <div class="section-heading">
+        <div class="svg-icon"><img src="/assets/svg/inventory.svg"/></div>
+        <div>
+            <h5 class="subtitle">{{item.name}}</h5>
+            <h1 class="section-title">{{mode == 'add' ? 'New' : ''}} Package {{_package.FinishedDate ? '(Finished)' : ''}}</h1>
+        </div>
+    </div>
+
+    <ng-container *ngIf="item && _package">
+
+        <ng-container *ngIf="mode == 'view'">
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Label</span>
+                    <h5 class="product-info">{{_package.Label}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Quantity Received</span>
+                    <h5 class="product-info">{{_package.ReceivedQuantity}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Quantity Remaining</span>
+                    <h5 class="product-info">{{_package.Quantity}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Total Wholesale Price</span>
+                    <h5 class="product-info">{{_package.wholesalePrice}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Per {{_package.UnitOfMeasureName == "Grams" ? "Gram" : "Unit"}} Wholesale Price</span>
+                    <h5 class="product-info">{{(_package.wholesalePrice / _package.ReceivedQuantity) | currency:'USD':true}}</h5>
+                </div>
+            </div>
+
+            <!-- Adjustment table -->
+            <div class="adjustment-table" style="padding-bottom: 20px" *ngIf="_package.Adjustments.length">
+                <span class="input-label">Quantity Adjustments</span>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Adjustment Amount</th>
+                        <th class="align-right">Adjustment Reason</th>
+                        <th class="align-right">Date</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <ng-container *ngFor="let adjustment of this._package.Adjustments">
+                        <tr (click)="expandRow(row)" #row class="hide-next">
+                            <td>{{adjustment.amount}}</td>
+                            <td class="align-right">{{adjustment.reason}}</td>
+                            <td class="align-right">{{adjustment.date | date:'shortDate'}}</td>
+                        </tr>
+                        <tr style="cursor: default; border-top: 0" class="adjustment-detail-row">
+                            <td class="notes-row" colspan="3" style="white-space: pre-wrap">Notes: {{adjustment.notes}}</td>
+                        </tr>
+                    </ng-container>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="adjustment-table" style="padding-bottom: 20px" *ngIf="_package.PriceAdjustments.length">
+                <span class="input-label">Price Adjustments</span>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Adjustment Amount</th>
+                        <th class="align-right">Adjustment Reason</th>
+                        <th class="align-right">Date</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <ng-container *ngFor="let adjustment of this._package.PriceAdjustments">
+                        <tr (click)="expandRow(row)" #row class="hide-next">
+                            <td>{{adjustment.amount | currency:'USD':true}}</td>
+                            <td class="align-right">{{adjustment.reason}}</td>
+                            <td class="align-right">{{adjustment.date | date:'shortDate'}}</td>
+                        </tr>
+                        <tr style="cursor: default; border-top: 0" class="adjustment-detail-row">
+                            <td class="notes-row" colspan="3" style="white-space: pre-wrap">Notes: {{adjustment.notes}}</td>
+                        </tr>
+                    </ng-container>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="adjustment-table" style="padding-bottom: 20px" *ngIf="_package.PurchaseOrders.length">
+                <span class="input-label">Purchase Orders</span>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Purchase Quantity</th>
+                        <th>Purchase Wholesale Price</th>
+                        <th class="align-right">Date</th>
+                        <th>Employee</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <ng-container *ngFor="let adjustment of this._package.PurchaseOrders">
+                        <tr (click)="expandRow(row)" #row class="hide-next">
+                            <td>{{adjustment.amount}}</td>
+                            <td>{{adjustment.price | currency:'USD':true}}</td>
+                            <td class="align-right">{{adjustment.date | date:'shortDate'}}</td>
+                            <td>{{adjustment.User ? adjustment.User.firstName : ''}} {{adjustment.User ? adjustment.User.lastName : ''}}</td>
+                        </tr>
+                        <tr style="cursor: default; border-top: 0" class="adjustment-detail-row">
+                            <td class="notes-row" colspan="3" style="white-space: pre-wrap">Notes: {{adjustment.notes}}</td>
+                        </tr>
+                    </ng-container>
+                    </tbody>
+                </table>
+            </div>
+
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input *ngIf="mode == 'edit'" mdInput placeholder="Label" readonly [(ngModel)]="_package.Label"/>
+                    <input *ngIf="mode == 'add'" [ngClass]="{error: errorFlags.label}" mdInput placeholder="Label" [(ngModel)]="_package.Label"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input *ngIf="mode == 'edit'" type="number" style="text-align: right; background-color: #d7dcda;" mdInput placeholder="Quantity Received" readonly [(ngModel)]="_package.ReceivedQuantity"/>
+                    <input *ngIf="mode == 'add'" type="number" style="text-align: right" [ngClass]="{error: errorFlags.quantity}" mdInput placeholder="Quantity Received" [(ngModel)]="_package.ReceivedQuantity" />
+                </md-input-container>
+            </div>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input *ngIf="mode == 'edit'" type="number" style="text-align: right; background-color: #d7dcda;" mdInput placeholder="Quantity Remaining" readonly [(ngModel)]="_package.Quantity"/>
+                    <input *ngIf="mode == 'add'" type="number" style="text-align: right" [ngClass]="{error: errorFlags.quantity}" mdInput placeholder="Quantity Remaining" [(ngModel)]="_package.Quantity" />
+                </md-input-container>
+            </div>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input type="number" style="text-align: right" mdInput [ngClass]="{error: errorFlags.wholesale}" (keyup)="updatePackagePerUnitWholesalePrice($event)" placeholder="Total Wholesale Price" [(ngModel)]="_package.wholesalePrice"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input type="text" [(ngModel)]="_package.perUnitWholesalePrice" (keyup)="updatePackageWholesalePrice($event)" style="text-align: right;" mdInput placeholder={{wholesalePerUnitPlaceholder}}/>
+                </md-input-container>
+            </div>
+
+            <ng-container *ngIf="mode == 'edit'">
+                <!-- Adjustment table -->
+                <div class="adjustment-table" style="padding-bottom: 20px" *ngIf="_package.Adjustments.length">
+                    <span class="input-label">Quantity Adjustments</span>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Adjustment Amount</th>
+                            <th class="align-right">Adjustment Reason</th>
+                            <th class="align-right">Date</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <ng-container *ngFor="let adjustment of this._package.Adjustments">
+                            <tr (click)="expandRow(row)" #row class="hide-next">
+                                <td>{{adjustment.amount}}</td>
+                                <td class="align-right">{{adjustment.reason}}</td>
+                                <td class="align-right">{{adjustment.date | date:'shortDate'}}</td>
+                            </tr>
+                            <tr style="cursor: default; border-top: 0" class="adjustment-detail-row">
+                                <td class="notes-row" colspan="3" style="white-space: pre-wrap">Notes: {{adjustment.notes}}</td>
+                            </tr>
+                        </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="adjustment-table" style="padding-bottom: 20px" *ngIf="_package.PriceAdjustments.length">
+                    <span class="input-label">Price Adjustments</span>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Adjustment Amount</th>
+                            <th class="align-right">Adjustment Reason</th>
+                            <th class="align-right">Date</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <ng-container *ngFor="let adjustment of this._package.PriceAdjustments">
+                            <tr (click)="expandRow(row)" #row class="hide-next">
+                                <td>{{adjustment.amount | currency:'USD':true}}</td>
+                                <td class="align-right">{{adjustment.reason}}</td>
+                                <td class="align-right">{{adjustment.date | date:'shortDate'}}</td>
+                            </tr>
+                            <tr style="cursor: default; border-top: 0" class="adjustment-detail-row">
+                                <td class="notes-row" colspan="3" style="white-space: pre-wrap">Notes: {{adjustment.notes}}</td>
+                            </tr>
+                        </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="adjustment-table" style="padding-bottom: 20px" *ngIf="_package.PurchaseOrders.length">
+                    <span class="input-label">Purchase Orders</span>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Purchase Quantity</th>
+                            <th>Purchase Wholesale Price</th>
+                            <th class="align-right">Date</th>
+                            <th>Employee</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr (click)="expandRow(row)" #row class="hide-next">
+                            <td>{{_package.ReceivedQuantity}}</td>
+                            <td>{{_package.wholesalePrice | currency:'USD':true}}</td>
+                            <td>{{_package.ReceivedDateTime | date:'shortDate'}} {{_package.ReceivedDateTime | date:'shortTime'}}</td>
+                            <td></td>
+                        </tr>
+                        <tr style="cursor: default; border-top: 0" class="adjustment-detail-row">
+                            <td class="notes-row" colspan="3" style="white-space: pre-wrap">Notes: Package Creation</td>
+                        </tr>
+                        <ng-container *ngFor="let adjustment of this._package.PurchaseOrders">
+                            <tr (click)="expandRow(row)" #row class="hide-next">
+                                <td>{{adjustment.amount}}</td>
+                                <td>{{adjustment.price | currency:'USD':true}}</td>
+                                <td class="align-right">{{adjustment.date | date:'shortDate'}}</td>
+                                <td>{{adjustment.User ? adjustment.User.firstName : ''}} {{adjustment.User ? adjustment.User.lastName : ''}}</td>
+                            </tr>
+                            <tr style="cursor: default; border-top: 0" class="adjustment-detail-row">
+                                <td class="notes-row" colspan="3" style="white-space: pre-wrap">Notes: {{adjustment.notes}}</td>
+                            </tr>
+                        </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Adjustment form -->
+                <div class="add-adjustment" *ngIf="adjustmentShowing">
+
+                    <ul *ngIf="adjustmentErrors" class="errors" style="padding: 1rem; color: red">
+                        <li *ngFor="let error of adjustmentErrors">{{error}}</li>
+                    </ul>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput type="number" style="text-align: right" placeholder="Quantity Adjustment Amount" [(ngModel)]="this.adjustment.amount" *ngIf="!errorFlags.amount"/>
+                            <input mdInput type="number" style="text-align: right; border: 1px solid red;" placeholder="Quantity Adjustment Amount" [(ngModel)]="this.adjustment.amount" *ngIf="errorFlags.amount"/>
+                        </md-input-container>
+
+                    </div>
+
+                    <div class="input-row" *ngIf="_package.Item.ProductType.category == 'non-cannabis'">
+                        <md-input-container class="default single">
+                            <input mdInput type="text" placeholder="Adjustment Reason" [(ngModel)]="this.adjustment.reason" [class.error]="errorFlags.reason"/>
+                        </md-input-container>
+                    </div>
+
+                    <div class="input-row" *ngIf="_package.Item.ProductType.category != 'non-cannabis'">
+                        <app-select2 class="full-width"
+                                     *ngIf="adjustmentOptions"
+                                     style="margin-right: 1rem;"
+                                     [options]="adjustmentOptions"
+                                     [(ngModel)]="this.adjustment.reason"
+                                     >
+                        </app-select2>
+                    </div>
+
+                    <div class="input-row">
+                        <label for="quantity-notes" class="textarea-label">Notes for Adjustment</label>
+                        <textarea id="quantity-notes" style="height: 100px;" [(ngModel)]="this.adjustment.notes" class="textarea-content"></textarea>
+                    </div>
+
+                    <div class="overlay-action-buttons" *ngIf="adjustmentShowing">
+                        <button class="btn secondary grey" data-overlay-close (click)="cancelAdjustment()"><i class="icon icon-cancel"></i>Cancel
+                        </button>
+                        <button class="btn secondary blue" (click)="saveAdjustment()"><i class="icon icon-save"></i>Save</button>
+                    </div>
+
+                </div>
+
+                <div class="add-adjustment" *ngIf="priceAdjustmentShowing">
+
+                    <ul *ngIf="adjustmentErrors" class="errors" style="padding: 1rem; color: red">
+                        <li *ngFor="let error of adjustmentErrors">{{error}}</li>
+                    </ul>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput type="number" style="text-align: right" placeholder="Price Adjustment Amount" [(ngModel)]="this.priceAdjustment.amount"/>
+                        </md-input-container>
+
+                    </div>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput type="text" placeholder="Adjustment Reason" [(ngModel)]="this.priceAdjustment.reason" [class.error]="errorFlags.reason"/>
+                        </md-input-container>
+                    </div>
+
+                    <div class="input-row">
+                        <label for="price-notes" class="textarea-label">Notes for Adjustment</label>
+                        <textarea id="price-notes" style="height: 100px;" [(ngModel)]="this.priceAdjustment.notes" class="textarea-content"></textarea>
+                    </div>
+
+                    <div class="overlay-action-buttons" *ngIf="priceAdjustmentShowing">
+                        <button class="btn secondary grey" data-overlay-close (click)="cancelPriceAdjustment()"><i class="icon icon-cancel"></i>Cancel
+                        </button>
+                        <button class="btn secondary blue" (click)="savePriceAdjustment()"><i class="icon icon-save"></i>Save</button>
+                    </div>
+
+                </div>
+
+                <div class="add-adjustment" *ngIf="purchaseOrderShowing">
+
+                    <ul *ngIf="adjustmentErrors" class="errors" style="padding: 1rem; color: red">
+                        <li *ngFor="let error of adjustmentErrors">{{error}}</li>
+                    </ul>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput type="number" style="text-align: right" placeholder="Purchase Order Quantity" [(ngModel)]="this.purchaseOrder.amount" *ngIf="!errorFlags.amount"/>
+                            <input mdInput type="number" style="text-align: right; border: 1px solid red;" placeholder="Purchase Order Quantity" [(ngModel)]="this.purchaseOrder.amount" *ngIf="errorFlags.amount"/>
+                        </md-input-container>
+                    </div>
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput type="number" style="text-align: right" placeholder="Purchase Wholesale Price" [(ngModel)]="this.purchaseOrder.price"/>
+                        </md-input-container>
+                    </div>
+
+                    <div class="input-row">
+                        <label for="quantity-notes" class="textarea-label">Purchase Notes</label>
+                        <textarea id="quantity-notes" style="height: 100px;" [(ngModel)]="this.purchaseOrder.notes" class="textarea-content"></textarea>
+                    </div>
+
+                    <div class="overlay-action-buttons" *ngIf="purchaseOrderShowing">
+                        <button class="btn secondary grey" data-overlay-close (click)="cancelPurchaseOrder()"><i class="icon icon-cancel"></i>Cancel
+                        </button>
+                        <button class="btn secondary blue" (click)="savePurchaseOrder()"><i class="icon icon-save"></i>Save</button>
+                    </div>
+
+                </div>
+
+                <div class="overlay-action-buttons" *ngIf="shouldShowAddAdjustmentActions() && !_package.FinishedDate">
+                    <button class="btn secondary blue" (click)="showAdjustment()"><i class="icon icon-edit"></i>Add Quantity Adjustment</button>
+                    <button class="btn secondary blue" (click)="showPriceAdjustment()"><i class="icon icon-edit"></i>Add Price Adjustment</button>
+                </div>
+                <div class="overlay-action-buttons" *ngIf="shouldShowCancelAddAdjustment() && !_package.FinishedDate">
+                    <button class="btn secondary grey" (click)="hideAddAdjustmentActions()"><i class="icon icon-cancel"></i>Cancel</button>
+                </div>
+                <div class="overlay-action-buttons" *ngIf="shouldShowAddAdjustment() && !_package.FinishedDate">
+                    <button class="btn secondary blue" (click)="showAddAdjustmentActions()"><i class="icon icon-edit"></i>Add Adjustment</button>
+                    <button class="btn secondary blue" (click)="showPurchaseOrder()"><i class="icon icon-edit"></i>Add Purchase Order</button>
+                </div>
+            </ng-container>
+
+            <div class="overlay-action-buttons" *ngIf="!shouldShowCancelAddAdjustment() && !adjustmentShowing && !priceAdjustmentShowing && !purchaseOrderShowing">
+                <button class="btn secondary grey" data-overlay-close (click)="startLeaving()"><i class="icon icon-cancel"></i>Cancel
+                </button>
+                <button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>Save</button>
+            </div>
+
+        </ng-container>
+
+    </ng-container>
+</div>

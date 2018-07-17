@@ -1,0 +1,45 @@
+<div class="topbar-controls">
+
+    <div class="controls-row">
+        <h2 class="page-subtitle">Patient Groups</h2>
+        
+        <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search Patient Groups..."/>
+        
+        <button md-button class="btn tertiary green" (click)="createNewPatientGroup()"><i class="icon icon-add"></i>Patient Group</button>
+        <!--<button md-button class="btn tertiary blue btn-export"><i class="icon icon-export"></i>Export</button>-->
+    </div>
+
+</div>
+
+<main class="content">
+    <table class="inventory-products-table green-hl-tr">
+        <thead>
+        <tr>
+            <th sortBy="name" [(ngModel)]="sortByModel">Name</th>
+            <th>Description</th>
+
+
+            <th *ngIf="user.Permissions.patientManagement == 'edit' && user.Permissions.canEditPatients"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let patientGroup of objects | async" (click)="onRowClick($event, patientGroup)">
+
+            <td>{{patientGroup.name}}</td>
+            <td style="white-space: pre-wrap">{{patientGroup.description}}</td>
+
+            <td class="table-action" *ngIf="user.Permissions.patientManagement == 'edit' && user.Permissions.canEditPatientGroups">
+                <i class="icon icon-edit" (click)="editPatientGroup(patientGroup)"></i>
+                <!--<i class="icon icon-my-account" (click)="viewDiscount(discount)"></i>-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)]="pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listPatientGroups()"></div>
+
+<router-outlet></router-outlet>

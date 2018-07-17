@@ -1,0 +1,118 @@
+// Background
+$bg: #313541;
+$border: #464A54;
+$font-size: 14px;
+$icon-mb: 20px;
+$color-active: #fff;
+$item-padding: 28px 10px;
+$leftnav-item-active: $green;
+
+.leftnav {
+    position: fixed;
+    top: $topnav-height;
+    left: 0;
+    bottom: 0;
+    width: $leftnav-width;
+    z-index: $leftnav-z;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    font-weight: $bold;
+    font-size: $font-size;
+    background-color: $bg;
+    transition: transform 200ms ease;
+
+    @include max-width($compact) {
+        width: $leftnav-width-compact;
+    }
+
+    @include max-width($tablet) {
+        width: $leftnav-width-mobile;
+        display: none;
+
+        &.show {
+            display: flex;
+        }
+
+        > * {
+            flex: 1;
+        }
+    }
+}
+
+.left-sidebar {
+    @include max-width($tablet) {
+        display: none;
+
+        &.show {
+            display: block;
+        }
+    }
+}
+
+.leftnav-item.mat-button {
+    color: $link-color;
+    background-color: $bg;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    z-index: 0;
+    font-family: $font-family;
+    font-weight: $bold;
+    flex-grow: 1;
+    line-height: 1.75;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    & + .leftnav-item {
+        border-top: 1px solid $border;
+    }
+
+    //@TEMP
+    @include active(9px, 1);
+
+    .icon {
+        font-size: 20px;
+    }
+
+    &.active {
+        background-color: $leftnav-item-active;
+        color: $color-active;
+        
+        .icon {
+            background-color: white;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    }
+
+    &:hover,
+    &:focus {
+        color: #fff;
+
+        .icon {
+            background-color: white;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    }
+
+    &.leftnav-toggle {
+        display: none;
+        @include max-width($tablet) {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: $leftnav-width-tablet;            
+            height: $topnav-height-tablet;
+            z-index: 1;
+        }
+    }
+}

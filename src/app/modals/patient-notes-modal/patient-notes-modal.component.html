@@ -1,0 +1,77 @@
+<main class="modal-pagination-possible">
+
+    <div class="content-section">
+
+        <div class="submit-note" style="text-align: center;">
+            <div class="note-form">
+                <textarea id="new-note" name="note" style="width: 100%; height: 100px;" [(ngModel)]="currentNote" rows="6"></textarea>
+            </div>
+            <button class="btn secondary blue" (click)="addNote()"><i class="icon icon-save"></i>Add New Note</button>
+        </div>
+
+    </div>
+
+    <div class="note-container" *ngIf="patient">
+        <ng-container *ngIf="patient.PatientNotes.length">
+            <div class="content-section note-content" *ngFor="let note of patient.PatientNotes">
+                <div class="note-header">
+                    <div style="font-weight: bold">
+                        {{note.Author.firstName}} {{note.Author.lastName}}
+                    </div>
+                    <div class="date-header">
+                        {{note.createdAt | date:'short'}}
+                    </div>
+                </div>
+                <div class="note-body">
+                    {{note.note}}
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="!patient.PatientNotes || !patient.PatientNotes.length">
+            <div>
+                There are no notes for this patient.
+            </div>
+        </ng-container>
+
+        <!--<div class="content-section note-content">-->
+            <!--<div class="note-header">-->
+                <!--<div style="font-weight: bold">-->
+                    <!--Joe Mileo-->
+                <!--</div>-->
+                <!--<div class="date-header">-->
+                    <!--4/20/2018 4:20PM-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="note-body">-->
+                <!--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="content-section note-content">-->
+            <!--<div class="note-header">-->
+                <!--<div style="font-weight: bold">-->
+                    <!--Joe Mileo-->
+                <!--</div>-->
+                <!--<div class="date-header">-->
+                    <!--4/20/2018 4:20PM-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="note-body">-->
+                <!--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="content-section note-content">-->
+            <!--<div class="note-header">-->
+                <!--<div style="font-weight: bold">-->
+                    <!--Joe Mileo-->
+                <!--</div>-->
+                <!--<div class="date-header">-->
+                    <!--4/20/2018 4:20PM-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="note-body">-->
+                <!--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.-->
+            <!--</div>-->
+        <!--</div>-->
+    </div>
+
+</main>

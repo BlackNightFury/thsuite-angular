@@ -1,0 +1,130 @@
+<main class="modal-previous-purchases content modal-pagination-possible">
+
+    <div style="font-size: smaller; text-align: left;">
+        <a class="hover-link" (click)="close()">{{source}}</a> > <a class="hover-link" (click)="stopViewing()">Previous Purchases</a> <ng-container *ngIf="viewingReceipt"> > <span>{{viewedReceipt.barcode}}</span> </ng-container>
+    </div>
+
+    <div class="header" *ngIf="patient">
+        <div style="margin: auto;">
+            <h2>Patient: {{patient.firstName}} {{patient.lastName}}</h2>
+            <h3>Medical ID: {{formatMedID(patient.medicalStateId)}}</h3>
+        </div>
+    </div>
+
+    <ng-container *ngIf="!viewingReceipt">
+
+        <ng-container *ngIf="!receipts">
+            <div style="margin-bottom: 1.5rem;">
+                <span>Loading receipts...</span>
+            </div>
+        </ng-container>
+
+        <table class="receipts-table nohover" style="text-align: left; margin-bottom: 0.5rem;">
+            <thead>
+                <tr>
+                    <th>Receipt ID</th>
+                    <th>Date/Time</th>
+                    <th>Product</th>
+                    <th>Qty Purchased</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let lineItem of currentReceiptLineItems">
+                    <tr>
+                        <td><a class="underline-link hover-link" (click)="viewReceipt(lineItem.receiptId)">{{getBarcode(lineItem.receiptId)}}{{lineItem.isReturn ? " (RETURN)" : ""}}</a></td>
+                        <td>{{lineItem.createdAt | date:'short'}}</td>
+                        <td>{{lineItem.Product.name}} - {{lineItem.ProductVariation.name}}</td>
+                        <td *ngIf="lineItem.Product.inventoryType != 'weight'">{{lineItem.quantity}}</td>
+                        <td *ngIf="lineItem.Product.inventoryType == 'weight'">{{lineItem.quantity}} ({{lineItem.ProductVariation.quantity * lineItem.quantity * (lineItem.isReturn ? -1 : 1) | number : '1.0-2' }} {{lineItem.Product.Item.UnitOfMeasureAbbreviation}})</td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+
+        <ng-container *ngIf="allReceiptLineItems.length > itemsPerPage">
+            <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+        </ng-container>
+
+        <ng-container *ngIf="receipts && !receipts.length">
+            <h5>No Previous Purchases</h5>
+        </ng-container>
+
+    </ng-container>
+
+    <ng-container *ngIf="viewingReceipt">
+        <div class="content-section-flex">
+            <div class="content-section-column-1">
+                <div class="details-row">
+                    <div class="details-row-label">Receipt ID:</div>
+                    <div class="details-row-value">{{viewedReceipt.barcode}}</div>
+                </div>
+                <div class="details-row">
+                    <div class="details-row-label">Date:</div>
+                    <div class="details-row-value">{{viewedReceipt.createdAt | date:'short'}}</div>
+                </div>
+                <div class="details-row">
+                    <div class="details-row-label">Budtender:</div>
+                    <div class="details-row-value">{{viewedReceipt.User.firstName}} {{viewedReceipt.User.lastName}}</div>
+                </div>
+                <div class="details-row">
+                    <div class="details-row-label">Payment Type:</div>
+                    <div class="details-row-value">{{viewedReceipt.paymentMethod | ucfirst}}</div>
+                </div>
+                <div class="details-row">
+                    <div class="details-row-label">Device:</div>
+                    <div class="details-row-value">{{viewedReceipt.Drawer.Device.name}}</div>
+                </div>
+            </div>
+            <div class="content-section-column-2">
+                <div class="details-row">
+                    <div class="details-row-label">Subtotal:</div>
+                    <div class="details-row-value">{{viewedReceipt.subtotal | currency:'USD':true}}</div>
+                </div>
+                <div class="details-row">
+                    <div class="details-row-label">Discount:</div>
+                    <div class="details-row-value">{{viewedReceipt.discount | currency:'USD':true}}</div>
+                </div>
+                <div class="details-row">
+                    <div class="details-row-label">Refund:</div>
+                    <div class="details-row-value">{{viewedReceipt.refund | currency:'USD':true}}</div>
+                </div>
+                <div class="details-row">
+                    <div class="details-row-label">Tax(Included):</div>
+                    <div class="details-row-value">{{viewedReceipt.tax | currency:'USD':true}}</div>
+                </div>
+                <div class="details-row">
+                    <div class="details-row-label">Total:</div>
+                    <div class="details-row-value">{{viewedReceipt.total | currency:'USD':true}}</div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h4>Items Purchased</h4>
+            <table class="receipts-table nohover" style="text-align: left; margin-bottom: 1rem;">
+                <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Product Type</th>
+                    <th>Qty Purchased</th>
+                    <th>Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                <ng-container *ngFor="let lineItem of viewedReceipt.LineItems">
+                    <tr>
+                        <td>{{lineItem.Product.name}} - {{lineItem.ProductVariation.name}}</td>
+                        <td>{{lineItem.Product.ProductType.name}}</td>
+                        <!--
+                        <td>{{lineItem.quantity}} ({{lineItem.ProductVariation.quantity * lineItem.quantity | number : '1.0-2'}} {{lineItem.Product.Item.UnitOfMeasureAbbreviation}})</td>
+                        TODO: Should refunds be reflected here without the minus sign ?
+                        -->
+                        <td>{{lineItem.quantity}} ({{lineItem.ProductVariation.quantity * lineItem.quantity * (lineItem.isReturn ? -1 : 1) | number : '1.0-2' }} {{lineItem.Product.Item.UnitOfMeasureAbbreviation}})</td>
+                        <td>{{lineItem.price}}</td>
+                    </tr>
+                </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </ng-container>
+
+</main>

@@ -1,0 +1,21 @@
+.manager-list {
+    @extend %default-list;
+    margin-top: 13px;
+
+    li {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        font-weight: $semi;
+        margin-bottom: 10px;
+    }
+
+    img {
+        @include blockcircle(33px);
+        margin-right: 9px;
+    }
+
+    a {
+        margin-left: auto;
+    }
+}

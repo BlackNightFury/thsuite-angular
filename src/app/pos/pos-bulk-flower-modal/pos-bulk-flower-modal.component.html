@@ -1,0 +1,13 @@
+<main>
+
+    <span style="color: red" *ngIf="error">{{error}}</span>
+
+    <div style="display: flex; flex-direction: column" *ngIf="productVariation">
+        <h3>Please enter the total amount of flower weighed out</h3>
+        <div style="display: flex; flex-direction: row;">
+            <input placeholder="Weight" type="number" [(ngModel)]="weight" style="width: 40%; margin-left: 25%; text-align: right"/>
+            <span style="margin: auto 1rem;">grams</span>
+        </div>
+        <h4>Currently entering weight for product: {{productVariation.Product.name}}</h4>
+    </div>
+</main>

@@ -1,0 +1,100 @@
+.pin-entry-outer-container {
+    width : 440px;
+    margin:auto;
+}
+
+.pin-entry-display-container, .pin-entry-keypad-container, .pin-entry-message-container {
+    width:100%;
+    padding:20px;
+}
+
+.pin-entry-display-container {
+    margin-top:30px;
+}
+
+.pin-entry-display-container {
+    display:flex;
+}
+
+.pin-entry-message-container {
+    min-height:70px;
+    color:red;
+}
+
+.pin-entry-display-container .col-25 {
+    flex-basis:25%;
+}
+.pin-entry-display-container .col-50 {
+    flex-basis:50%; 
+}
+
+.filledDot, .emptyDot {
+    border:2px solid #28bd8b;
+    width:28px;
+    height:28px;
+    border-radius:14px;
+    margin:5px;
+    display:inline-block;
+}
+
+.filledDot {
+    background-color:#28bd8b;
+}
+.emptyDot {
+}
+
+.deleteButton {
+    width:60px;
+    height:60px;
+    cursor:pointer;
+    display: inline-block;
+    position: relative;
+    top: -12px;
+    padding: 12px;
+
+    -webkit-user-select: none; /* Chrome/Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+ */
+    -o-user-select: none; /* Opera */
+    user-select: none; /* Generic */
+}
+
+.keypad-row {
+    width:100%;
+    display:flex;
+}
+
+.keypad-col {
+    flex-basis : 33.33%;
+    text-align:center;
+}
+
+.keypad-col.centralised {
+    margin-left:33.33%;
+}
+
+.key-container {
+    width:80px;
+    height:80px;
+    display:inline-block;
+    transition:background-color 100ms linear;
+    line-height:80px;
+    text-align:center;
+    border-radius:50px;
+    cursor:pointer;
+    border:2px solid #28bd8b;
+    color:black;
+    margin:10px;
+    font-size:120%;
+}
+.key-container:hover {
+    background-color:#f2fbf8;
+    color:black;
+}
+.key-container:active {
+    background-color:#28bd8b;
+    color:white;
+}
+
+.key-inner {
+}

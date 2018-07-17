@@ -1,0 +1,38 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Discounts By Product Type</h2>
+        <button class="btn tertiary blue btn-export" (click)="onClickExport('discount-product-types')" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+    </div>
+</div>
+
+<main class="content">
+    <table class="report-table discounts-by-type-table has-total nohover">
+        <thead>
+        <tr>
+            <th style="width: 23%">Discount Entity Type</th>
+            <th style="width: 23%">Discounted Entity</th>
+            <th style="width: 18%" sortBy="count" [(ngModel)]="sortByModel" class="align-right">Uses</th>
+            <th style="width: 18%" sortBy="amount" [(ngModel)]="sortByModel" class="align-right">Amount Discounted</th>
+            <th style="width: 18%" sortBy="average" [(ngModel)]="sortByModel" class="align-right">Average Discount Per Use</th>
+            <th style="width: 18%" sortBy="profit" [(ngModel)]="sortByModel" class="align-right">Net Profit</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let data of discountData">
+            <td>{{data.type}}</td>
+            <td>{{data.name}}</td>
+            <td class="align-right">{{data.count}}</td>
+            <td class="align-right">{{data.amount | currency:'USD':true}}</td>
+            <td class="align-right">{{(data.count > 0 ? (data.amount/data.count) : 0) | currency:'USD':true}}</td>
+            <td class="align-right">{{(data.totalPrice - data.taxAmount - data.cogs) | currency:'USD':true}}</td>
+        </tr>
+        </tbody>
+    </table>
+</main>

@@ -1,0 +1,49 @@
+<div class="topbar-controls patient-management">
+
+    <div class="controls-row">
+        <h2 class="page-subtitle">Barcodes</h2>
+        
+        <input type="text" class="controls-input-search" style="width: 20em;" #searchBar (keyup)="search(searchBar.value)" placeholder="Search by Product Name or Barcode #">
+
+        <button md-button class="btn tertiary green" (click)="createBarcode()" *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditBarcodes"><i class="icon icon-add"></i>Barcode</button>
+        <!--<button md-button class="btn tertiary blue btn-export"><i class="icon icon-export"></i>Export</button>-->
+    </div>
+
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-button-toggler class="multiple" [options]="toggleTHCOptions" [(ngModel)]="toggleTHC"></app-button-toggler>
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-products-table sticky">
+        <thead>
+        <tr>
+            <th sortBy="barcode" [(ngModel)]="sortByModel">Barcode</th>
+            <th sortBy="ProductVariation.Product.name" [(ngModel)]="sortByModel">Product</th>
+            <th sortBy="ProductVariation.name" [(ngModel)]="sortByModel">Product Variation</th>
+            <th sortBy="remainingInventory" [(ngModel)]="sortByModel">Qty. Remaining</th>
+            <th sortBy="ProductVariation.price" [(ngModel)]="sortByModel">Price</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let barcode of objects | async" (click)="onRowClick($event, barcode)">
+            <td>{{barcode.barcode}}</td>
+            <td>{{barcode.ProductVariation.Product.name}}</td>
+            <td>{{barcode.ProductVariation.name}}</td>
+            <td>{{(barcode.remainingInventory ? barcode.remainingInventory : "No allocation")}}</td>
+            <td *ngIf="!barcode.ProductVariation.isBulkFlower">{{productVariationPrice(barcode.ProductVariation)}}</td>
+            <td *ngIf="barcode.ProductVariation.isBulkFlower">{{barcode.ProductVariation.Product.PricingTier.name}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listBarcodes()"></div>
+
+<router-outlet></router-outlet>

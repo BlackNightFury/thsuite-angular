@@ -1,0 +1,48 @@
+<div class="overlay-closearea second" (click)="startLeaving()"></div>
+<div class="overlay right second active not-hidden-block" [@leave]="animationStatus" (@leave.done)="cancel()">
+
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+
+    <div class="section-heading">
+        <div class="svg-icon"><img src="/assets/svg/inventory.svg"/></div>
+
+        <div>
+            <h5 class="subtitle" *ngIf="product">{{product.name}}</h5>
+            <h1 class="section-title">Product Variations</h1>
+        </div>
+    </div>
+
+    <ng-container *ngIf="product">
+        <div class="input-row">
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th class="align-right" *ngIf="product.inventoryType == 'weight'">Weight</th>
+                    <th class="align-right" *ngIf="product.inventoryType != 'weight'">Price</th>
+                    <th></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr *ngFor="let variation of product.ProductVariations" (click)="onRowClick($event, variation)">
+                    <td>{{variation.name}}</td>
+                    <td *ngIf="product.inventoryType == 'weight' && !variation.isBulkFlower" class="align-right">{{variation.quantity}} {{product.inventoryType == 'weight' ? 'g' : 'ea'}}</td>
+                    <td *ngIf="product.inventoryType == 'weight' && variation.isBulkFlower" class="align-right">Bulk</td>
+                    <td class="align-right" *ngIf="product.inventoryType != 'weight'">{{variation.price | currency:'USD':true}}</td>
+                    <td>
+                        <i *ngIf="user.Permissions.canEditProducts" class="icon icon-edit" (click)="editVariation(variation)"></i>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="controls-buttons" style="text-align: center;">
+            <button md-button class="btn secondary green" (click)="createNewProductVariation()"><i class="icon icon-add"></i>Product Variation</button>
+            <!--<button md-button class="btn secondary blue btn-export"><i class="icon icon-export"></i>Export</button>-->
+        </div>
+    </ng-container>
+</div>
+
+<router-outlet></router-outlet>

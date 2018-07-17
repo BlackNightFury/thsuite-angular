@@ -1,0 +1,517 @@
+<main class="modal--patient-verification" *ngIf="patient">
+    <input type="hidden" autofocus name="focus-target"/>
+    <div style="margin-top: 0.5em;" class="modal--patient-verification-inner">
+        <ul *ngIf="sectionErrors" class="errors section-errors" style="color: red; text-align:left;">
+            <li *ngFor="let error of sectionErrors">{{error}}</li>
+        </ul>
+
+        <ng-container *ngIf="!editingPatient">
+            <section class="padded">
+                <div class="section-heading">
+                    <h1>Patient Information</h1>
+                    <div *ngIf="mode == 'verify'">
+                        <button *ngIf="!editingCaregiver && !editingPhysician" class="btn primary blue" (click)="editPatient()">Edit</button>
+                    </div>
+                </div>
+                <table class="nohover">
+                    <tr>
+                        <td>Patient</td>
+                        <td class="color-green">{{patient.firstName + ' ' + patient.lastName}}</td>
+                    </tr>
+                    <tr>
+                        <td>DOB</td>
+                        <td>{{formatDate(patient.birthday)}}</td>
+                    </tr>
+                    <tr>
+                        <td>Medical ID #</td>
+                        <td class="color-green">{{formatMedID(patient.medicalStateId)}}</td>
+                    </tr>
+                    <tr *ngIf="environment.shouldShowPatientIDExpiration">
+                        <td>Medical ID Expiration Date</td>
+                        <td>{{formatDate(patient.expirationDate)}}</td>
+                    </tr>
+                    <tr>
+                        <td>Driver's License ID #</td>
+                        <td>{{patient.driversLicenseId ? patient.driversLicenseId : "Not Set"}}</td>
+                    </tr>
+                    <tr>
+                        <td>Passport ID #</td>
+                        <td>{{patient.passportId ? patient.passportId: "Not Set"}}</td>
+                    </tr>
+                    <tr>
+                        <td>Other State ID #</td>
+                        <td>{{patient.otherStateId ? patient.otherStateId : "Not Set"}}</td>
+                    </tr>
+                    <tr>
+                        <td>Address</td>
+                        <td>{{patient.address ? patient.address : "Not Set"}}</td>
+                    </tr>
+                    <tr>
+                        <td>City</td>
+                        <td>{{patient.city ? patient.city : "Not Set"}}</td>
+                    </tr>
+                    <tr>
+                        <td>State</td>
+                        <td>{{patient.state ? patient.state : "Not Set"}}</td>
+                    </tr>
+                    <tr>
+                        <td>Zip Code</td>
+                        <td>{{patient.zip ? patient.zip : "Not Set"}}</td>
+                    </tr>
+                    <tr>
+                        <td>County</td>
+                        <td>{{patient.county ? patient.county : "Not Set"}}</td>
+                    </tr>
+                    <tr>
+                        <td>Phone #</td>
+                        <td>{{patient.phoneNumber | toPhoneNumber}}</td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>{{patient.emailAddress}}</td>
+                    </tr>
+                    <tr>
+                        <td>Patient Group</td>
+                        <td>{{patient.PatientGroup ? patient.PatientGroup.name : 'None'}}</td>
+                    </tr>
+                    <tr>
+                        <td>Medical Condition</td>
+                        <td>{{patient.patientMedicalConditions && patient.patientMedicalConditions.length ? patient.patientMedicalConditions.join(', ') : 'None listed'}}</td>
+                    </tr>
+                    <tr>
+                        <td>Referrer</td>
+                        <td>{{patient.referrer}}</td>
+                    </tr>
+                    <tr>
+                        <td>Referrer</td>
+                        <td>{{patient.referrer}}</td>
+                    </tr>
+                </table>
+            </section>
+        </ng-container>
+
+        <ng-container *ngIf="editingPatient">
+            <section class="padded">
+                <div class="section-heading">
+                    <h1>Patient Information</h1>
+                    <button class="btn primary blue" (click)="savePatient()">Save</button>
+                </div>
+                <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red; text-align:left;">
+                    <li *ngFor="let error of errors">{{error}}</li>
+                </ul>
+                <table class="nohover editing">
+                    <tr>
+                        <td>Patient</td>
+                        <td>
+                            <div class="double-input">
+                                <input [ngClass]="{error: patientErrorFlags.firstName}" [(ngModel)]="patient.firstName"/>
+                                <input [ngClass]="{error: patientErrorFlags.lastName}" [(ngModel)]="patient.lastName"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>DOB</td>
+                        <td>
+                            <input [ngClass]="{error: patientErrorFlags.birthday}" [owlDateTime]="dtDOB" [owlDateTimeTrigger]="dtDOB" [(ngModel)]="patient.birthday" [max]="maxBirthday" placeholder="mm/dd/yyyy">
+                            <owl-date-time #dtDOB [pickerType]="'calendar'"></owl-date-time>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Medical ID #</td>
+                        <td>
+                            <input [ngClass]="{error: patientErrorFlags.medicalStateId}" [ngModel]="patient.medicalStateId | toMedID" (ngModelChange)="setMedicalStateId($event)" maxlength=19 (keypress)="filterAlphanumericKeyPress($event)"/>
+                        </td>
+                    </tr>
+                    <tr *ngIf="environment.shouldShowPatientIDExpiration">
+                        <td>Medical ID Expiration Date</td>
+                        <td>
+                            <input [ngClass]="{error: patientErrorFlags.expirationDate}" [owlDateTime]="dtExpiration" [owlDateTimeTrigger]="dtExpiration" [(ngModel)]="patient.expirationDate" [min]="minExpDate" placeholder="mm/dd/yyyy">
+                            <owl-date-time #dtExpiration [pickerType]="'calendar'"></owl-date-time>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Driver's License ID #</td>
+                        <td>
+                            <input [ngClass]="{error: patientErrorFlags.driversLicenseId}" [(ngModel)]="patient.driversLicenseId" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Passport ID #</td>
+                        <td>
+                            <input [ngClass]="{error: patientErrorFlags.passportId}" [(ngModel)]="patient.passportId" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Other State ID #</td>
+                        <td>
+                            <input [ngClass]="{error: patientErrorFlags.otherStateId}" [(ngModel)]="patient.otherStateId" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Address</td>
+                        <td>
+                            <input [ngClass]="{error: patientErrorFlags.address}" [(ngModel)]="patient.address" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>City</td>
+                        <td>
+                            <input [ngClass]="{error: patientErrorFlags.city}" [(ngModel)]="patient.city" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>State</td>
+                        <td>
+                            <input [ngClass]="{error: patientErrorFlags.state}" [(ngModel)]="patient.state" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Zip Code</td>
+                        <td>
+                            <input mdInput [ngClass]="{error: patientErrorFlags.zip}" [(ngModel)]="patient.zip" maxlength=5 (keypress)="filterNumericKeyPress($event)"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>County</td>
+                        <td>
+                            <app-select2 *ngIf="countySelect2Options"
+                                         [options]="countySelect2Options" class="full-width"
+                                         [(ngModel)]="patient.county"
+                                         [ngClass]="{error: patientErrorFlags.county}">
+                            </app-select2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Phone #</td>
+                        <td>
+                            <input [ngClass]="{error: patientErrorFlags.phoneNumber}" [ngModel]="patient.phoneNumber | toPhoneNumber" (ngModelChange)="setPhoneNumber($event)" maxlength=14 (keypress)="filterNumericKeyPress($event)"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>
+                            <input [ngClass]="{error: patientErrorFlags.emailAddress}" [(ngModel)]="patient.emailAddress" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Patient Group</td>
+                        <td>
+                            <app-select2 *ngIf="patientGroupSelect2Options"
+                                        [ngClass]="{error: patientErrorFlags.patientGroupId}"
+                                         [options]="patientGroupSelect2Options" class="full-width"
+                                         [(ngModel)]="patient.patientGroupId">
+                            </app-select2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Medical Condition</td>
+                        <td *ngIf="!addingNewCondition">
+                            <app-select2 *ngIf="medicalConditionsSelect2Options"
+                                         [options]="medicalConditionsSelect2Options" class="full-width"
+                                         [(ngModel)]="patient.patientMedicalConditions"
+                                         [ngClass]="{error: patientErrorFlags.patientMedicalConditions}">
+                            </app-select2>
+                            <button class="btn btn-primary" style="margin-left: 25%; margin-top: 1rem; background-color: black;" (click)="newCondition()">Condition not listed</button>
+                        </td>
+                        <td *ngIf="addingNewCondition">
+                            <input [ngClass]="{error: patientErrorFlags.patientMedicalConditions}" [(ngModel)]="patient.patientMedicalConditions" placeholder="Enter new medical condition here" />
+                            <button class="btn btn-primary" style="margin-left: 25%; margin-top: 1rem; background-color: black;" (click)="backToPredefined()">Back to predefined list</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Referrer</td>
+                        <td>
+                            <input [ngClass]="{error: patientErrorFlags.referrer}" [(ngModel)]="patient.referrer" />
+                        </td>
+                    </tr>
+                </table>
+            </section>
+        </ng-container>
+
+        <ng-container *ngIf="caregiver && !editingCaregiver">
+            <section class="padded">
+                <div class="section-heading">
+                    <h1>Caregiver Information</h1>
+                    <div *ngIf="mode == 'verify'">
+                        <button *ngIf="!editingPatient && !editingPhysician" class="btn primary blue" (click)="editCaregiver()">Edit</button>
+                    </div>
+                </div>
+                <table class="nohover">
+                    <tr>
+                        <td>Caregiver</td>
+                        <td>{{caregiver.firstName + ' ' + caregiver.lastName}}</td>
+                    </tr>
+                    <tr>
+                        <td>Medical ID #</td>
+                        <td>{{formatMedID(caregiver.medicalStateId)}}</td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>{{caregiver.emailAddress}}</td>
+                    </tr>
+                    <tr>
+                        <td>DOB</td>
+                        <td>{{formatDate(caregiver.birthday)}}</td>
+                    </tr>
+                    <tr>
+                        <td>Phone Number</td>
+                        <td>{{caregiver.phoneNumber | toPhoneNumber}}</td>
+                    </tr>
+                </table>
+            </section>
+        </ng-container>
+
+        <ng-container *ngIf="caregiver && editingCaregiver">
+            <section class="padded">
+                <div class="section-heading">
+                    <h1>Caregiver Information</h1>
+                    <button class="btn primary blue" (click)="saveCaregiver()">Save</button>
+                </div>
+                <table class="nohover editing">
+                    <tr>
+                        <td>Caregiver</td>
+                        <td>
+                            <div class="double-input">
+                                <input [ngClass]="{error: caregiverErrorFlags.firstName}" [(ngModel)]="caregiver.firstName"/>
+                                <input [ngClass]="{error: caregiverErrorFlags.lastName}" [(ngModel)]="caregiver.lastName"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Medical ID #</td>
+                        <td>
+                            <input [ngClass]="{error: caregiverErrorFlags.medicalStateId}" [(ngModel)]="caregiver.medicalStateId" (keyup)="formatMedIDFromEvent($event)"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>DOB</td>
+                        <td>
+                            <input [ngClass]="{error: caregiverErrorFlags.birthday}" [owlDateTime]="dtDOBCaregiver" [owlDateTimeTrigger]="dtDOBCaregiver" [(ngModel)]="caregiver.birthday" [max]="maxCaregiverBirthday">
+                            <owl-date-time #dtDOBCaregiver [pickerType]="'calendar'"></owl-date-time>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>
+                            <input [ngClass]="{error: caregiverErrorFlags.emailAddress}" [(ngModel)]="caregiver.emailAddress" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Phone Number</td>
+                        <td>
+                            <input [ngClass]="{error: caregiverErrorFlags.phoneNumber}" [ngModel]="caregiver.phoneNumber | toPhoneNumber" (ngModelChange)="setCaregiverPhoneNumber($event)" maxlength=14 (keypress)="filterNumericKeyPress($event)" />
+                        </td>
+                    </tr>
+                </table>
+            </section>
+        </ng-container>
+
+        <ng-container *ngIf="!editingPhysician">
+            <section class="padded">
+                <div class="section-heading">
+                    <h1>Physician Information</h1>
+                    <div *ngIf="mode == 'verify'">
+                        <button *ngIf="!editingCaregiver && !editingPatient" class="btn primary blue" (click)="editPhysician()">Edit</button>
+                    </div>
+                </div>
+                <ng-container *ngIf="patient.Physician">
+                    <table class="nohover">
+                        <tr>
+                            <td>Physician</td>
+                            <td><ng-container *ngIf="patient.Physician">{{patient.Physician.firstName + ' ' + patient.Physician.lastName}}</ng-container></td>
+                        </tr>
+                        <tr>
+                            <td>Clinic</td>
+                            <td>{{patient.Physician.clinicName}}</td>
+                        </tr>
+                        <tr>
+                            <td>Address</td>
+                            <td>{{patient.Physician.address}}</td>
+                        </tr>
+                        <tr>
+                            <td>City, State, Zip</td>
+                            <td>{{patient.Physician.city + ', ' + patient.Physician.state + ' ' + patient.Physician.zip}}</td>
+                        </tr>
+                        <tr>
+                            <td>Phone #</td>
+                            <td>{{patient.Physician.phoneNumber | toPhoneNumber}}</td>
+                        </tr>
+                    </table>
+                </ng-container>
+                <ng-container *ngIf="!patient.Physician">
+                    <table class="nohover">
+                        <tr>
+                            <td>Physician</td>
+                            <td>N/A</td>
+                        </tr>
+                    </table>
+                </ng-container>
+            </section>
+        </ng-container>
+
+        <ng-container *ngIf="editingPhysician">
+            <section class="padded">
+                <div class="section-heading">
+                    <h1>Physician Information</h1>
+                    <button class="btn primary blue" (click)="savePhysician()">Save</button>
+                </div>
+                <ng-container *ngIf="!addingNewPhysician">
+                    <table class="nohover editing">
+                        <tr>
+                            <td>Physician</td>
+                            <td>
+                                <app-select2 *ngIf="physicianSelect2Options"
+                                            [options]="physicianSelect2Options" class="full-width"
+                                            [ngClass]="{error: physicianErrorFlags.id}"
+                                            [(ngModel)]="patient.physicianId">
+                                </app-select2>
+                                <br>
+                                <button class="btn btn-primary" style="margin-left: 30%; margin-top: 1rem; background-color: black;" (click)="newPhysician()">Physician not listed</button>
+                            </td>
+                        </tr>
+                    </table>
+                </ng-container>
+                <ng-container *ngIf="addingNewPhysician">
+                    <table class="nohover editing">
+                        <tr>
+                            <td>Physician</td>
+                            <td>
+                                <div class="double-input">
+                                    <input [ngClass]="{error: physicianErrorFlags.firstName}" [(ngModel)]="patient.Physician.firstName" placeholder="Physician's First Name" />
+                                    <input [ngClass]="{error: physicianErrorFlags.lastName}" [(ngModel)]="patient.Physician.lastName" placeholder="Physician's Last Name"/>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Clinic</td>
+                            <td>
+                                <input [ngClass]="{error: physicianErrorFlags.clinicName}" [(ngModel)]="patient.Physician.clinicName" placeholder="Physician's Clinic Name" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Address</td>
+                            <td>
+                                <input [ngClass]="{error: physicianErrorFlags.address}" [(ngModel)]="patient.Physician.address" placeholder="Physician's Address" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>City, State, Zip</td>
+                            <td>
+                                <div class="triple-input">
+                                    <input [ngClass]="{error: physicianErrorFlags.city}" [(ngModel)]="patient.Physician.city" placeholder="Physician's City" />
+                                    <input [ngClass]="{error: physicianErrorFlags.state}" [(ngModel)]="patient.Physician.state" placeholder="Physician's State" />
+                                    <input [ngClass]="{error: physicianErrorFlags.zip}" [(ngModel)]="patient.Physician.zip" placeholder="Physician's Zip" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Phone #</td>
+                            <td>
+                                <input [ngClass]="{error: physicianErrorFlags.phoneNumber}" [ngModel]="patient.Physician.phoneNumber | toPhoneNumber" (ngModelChange)="setPhysicianPhoneNumber($event)" maxlength=14 (keypress)="filterNumericKeyPress($event)" placeholder="Physician's Phone Number" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <button class="btn btn-primary" style="margin-left: 30%; margin-top: 1rem; background-color: black;" (click)="backToPredefinedPhysicians()">Back to predefined list</button>
+                            </td>
+                        </tr>
+                    </table>
+                </ng-container>
+            </section>
+        </ng-container>
+
+        <section class="padded">
+            <div class="section-heading">
+                <h1>Compliance</h1>
+            </div>
+            <ng-container *ngIf="patientErrorFlags.gramLimit">
+                <ul class="errors" style="padding: 1rem; color: red; text-align:left;">
+                    <li>Patient Gram Limit must be set.</li>
+                </ul>
+            </ng-container>
+            <table class="nohover">
+                <ng-container *ngIf="!editingMedicalId">
+                    <tr [ngClass]="{highlight: showConfirm}">
+                        <td>Medical ID #</td>
+                        <td class="color-green">{{formatMedID(patient.medicalStateId)}} <button class="btn primary blue" (click)="editMedicalId()">Edit</button></td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="editingMedicalId">
+                    <tr [ngClass]="{highlight: showConfirm}">
+                        <td>Medical ID #</td>
+                        <td class="td-with-button">
+                            <input [ngClass]="{error: patientErrorFlags.medicalStateId}" [ngModel]="patient.medicalStateId | toMedID" (ngModelChange)="setMedicalStateId($event)" maxlength=19 (keypress)="filterAlphanumericKeyPress($event)"/>
+                            <button class="btn primary blue" (click)="saveMedicalId()">Save</button>
+                        </td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="!editingGramLimit">
+                    <tr [ngClass]="{highlight: showConfirm}">
+                        <td>Gram Limit</td>
+                        <td class="color-green">{{(patient.gramLimit ? patient.gramLimit + 'g' : 'Not set')}} <button class="btn primary blue" (click)="editGramLimit()">Edit</button></td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="editingGramLimit">
+                    <tr [ngClass]="{highlight: showConfirm}">
+                        <td>Gram Limit</td>
+                        <td class="td-with-button"><input [ngClass]="{error: patientErrorFlags.gramLimit}" type="number" [(ngModel)]="gramLimit"/> <button class="btn primary blue" (click)="saveGramLimit()">Save</button></td>
+                    </tr>
+                </ng-container>
+                <tr>
+                    <td>ID</td>
+                    <td>
+                        <ng-container *ngIf="patient.idImage">
+                            <div class="fixed-width-button-container"><button class="btn blue" (click)="openUrl(patient.idImage)">Download</button></div>
+                            <a (click)="patient.idImage = null" class="replace-link hover-underline">Replace</a>
+                        </ng-container>
+                        <ng-container *ngIf="!patient.idImage">
+                            <image-upload
+                                [max]="1"
+                                [preview]="false"
+                                [buttonCaption]="'Upload'"
+                                [dropBoxMessage]=""
+                                (uploadFinished)="uploadImage($event)"
+                            ></image-upload>
+                        </ng-container>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Patient Attestation Form</td>
+                    <td *ngIf="patient.attestationForm">
+                        <div class="fixed-width-button-container">
+                          <button class="btn blue" (click)="openUrl(patient.attestationForm)">View</button>
+                        </div>
+                        <a (click)="patient.attestationForm = null" class="replace-link hover-underline">Replace</a>
+                    </td>
+                    <td *ngIf="!patient.attestationForm">
+                      <image-upload
+                          [max]="1"
+                          [preview]="false"
+                          [buttonCaption]="'Upload'"
+                          [dropBoxMessage]=""
+                          (uploadFinished)="uploadImage($event, 'attestationForm')"
+                      ></image-upload>
+                    </td>
+                </tr>
+            </table>
+        </section>
+
+        <ng-container *ngIf="showVerifyEnter">
+            <button *ngIf="patientQueue && mode == 'verify'" class="btn primary green large" (click)="showConfirmation()">
+                {{patientQueue.verifiedAt ? "Enter" : "Verify &amp; Enter"}}
+            </button>
+        </ng-container>
+
+        <ng-container *ngIf="showConfirm">
+            <span class="input-note" style="color: red">Please double check and confirm that the patient's gram limit and medical ID match what is shown in the MMCC portal</span>
+            <button *ngIf="patientQueue && mode == 'verify'" class="btn primary green large" (click)="patientQueue.verifiedAt ? verifyOrEnter() : verifyAndEnter()">
+                {{patientQueue.verifiedAt ? "Confirm & Enter" : "Confirm, Verify &amp; Enter"}}
+            </button>
+        </ng-container>
+
+
+
+    </div>
+
+</main>

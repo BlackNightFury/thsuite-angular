@@ -1,0 +1,17 @@
+.cart-patient-queue {
+    padding: 35px 20px; 
+    border-bottom: 1px solid #e2e7eb; 
+    height: 120px;
+}
+
+.patient-queue {
+    font-size: 25px; 
+    width: 50%; 
+    float: left; padding-top: 9px;
+}
+
+.guest-patient-button {
+    width: 50%; 
+    float: left; 
+    text-align: right;
+}

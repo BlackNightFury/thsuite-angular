@@ -1,0 +1,30 @@
+.btn.remove{
+    background-color: #d12b28;
+    transition: background-color 200ms ease;
+}
+
+.btn.remove:hover{
+    background-color: #ab2320;
+}
+
+.small-image-upload{
+
+}
+
+.img-ul-file-upload[_ngcontent-c5]{
+    padding: 0 !important;
+}
+
+.small-image-upload .img-ul-file-upload{
+    background-color: #FFF;
+    border: none;
+    padding: 0 !important;
+}
+
+.small-image-upload .img-ul-file-upload.img-ul-hr-inline-group{
+    padding: 0 !important;
+}
+
+.small-image-upload .img-ul-drag-box-msg{
+    display: none;
+}

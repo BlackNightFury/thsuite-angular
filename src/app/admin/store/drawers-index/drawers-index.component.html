@@ -1,0 +1,76 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Device Dashboard</h2>
+
+        <span class="input-label" *ngIf="savedIndicator">Saved!</span>
+
+        <button *ngIf="!localDeviceId" md-button class="btn secondary green" (click)="initializeLocalDevice()">
+            <i class="icon icon-save"></i>Register This Device
+        </button>
+    </div>        
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-button-toggler [options]="filters" [(ngModel)]="filter"></app-button-toggler>
+    </div>
+</div>
+
+<main class="store-settings content" *ngIf="devices" >
+
+    <section>
+        <h3>Drawer Management</h3>
+
+        <table class="devices-table">
+            <thead>
+            <tr>
+                <th>Device</th>
+                <th>Is Open</th>
+                <th>Cash</th>
+                <th>Revenue</th>
+                <th>Current User</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ng-container *ngFor="let device of devices">
+                <tr (click)="$event.target.parentElement.nextElementSibling.classList.toggle('hide')" [ngClass]="{'filter-out': filter === 'in-use' && !device.CurrentDrawer}" >
+                    <td>{{device.name}}</td>
+                    <td>{{device.CurrentDrawer ? 'Yes' : 'No'}}</td>
+                    <td>{{(device.CurrentDrawer ? device.CurrentDrawer.currentBalance : 0 ) | currency:'USD':true}}</td>
+                    <td>{{(device.CurrentDrawer ? device.CurrentDrawer.dailyRevenue : 0 ) | currency:'USD':true}}</td>
+                    <td>{{device.CurrentDrawer && device.CurrentDrawer.User ? device.CurrentDrawer.User.firstName + " " + device.CurrentDrawer.User.lastName : ''}}</td>
+                </tr>
+                <tr class="receipts hide" [ngClass]="{'filter-out': filter === 'in-use' && !device.CurrentDrawer}" >
+                    <td colspan="5">
+                        <table *ngIf="device.CurrentDrawer" class="report-table receipts-table">
+                            <thead>
+                            <tr>
+                                <th>Receipt ID</th>
+                                <th>Date/Time</th>
+                                <th>Payment Method</th>
+                                <th>Employee</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <ng-container *ngFor="let receipt of device.CurrentDrawer.Receipts">
+                                <tr>
+                                    <td>{{receipt.barcode}}</td>
+                                    <td>{{receipt.createdAt | date:'short'}}</td>
+                                    <td>{{(receipt.paymentMethod == 'gift-card' ? "gift card" : receipt.paymentMethod) | ucwords}}</td>
+                                    <td>{{receipt.User ? receipt.User.firstName + ", " + receipt.User.lastName : ''}}</td>
+                                    <td>{{receipt.total | currency:'USD':true}}</td>
+                                </tr>
+                            </ng-container>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </ng-container>
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
+<router-outlet></router-outlet>

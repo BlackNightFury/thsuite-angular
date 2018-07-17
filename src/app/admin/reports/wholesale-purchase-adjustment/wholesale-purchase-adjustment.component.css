@@ -1,0 +1,22 @@
+tr.detail {
+    display: none;
+}
+
+tr.detail.toggled {
+    display: table-row;
+}
+
+.price-adjustments > ul > li,
+.price-adjustments > div {
+    display: flex;
+}
+
+.price-adjustments > ul > li > *,
+.price-adjustments > div > * {
+    flex: 1;
+}
+
+ul {
+    margin: 1rem 0rem;
+    padding: 0;
+}

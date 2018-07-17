@@ -1,0 +1,37 @@
+<button class="btn primary" style="position:absolute; top: 0; right: 0;" (click)="leaveModal()">x</button>
+
+<h1 mat-dialog-title style="text-align: center; padding-top: 20px">Remove Cash from Open Drawer</h1>
+
+<div mat-dialog-content>
+    <div class="input-row">
+        <label class="input-label-improved">Current Drawer Balance: </label><br>
+        <label class="input-label-improved" style="font-weight: 500">
+            {{data.currentBalance | currency:'USD':true }}</label>
+    </div>
+
+    <div class="input-row" style="maring-bottom: 0px;">
+        <label class="input-label-improved" style="margin-bottom: 20px;">Amount Removed: </label>
+        <input class="input-label-improved" style="margin-bottom: 0px; font-weight: 500" [(ngModel)]="this.removedCashAmount"
+               (ngModelChange)="validateInput()" (keyup.enter)="leaveModal(this.removedCashAmount)" placeholder="Enter Cash Amount">
+        <div class="errors" style="text-align: center; color: red; margin-top: 5px; font-size: 14px;" *ngIf="this.error">
+            {{this.error}}
+        </div>
+    </div>
+
+    <div class="input-row">
+        <label class="input-label-improved">New Drawer Balance: </label><br>
+        <label class="input-label-improved" style="font-weight: 500" *ngIf="!validInput">
+            {{ data.currentBalance | currency:'USD':true }}</label>
+        <label class="input-label-improved" style="font-weight: 500" *ngIf="validInput">
+            {{ data.currentBalance - this.removedCashAmount | currency:'USD':true }}</label>
+    </div>
+
+    <div class="section-action center" style="text-align: center;">
+        <button class="btn primary green" style="height: 50px; width: 150px; text-align: center; font-size: 14px;"
+                (click)="leaveModal(this.removedCashAmount)">Remove Cash</button>
+    </div>
+
+</div>
+
+
+

@@ -1,0 +1,34 @@
+<main>
+  <div *ngIf="!completed else patientSuccessfullyAssignedToGroup">
+    <div><b class="input-label input-label-bigger">Patient: {{patient?.firstName}} {{patient?.lastName}}</b></div>
+    <div><b class="input-label input-label-bigger">Patient ID: {{formatMedID(patient?.medicalStateId)}}</b></div>
+    
+    <div class="input-row">
+        <label class="input-label separate separated-top">Patient Group</label>
+        <app-select2 #s2 *ngIf="patientGroupSelect2Options"
+                    [options]="patientGroupSelect2Options" class="full-width"
+                    [(ngModel)]="patient.patientGroupId"
+                    (ngModelChange)="patientGroupChange(patient, $event, s2)">
+        </app-select2>
+    </div>
+    <div class="ui-dialog-buttonpane text-center">
+      <button class="btn dialog-button-cancel " (click)="cancel()">
+        Cancel
+      </button>
+      <button [ngClass]="{'btn dialog-button-cancel' : !newPatientGroupName, 'btn secondary green' : newPatientGroupName}" (click)="save()" [disabled]="!newPatientGroupName">
+        Save
+      </button>
+    </div>
+  </div>
+  <ng-template #patientSuccessfullyAssignedToGroup>
+      <div class="success-mesage">
+        Patient: {{patient.firstName}} {{patient.lastName}} has been successfully added to the patient group {{this.newPatientGroupName}}
+      </div>
+      <div class="ui-dialog-buttonpane text-center">
+        <button class="btn secondary green" (click)="cancel()">
+          OK
+        </button>
+      </div>
+  </ng-template>
+
+</main>

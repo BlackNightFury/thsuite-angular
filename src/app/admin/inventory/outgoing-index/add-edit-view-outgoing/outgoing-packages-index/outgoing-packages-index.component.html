@@ -1,0 +1,41 @@
+<div class="overlay-closearea second double-width" (click)="startLeaving()"></div>
+<div class="overlay right second active not-hidden-block double-width" [@leave]="animationStatus" (@leave.done)="cancel()">
+
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+    <div class="section-heading">
+        <div class="svg-icon"><img src="/assets/svg/inventory.svg"/></div>
+        <div>
+            <h5 class="subtitle">{{transfer.ManifestNumber}} - {{transfer.CreatedByUserName}}</h5>
+            <h1 class="section-title">Package List</h1>
+        </div>
+    </div>
+
+
+    <ng-container *ngIf="transfer">
+        <div class="input-row" style="margin-top: 1rem" *ngFor="let delivery of deliveries">
+            <h4 class="section-heading">{{delivery.RecipientFacilityName + " - " + delivery.MetrcId}}</h4>
+            <table class="nohover">
+                <thead>
+                <tr>
+                    <th>RFID Label</th>
+                    <th>Product Name</th>
+                    <th>Product Type</th>
+                    <th class="align-right">Shipped</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr *ngFor="let _package of delivery.DeliveryPackages">
+                    <td>{{_package.PackageLabel}}</td>
+                    <td>{{_package.ProductName}}</td>
+                    <td>{{_package.ProductCategoryName}}</td>
+                    <td class="align-right">{{(_package.ShippedQuantity ? _package.ShippedQuantity.toFixed(2) : 0.00 )}}&nbsp;{{_package.ShippedUnitOfMeasureName}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </ng-container>
+</div>
+
+
+<router-outlet></router-outlet>

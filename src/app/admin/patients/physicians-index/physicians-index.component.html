@@ -1,0 +1,45 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Physicians</h2>
+
+        <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search Physicians..."/>
+        
+        <button md-button class="btn tertiary green" (click)="createNewPhysician()"><i class="icon icon-add"></i>Physician</button>
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-products-table green-hl-tr">
+        <thead>
+        <tr>
+            <th sortBy="firstName" [(ngModel)]="sortByModel">First Name</th>
+            <th sortBy="lastName" [(ngModel)]="sortByModel">Last Name</th>
+            <th sortBy="clinicName" [(ngModel)]="sortByModel">Clinic Name</th>
+            <th sortBy="city" [(ngModel)]="sortByModel">City</th>
+            <th sortBy="state" [(ngModel)]="sortByModel">State</th>
+            <th class="table-action" *ngIf="user.Permissions.patientManagement == 'edit' && user.Permissions.canEditPatients"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let physician of objects | async" (click)="onRowClick($event, physician)">
+
+            <td>{{physician.firstName}}</td>
+            <td>{{physician.lastName}}</td>
+            <td>{{physician.clinicName }}</td>
+            <td>{{physician.city}}</td>
+            <td>{{physician.state}}</td>
+
+            <td class="table-action" *ngIf="user.Permissions.patientManagement == 'edit' && user.Permissions.canEditPatients">
+                <i class="icon icon-edit" (click)="editPhysician(physician)"></i>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listPhysicians()"></div>
+
+<router-outlet></router-outlet>

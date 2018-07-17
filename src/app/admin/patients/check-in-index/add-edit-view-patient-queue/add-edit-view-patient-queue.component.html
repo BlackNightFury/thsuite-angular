@@ -1,0 +1,490 @@
+<div #root class="overlay right active not-hidden-block" xmlns="http://www.w3.org/1999/html">
+    <i class="icon icon-close overlay-close" (click)="cancel()"></i>
+
+    <div class="section-heading" *ngIf="mode == 'add'">
+        <div class="svg-icon"><img src="/assets/svg/discount_details.svg"/></div>
+        <h1 class="section-title">Add To Queue</h1>
+    </div>
+
+    <ng-container>
+        <ng-container *ngIf="mode != 'view'">
+            <div class="add-to-queue-instructions">
+                <span *ngIf="!patient && !caregiver">
+                    Please select a patient or caregiver to add to the queue
+                </span>
+                <span *ngIf="caregiver && caregiverSelectedFirst">
+                    Not checking in a caregiver? <a (click)="returnToCheckIn()">&lt; Return to Check-in</a>
+                </span>
+                <span *ngIf="patient && !caregiverSelectedFirst">
+                    Not checking in a patient? <a (click)="returnToCheckIn()">&lt; Return to Check-in</a>
+                </span>
+            </div>
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <ng-container *ngIf="!caregiver && !patient">
+                <h3>Add Patient to Queue</h3>
+
+                <div class="detail-row">
+                    <div>
+                        <app-select2 *ngIf="patientSelect2Options"
+                                    [options]="patientSelect2Options" class="full-width"
+                                    [(ngModel)]="selectedPatientId" (ngModelChange)="setPatientFirst($event)" [searchPlaceholder]="'Search by Patient Medical ID or Name'"  [renderOptionsAsHTML]="true">
+                        </app-select2>
+                    </div>
+                </div>
+            </ng-container>
+
+            <div *ngIf="!caregiver && !patient" class="dividing-container">
+                <div class="dividing-line"><hr></div>
+                <div class="dividing-text">OR</div>
+                <div class="dividing-line"><hr></div>
+            </div>
+
+            <ng-container *ngIf="!patient || caregiverSelectedFirst">
+                <h3 *ngIf="caregiver">Caregiver Details</h3>
+                <h3 *ngIf="!caregiver">Add Caregiver to Queue</h3>
+
+                <div class="detail-row">
+                    <div>
+                        <span class="input-label" *ngIf="caregiver">Caregiver ID</span>
+                        <app-select2 *ngIf="caregiverSelect2Options"
+                                    [options]="caregiverSelect2Options" class="full-width"
+                                    [(ngModel)]="selectedCaregiverId" (ngModelChange)="setCaregiverFirst($event)" [searchPlaceholder]="'Search by Caregiver Medical ID or Name'" [renderOptionsAsHTML]="true">
+                        </app-select2>
+                    </div>
+                </div>
+
+                <ng-container *ngIf="caregiver">
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput placeholder="First Name" [(ngModel)]="caregiver.firstName"/>
+                        </md-input-container>
+                    </div>
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput placeholder="Last Name" [(ngModel)]="caregiver.lastName"/>
+                        </md-input-container>
+                    </div>
+
+                    <div class="detail-row">
+                        <div>
+                            <span class="input-label">Caregiver's Medical / State ID</span>
+                            <h5 class="product-info">{{formatMedID(caregiver.medicalStateId)}}</h5>
+                        </div>
+                    </div>
+
+                    <div class="input-row md-input">
+                        <label class="input-label separate separated-top">Caregiver's Birthday</label>
+                        <div class="input-has-icon datepick">
+                            <input [class.error]="errorFlags.birthday" [owlDateTime]="dtCaregiverDOB" [owlDateTimeTrigger]="dtCaregiverDOB" [(ngModel)]="caregiver.birthday" [max]="maxCaregiverBirthday">
+                            <i class="icon icon-calendar"></i>
+                        </div>
+                        <owl-date-time #dtCaregiverDOB [pickerType]="'calendar'"></owl-date-time>
+                    </div>
+
+                    <div class="input-row md-input">
+                        <md-input-container class="default single">
+                            <input mdInput placeholder="Email Address" [(ngModel)]="caregiver.emailAddress"/>
+                        </md-input-container>
+                    </div>
+
+                    <div class="input-row md-input">
+                        <md-input-container class="default single">
+                            <input mdInput placeholder="Phone Number" [ngModel]="caregiver.phoneNumber | toPhoneNumber" (ngModelChange)="setCaregiverPhoneNumber($event)" maxlength=14 (keypress)="filterNumericKeyPress($event)" />
+                        </md-input-container>
+                    </div>
+                </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="patient || caregiver">
+                <h3 *ngIf="patient">Patient Details</h3>
+                <h3 *ngIf="!patient">Add Patient</h3>
+
+                <div class="input-row">
+                    <span class="input-label" *ngIf="patient">Patient ID</span>
+                    <app-select2 *ngIf="patientSelect2Options"
+                                [options]="patientSelect2Options" class="full-width"
+                                [(ngModel)]="selectedPatientId" [searchPlaceholder]="'Search by Patient Medical ID or Name'" [searchPlaceholder]="'Search by Patient Medical ID or Name'" [renderOptionsAsHTML]="true">
+                    </app-select2>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="patient">
+                <div class="input-row">
+                    <md-input-container class="default single">
+                        <input [class.error]="errorFlags.firstName" mdInput placeholder="First Name" [(ngModel)]="patient.firstName"/>
+                    </md-input-container>
+                </div>
+                <div class="input-row">
+                    <md-input-container class="default single">
+                        <input [class.error]="errorFlags.lastName" mdInput placeholder="Last Name" [(ngModel)]="patient.lastName"/>
+                    </md-input-container>
+                </div>
+
+                <div class="detail-row">
+                    <div>
+                        <span class="input-label">Medical / State ID</span>
+                        <h5 class="product-info">{{formatMedID(patient.medicalStateId)}}</h5>
+                    </div>
+                </div>
+
+                <div class="input-row" *ngIf="environment.shouldShowPatientIDExpiration">
+                    <label class="input-label separate separated-top">Medical ID Expiration Date</label>
+                    <div class="input-has-icon datepick">
+                        <input [class.error]="errorFlags.expirationDate" [owlDateTime]="dtExpiration" [owlDateTimeTrigger]="dtExpiration" [(ngModel)]="patient.expirationDate" [min]="minExpDate" placeholder="mm/dd/yyyy">
+                        <i class="icon icon-calendar"></i>
+                    </div>
+                    <owl-date-time #dtExpiration [pickerType]="'calendar'"></owl-date-time>
+                </div>
+
+                <div class="input-row">
+                    <md-input-container class="default single">
+                        <input [class.error]="errorFlags.driversLicenseId" mdInput placeholder="Driver's License ID" [(ngModel)]="patient.driversLicenseId"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row">
+                    <md-input-container class="default single">
+                        <input [class.error]="errorFlags.passportId" mdInput placeholder="Passport ID" [(ngModel)]="patient.passportId"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row">
+                    <md-input-container class="default single">
+                        <input [class.error]="errorFlags.otherStateId" mdInput placeholder="Other State ID" [(ngModel)]="patient.otherStateId"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row md-input">
+                    <md-input-container class="default single">
+                        <input [class.error]="errorFlags.address" mdInput placeholder="Address" [(ngModel)]="patient.address"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row md-input">
+                    <md-input-container class="default single">
+                        <input [class.error]="errorFlags.city" mdInput placeholder="City" [(ngModel)]="patient.city"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row md-input">
+                    <md-input-container class="default single">
+                        <input [class.error]="errorFlags.state" mdInput placeholder="State" [(ngModel)]="patient.state"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row">
+                    <md-input-container class="default single">
+                        <input [class.error]="errorFlags.zip" mdInput placeholder="Zip Code" [(ngModel)]="patient.zip" maxlength=5 (keypress)="filterNumericKeyPress($event)"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row">
+                    <label class="input-label separate separated-top">County</label>
+                    <app-select2 *ngIf="countySelect2Options"
+                                [class.error]="errorFlags.county"
+                                 [options]="countySelect2Options" class="full-width"
+                                 [(ngModel)]="patient.county">
+                    </app-select2>
+                </div>
+
+                <div class="input-row md-input">
+                    <label class="input-label separate separated-top">Birthday</label>
+                    <div class="input-has-icon datepick">
+                        <input [class.error]="errorFlags.birthday" [owlDateTime]="dtDOB" [owlDateTimeTrigger]="dtDOB" [(ngModel)]="patient.birthday" [max]="maxBirthday" placeholder="mm/dd/yyyy">
+                        <i class="icon icon-calendar"></i>
+                    </div>
+                    <owl-date-time #dtDOB [pickerType]="'calendar'"></owl-date-time>
+                </div>
+
+                <div class="input-row md-input">
+                    <md-input-container class="default single">
+                        <input [class.error]="errorFlags.phoneNumber" mdInput placeholder="Phone Number" [ngModel]="patient.phoneNumber | toPhoneNumber" (ngModelChange)="setPhoneNumber($event)" maxlength=14 (keypress)="filterNumericKeyPress($event)"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row md-input">
+                    <md-input-container class="default single">
+                        <input [class.error]="errorFlags.emailAddress" mdInput placeholder="Email Address" [(ngModel)]="patient.emailAddress"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row">
+                    <label class="input-label separate separated-top">Patient Group</label>
+                    <app-select2 *ngIf="patientGroupSelect2Options"
+                                 [class.error]="errorFlags.patientGroupId"
+                                 [options]="patientGroupSelect2Options" class="full-width"
+                                 [(ngModel)]="patient.patientGroupId">
+                    </app-select2>
+                </div>
+
+                <ng-container *ngIf="!addingNewPhysician">
+                    <div class="input-row">
+                        <label class="input-label separate separated-top">Physician</label>
+                        <app-select2 *ngIf="physicianSelect2Options"
+                                    [class.error]="errorFlags.physicianId"
+                                     [options]="physicianSelect2Options" class="full-width"
+                                     [(ngModel)]="patient.physicianId">
+                        </app-select2>
+                        <button class="btn btn-primary" style="margin-left: 30%; margin-top: 1rem; background-color: black;" (click)="newPhysician()">Physician not listed</button>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="addingNewPhysician">
+                <div class="add-physician-form">
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput [(ngModel)]="newPhysicianObject.firstName" [class.error]="errorFlags.physicianFirstName" placeholder="Physician's First Name" />
+                        </md-input-container>
+                    </div>
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput [(ngModel)]="newPhysicianObject.lastName" [class.error]="errorFlags.physicianLastName" placeholder="Physician's Last Name" />
+                        </md-input-container>
+                    </div>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput placeholder="Physician's Email" [(ngModel)]="newPhysicianObject.emailAddress" />
+                        </md-input-container>
+                    </div>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput placeholder="Physician's Phone Number" [class.error]="errorFlags.phoneNumber" [ngModel]="newPhysicianObject.phoneNumber | toPhoneNumber" (ngModelChange)="setPhysicianPhoneNumber($event)" maxlength=14 (keypress)="filterNumericKeyPress($event)" />
+                        </md-input-container>
+                    </div>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput placeholder="Physician's Clinic Name" [class.error]="errorFlags.physicianClinicName" [(ngModel)]="newPhysicianObject.clinicName" />
+                        </md-input-container>
+                    </div>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput placeholder="Physician's Address" [(ngModel)]="newPhysicianObject.address" />
+                        </md-input-container>
+                    </div>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput placeholder="Physician's City" [(ngModel)]="newPhysicianObject.city" />
+                        </md-input-container>
+                    </div>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput placeholder="Physician's State" [(ngModel)]="newPhysicianObject.state" />
+                        </md-input-container>
+                    </div>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput placeholder="Physician's Zip" [(ngModel)]="newPhysicianObject.zip" />
+                        </md-input-container>
+                        <button class="btn btn-primary" style="margin-left: 30%; margin-top: 1rem; background-color: black;" (click)="backToPredefinedPhysicians()">Back to predefined list</button>
+                    </div>
+                </div>
+
+                </ng-container>
+
+                <div class="input-row">
+                    <ng-container *ngIf="!addingNewCondition">
+                        <label class="input-label separate separated-top">Medical Condition</label>
+                        <app-select2 *ngIf="medicalConditionsSelect2Options"
+                                    [class.error]="errorFlags.patientMedicalConditions"
+                                     [options]="medicalConditionsSelect2Options" class="full-width"
+                                     [(ngModel)]="patient.patientMedicalConditions">
+                        </app-select2>
+                        <button class="btn btn-primary" style="margin-left: 30%; margin-top: 1rem; background-color: black;" (click)="newCondition()">Condition not listed</button>
+                    </ng-container>
+                    <ng-container *ngIf="addingNewCondition">
+                        <md-input-container class="default single">
+                            <input mdInput [class.error]="errorFlags.patientMedicalConditions" [(ngModel)]="patient.patientMedicalConditions" placeholder="Enter new medical condition here" />
+                        </md-input-container>
+                        <button class="btn btn-primary" style="margin-left: 30%; margin-top: 1rem; background-color: black;" (click)="backToPredefinedConditions()">Back to predefined list</button>
+                    </ng-container>
+                </div>
+
+                <div class="input-row md-input">
+                    <md-input-container class="default single">
+                        <input [class.error]="errorFlags.referrer" mdInput placeholder="Referrer Source" [(ngModel)]="patient.referrer"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row">
+                    <md-input-container class="default single">
+                        <input [class.error]="showConfirm" mdInput placeholder="Medical / State ID" [ngModel]="patient.medicalStateId | toMedID" (ngModelChange)="setMedicalStateId($event)" maxlength=19 (keypress)="filterAlphanumericKeyPress($event)"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row">
+                    <!--<div>-->
+                        <!--<span class="input-label">Gram Limit</span>-->
+                        <!--<h5 class="product-info">{{patient.gramLimit}}</h5>-->
+                    <!--</div>-->
+                    <md-input-container class="default single">
+                        <input [class.error]="showConfirm || errorFlags.gramLimit" mdInput placeholder="Gram Limit" [(ngModel)]="patient.gramLimit"/>
+                    </md-input-container>
+                </div>
+
+                <!--<div class="detail-row">-->
+                    <!--<div>-->
+                        <!--<span class="input-label">History</span>-->
+                        <!--<h5 class="product-info link" (click)="viewPurchaseHistory()">View Purchases</h5>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <!--<div class="detail-row">-->
+                    <!--<div>-->
+                        <!--<span class="input-label">Patient Notes</span>-->
+                        <!--<h5 class="product-info link" (click)="viewPatientNotes()">View Notes</h5>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <!--<div class="detail-row">-->
+                    <!--<div>-->
+                        <!--<span class="input-label">Loyalty Points</span>-->
+                        <!--<h5 class="product-info">{{patient.loyaltyPoints ? patient.loyaltyPoints : '0'}}</h5>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <div class="input-row md-input">
+                  <label class="button-label">ID</label>
+                  <div class="fixed-width-button-container"><button *ngIf="patient.idImage" class="btn blue" (click)="openUrl(patient.idImage)">Download</button></div>
+                  <a *ngIf="patient.idImage" (click)="patient.idImage = null" class="replace-link hover-underline">Replace</a>
+                  <ng-container *ngIf="!patient.idImage">
+                      <image-upload
+                          [max]="1"
+                          [preview]="false"
+                          [buttonCaption]="'Upload ID Image'"
+                          [dropBoxMessage]=""
+                          (uploadFinished)="uploadImage($event, patient)"
+                      ></image-upload>
+                  </ng-container>
+                </div>
+
+                <div class="input-row md-input">
+                  <label class="button-label">Patient Attestation Form</label>
+                  <ng-container *ngIf="patient.attestationForm">
+                    <div class="fixed-width-button-container"><button class="btn blue" (click)="openUrl(patient.attestationForm)">View</button></div>
+                    <a *ngIf="patient.attestationForm" (click)="patient.attestationForm = null" class="replace-link hover-underline">Replace</a>
+                  </ng-container>
+                  <ng-container *ngIf="!patient.attestationForm">
+                      <image-upload
+                          [max]="1"
+                          [preview]="false"
+                          [buttonCaption]="'Upload Attestation Form'"
+                          [dropBoxMessage]=""
+                          (uploadFinished)="uploadImage($event, patient, 'attestationForm')"
+                      ></image-upload>
+                  </ng-container>
+                </div>
+
+                <div class="input-row" *ngIf="!selectedCaregiverId">
+                    <label class="input-label separate separated-top">Caregiver?</label>
+                    <md-button-toggle-group class="default blue" [(ngModel)]="hasCaregiver">
+                        <md-button-toggle [value]="true">Yes</md-button-toggle>
+                        <md-button-toggle [value]="false">No</md-button-toggle>
+                    </md-button-toggle-group>
+                </div>
+
+                <div *ngIf="selectedCaregiverId">
+                    <div class="section-dividing-container">
+                        <hr/>
+                        <h3>Caregiver Details</h3>
+                    </div>
+                </div>
+
+                <ng-container *ngIf="hasCaregiver">
+
+                    <ng-container *ngIf="!selectedCaregiverId">
+                        <h4>Search Caregivers by Medical ID</h4>
+
+                        <div class="input-row">
+                            <label class="input-label">Caregiver State Medical ID</label>
+                            <div style="display: flex; flex-direction: row;">
+                                <input placeholder="Enter Medical ID" [ngModel]="caregiverMedicalID | toMedID" (ngModelChange)="setCaregiverMedicalId($event)" maxlength=19 (keypress)="filterAlphanumericKeyPress($event)"/>
+                                <button class="btn secondary blue" (click)="searchMedicalID()" style="padding-top: 0; padding-bottom: 0; margin-left: 10px; display: flex; padding-left: 20px;"><i class="icon icon-search"></i>Search</button>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <span class="input-label" [ngClass]="{stop: searchError, go: !searchError}">{{searchMessage}}</span>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="caregiver">
+
+                        <div class="input-row">
+                            <md-input-container class="default single">
+                                <input mdInput [class.error]="errorFlags.caregiverFirstName" placeholder="Caregiver's First Name" [(ngModel)]="caregiver.firstName"/>
+                            </md-input-container>
+                        </div>
+                        <div class="input-row">
+                            <md-input-container class="default single">
+                                <input mdInput [class.error]="errorFlags.caregiverLastName" placeholder="Caregiver's Last Name" [(ngModel)]="caregiver.lastName"/>
+                            </md-input-container>
+                        </div>
+
+                        <div class="detail-row">
+                            <div>
+                                <span class="input-label">Caregiver's Medical / State ID</span>
+                                <h5 class="product-info">{{formatMedID(caregiver.medicalStateId)}}</h5>
+                            </div>
+                        </div>
+
+                        <div class="input-row md-input">
+                            <label class="input-label separate separated-top">Caregiver's Birthday</label>
+                            <div class="input-has-icon datepick">
+                                <input [class.error]="errorFlags.birthday" [owlDateTime]="dtToggledCaregiverDOB" [owlDateTimeTrigger]="dtToggledCaregiverDOB" [(ngModel)]="caregiver.birthday" [max]="maxCaregiverBirthday">
+                                <i class="icon icon-calendar"></i>
+                            </div>
+                            <owl-date-time #dtToggledCaregiverDOB [pickerType]="'calendar'"></owl-date-time>
+                        </div>
+
+                        <div class="input-row md-input">
+                            <md-input-container class="default single">
+                                <input mdInput [class.error]="errorFlags.caregiverEmail" placeholder="Caregiver's Email Address" [(ngModel)]="caregiver.emailAddress"/>
+                            </md-input-container>
+                        </div>
+
+                        <div class="input-row md-input">
+                            <md-input-container class="default single">
+                                <input mdInput [class.error]="errorFlags.caregiverPhoneNumber" placeholder="Caregiver's Phone Number" [ngModel]="caregiver.phoneNumber | toPhoneNumber" (ngModelChange)="setCaregiverPhoneNumber($event)" maxlength=14 (keypress)="filterNumericKeyPress($event)" />
+                            </md-input-container>
+                        </div>
+
+                    </ng-container>
+
+                </ng-container>
+
+                <ng-container *ngIf="showAdd">
+
+                    <div class="overlay-action-buttons">
+                        <button md-button class="btn secondary grey" (click)="cancel()"><i class="icon icon-cancel"></i>Cancel</button>
+                        <button md-button class="btn secondary blue" (click)="showConfirmation()"><i class="icon icon-save"></i>Add to Queue</button>
+                    </div>
+
+                </ng-container>
+
+                <ng-container *ngIf="showConfirm">
+                    <span class="input-note" style="color: red">Please double check and confirm that the patient's gram limit and medical ID match what is shown in the MMCC portal</span>
+                    <div class="overlay-action-buttons">
+                        <button md-button class="btn secondary grey" (click)="cancel()"><i class="icon icon-cancel"></i>Cancel</button>
+                        <button md-button class="btn secondary blue" (click)="saveAndAdd()"><i class="icon icon-save"></i>Confirm</button>
+                    </div>
+
+                </ng-container>
+
+                <!--<div class="overlay-action-buttons">-->
+                    <!--<button md-button class="btn secondary grey" (click)="cancel()"><i class="icon icon-cancel"></i>Cancel</button>-->
+                    <!--<button md-button class="btn secondary blue" (click)="saveAndAdd()"><i class="icon icon-save"></i>Add to Queue</button>-->
+                <!--</div>-->
+            </ng-container>
+        </ng-container>
+    </ng-container>
+</div>

@@ -1,0 +1,50 @@
+<div class="topbar-controls">
+
+    <div class="controls-row">
+        <h2 class="page-subtitle">Sales by Product Type</h2>
+        <button class="btn tertiary blue flex-right btn-export" (click)="onClickExport('sales-by-product-type')"><i class="icon icon-export"></i>Export</button>
+    </div>
+
+    <!-- <div class="controls-row">
+        <button class="btn tertiary green" data-overlay-toggler="addCustomReport"><i class="icon icon-add"></i>Custom Report</button>
+    </div> -->
+
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+
+        <app-select2 *ngIf="productTypeSelect2Options"
+                     [options]="productTypeSelect2Options"
+                     [(ngModel)]="selectedProductTypeId">
+        </app-select2>
+
+        <ng-container *ngIf="employeeSelect2Options">
+            <app-select2 [options]="employeeSelect2Options" [(ngModel)]="selectedEmployeeId"></app-select2>
+        </ng-container>
+    </div>
+</div>
+
+<main class="content">
+
+    <table class="report-table first-wide sales-by-product-type has-total nohover">
+        <thead>
+        <tr>
+            <th sortBy="name" [(ngModel)]="sortByModel">Product Type</th>
+            <th sortBy="average" [(ngModel)]="sortByModel" class="align-right">Avg per Sale</th>
+            <th sortBy="count" [(ngModel)]="sortByModel" class="align-right"># of Sales</th>
+            <th sortBy="sum" [(ngModel)]="sortByModel" class="align-right">Total</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let data of salesData">
+            <td>{{ data.name }}</td>
+            <td class="align-right">{{ (data.count > 0 ? data.sum/data.count : 0) | currency:'USD':true }}</td>
+            <td class="align-right">{{ data.count | number }}</td>
+            <td class="align-right">{{ data.sum | currency:'USD':true }}</td>
+        </tr>
+        </tbody>
+    </table>
+</main>

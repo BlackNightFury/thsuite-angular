@@ -1,0 +1,61 @@
+<div class="container" id="mainPanel">
+    <div class="topbar-controls patient-management">
+        <div class="controls-row">
+            <h2 class="page-subtitle">Receipts</h2>
+
+            <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search or Scan ReceiptID">
+
+            <ng-container *ngIf="user.Permissions.canSubmitToMetrc">
+                <button  class="btn tertiary blue btn-export" (click)="submitToMetrc()" ><i class="icon icon-export"></i>Submit to Metrc</button>
+                <hr />
+                <div class="input-has-icon datepick export-day-date btn-export">
+                    <input [owlDateTime]="dtExportDate" [owlDateTimeTrigger]="dtExportDate" [(ngModel)]="exportDay" placeholder="mm/dd/yyyy">
+                    <i class="icon icon-calendar"></i>                
+                    <owl-date-time #dtExportDate [pickerType]="'calendar'"></owl-date-time>
+                </div>
+                <button class="btn tertiary blue export-day-btn btn-export" (click)="exportDayTransactions()" ><i class="icon icon-export"></i>Export Day's Transactions</button>
+            </ng-container>
+        </div>
+    </div>
+
+    <table class="receipts-table">
+        <thead>
+        <tr>
+            <th>Receipt ID</th>
+            <th>Date/Time</th>
+            <th>Employee</th>
+            <th>Drawer Name</th>
+            <th>Total</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container *ngFor="let receipt of objects | async">
+            <tr (click)="onRowClick($event, receipt)" class="{{ receipt.deletedAt ? 'deleted' : '' }}">
+                <td>{{receipt.barcode}}</td>
+                <td>{{receipt.createdAt | date:'short'}}</td>
+                <td>{{receipt.User ? receipt.User.firstName + " " + receipt.User.lastName : ''}}</td>
+                <td>{{receipt.Drawer && receipt.Drawer.Device ? receipt.Drawer.Device.name : ''}}</td>
+                <td>{{receipt.total | currency:'USD':true}}</td>
+                <td>
+                    <ng-container *ngIf="receipt.deletedAt && receipt.voidNotes">
+                        <span class="line-breaker">Voided: <br> {{ receipt.voidNotes }}</span>
+                    </ng-container>
+                    <md-select *ngIf="!receipt.deletedAt" placeholder='Select Action' (click)="onActionClick($event)" (change)="onReceiptAction($event, receipt)">
+                        <md-option value="print">Re-print Receipt</md-option>
+                        <md-option value="print-label">Re-print Label</md-option>
+                        <md-option value="return">View Return</md-option>
+                        <md-option value="void-confirmation">Void Receipt</md-option>
+                    </md-select>
+                </td>
+            </tr>
+        </ng-container>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</div>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listReceipts()"></div>
+
+<router-outlet></router-outlet>

@@ -1,0 +1,12 @@
+.icon-circle {
+    transition: background-color 200ms ease;
+    &.noavatar {
+        @include circle(42px);
+        background-color: #c5cdd4;
+
+        .icon {
+            font-size: 36px;
+            color: #fff;
+        }
+    }
+}

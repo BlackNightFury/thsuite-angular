@@ -1,0 +1,914 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle" *ngIf="_package">Package: {{_package.Label}}</h2>
+        <button md-button class="btn secondary green" (click)="onCreateConvertClick()"><i class="icon icon-add"></i>Create/Convert Package</button>
+    </div>
+</div>
+
+<main class="content">
+    <div class="nav" *ngIf="_package">
+        <a (click)="toDashboard()" style="cursor: pointer">Package Home</a> > {{_package.Label}}
+    </div>
+
+    <div class="toggle-bar">
+        <app-button-toggler [options]="navToggleOptions" [ngModel]="mode" (ngModelChange)="modeChange($event)"></app-button-toggler>
+    </div>
+
+    <div>
+
+        <ng-container *ngIf="mode == 'details'">
+            <h3>Package Details</h3>
+
+            <div class="content-section">
+
+                <ul *ngIf="packageErrors" class="errors" style="padding: 1rem; color: red">
+                    <li *ngFor="let error of packageErrors">{{error}}</li>
+                </ul>
+
+                <div *ngIf="!_package || !product">
+                    Loading...
+                </div>
+                <div *ngIf="_package && product">
+                    <div class="content-section-flex">
+                        <div class="content-section-column-1">
+                            <div class="details-row">
+                                <div class="details-row-label">Package Label:</div>
+                                <div class="details-row-value">{{ _package.Label }}</div>
+                            </div>
+                            <div class="details-row">
+                                <div class="details-row-label">Product:</div>
+                                <div class="details-row-value">{{ product.name }}</div>
+                            </div>
+                            <div class="details-row">
+                                <div class="details-row-label">Product Type:</div>
+                                <div class="details-row-value">{{ product.ProductType.name }}</div>
+                            </div>
+                            <div class="details-row">
+                                <div class="details-row-label">Supplier:</div>
+
+                                <div *ngIf=" product.ProductType.category == 'non-cannabis' " class="details-row-value">
+                                    <app-select2 *ngIf="supplierSelect2Options"
+                                                 [options]="supplierSelect2Options" class="full-width"
+                                                 [(ngModel)]="_package.supplierId">
+                                    </app-select2>
+                                </div>
+                                <div *ngIf=" product.ProductType.category == 'cannabis' " class="details-row-value">
+                                    {{ _package.Supplier ? _package.Supplier.name : '' }}
+                                </div>
+
+                            </div>
+                            <div class="details-row">
+                                <div class="details-row-label">{{(product.ProductType.cannabisCategory == "Buds" || product.ProductType.cannabisCategory == 'ShakeTrim') ? "Cultivator" : "Supplier"}} License</div>
+                                <div class="details-row-value">{{_package.Supplier ? _package.Supplier.licenseNumber : ''}}</div>
+                            </div>
+                            <div class="details-row">
+                                <div class="details-row-label">Manifest #:</div>
+                                <div class="details-row-value">{{ _package.manifestNumber }}</div>
+                            </div>
+                            <div class="details-row">
+                                <div class="details-row-label">Received Date:</div>
+                                <div class="details-row-value">{{ _package.ReceivedDateTime | date:'short' }}</div>
+                            </div>
+                        </div>
+                        <div class="content-section-column-2">
+                            <div class="details-row">
+                                <div class="details-row-label">Qty Received:</div>
+                                <div class="details-row-value">{{ _package.ReceivedQuantity }}{{ _package.UnitOfMeasureAbbreviation }}</div>
+                            </div>
+                            <div class="details-row">
+                                <div class="details-row-label">Qty Remaining:</div>
+                                <div class="details-row-value">{{ _package.Quantity }}{{ _package.UnitOfMeasureAbbreviation }}</div>
+                            </div>
+                            <div class="details-row">
+                                <div class="details-row-label">Total Package Wholesale Price:</div>
+                                <div class="details-row-value">
+                                    <input mdInput placeholder="" type="number" class="input-border" (keyup)="updatePackagePerUnitWholesalePrice($event)" [(ngModel)]="_package.wholesalePrice" />
+                                </div>
+                            </div>
+                            <div class="details-row">
+                                <div class="details-row-label">Per {{_package.UnitOfMeasureName == "Grams" ? "Gram" : "Unit"}} Wholesale Price:</div>
+                                <div class="details-row-value">
+                                    <input mdInput placeholder="" type="number" class="input-border" (keyup)="updatePackageWholesalePrice($event)" [(ngModel)]="_package.perUnitWholesalePrice" />
+                                </div>
+                            </div>
+                            <div class="details-row" *ngIf=" product && product.Item && product.Item.UnitOfMeasureAbbreviation == 'ea' && product.ProductType.category == 'cannabis' ">
+                                <div class="details-row-label">THC Weight (in grams):</div>
+                                <div class="details-row-value">
+                                    <input mdInput placeholder="" class="input-border" [(ngModel)]="product.Item.thcWeight"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="width:30%;margin: 2em auto 0 auto">
+                        <button md-button class="btn secondary blue" (click)="savePackage(false)"><i class="icon icon-save"></i>Save Package Details</button>
+                    </div>
+                    <span class="input-row-label" style="margin-left: 1rem; margin-bottom: 0;">{{packageSavedIndicator ? "Saved!" : ""}}</span>
+                </div>
+
+            </div>
+
+            <ng-container *ngIf="thcInformationAvailable">
+                <h3>THC Information</h3>
+                <div class="content-section">
+                    <div *ngIf="!_package || !product">
+                        Loading...
+                    </div>
+                    <div *ngIf="_package && product">
+                        <div class="content-section-flex">
+                            <div class="content-section-column-1">
+                                <div class="details-row">
+                                    <div class="details-row-label">THC %</div>
+                                    <div class="details-row-value" *ngIf="!environment.shouldShowLabResults">
+                                        <input mdInput placeholder="" type="number" class="input-border" min="0" max="100" (keyup)="updateCannabinoidTotal()" [(ngModel)]="_package.thcPercent"/>
+                                        <span>%</span>
+                                    </div>
+                                    <div class="details-row-value" *ngIf="environment.shouldShowLabResults">
+                                        <span>{{thcSum}}%</span>
+                                    </div>
+                                </div>
+                                <div class="details-row">
+                                    <div class="details-row-label">CBD %</div>
+                                    <div class="details-row-value" *ngIf="!environment.shouldShowLabResults">
+                                        <input mdInput placeholder="" type="number" class="input-border" min="0" max="100" (keyup)="updateCannabinoidTotal()" [(ngModel)]="_package.cbdPercent"/>
+                                        <span>%</span>
+                                    </div>
+                                    <div class="details-row-value" *ngIf="environment.shouldShowLabResults">
+                                        <span>{{cbdSum}}%</span>
+                                    </div>
+                                </div>
+                                <div class="details-row">
+                                    <div class="details-row-label">Total %</div>
+                                    <div class="details-row-value" *ngIf="!environment.shouldShowLabResults">
+                                        <input mdInput placeholder="" type="number" class="input-border" readonly [(ngModel)]="cannabinoidTotal"/>
+                                        <span>%</span>
+                                    </div>
+                                    <div class="details-row-value" *ngIf="environment.shouldShowLabResults">
+                                        <span>{{cannabinoidSum}}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content-section-column-2">
+                                <div class="details-row">
+                                    <div class="details-row-label">Strain Type:</div>
+                                    <div class="details-row-value">
+                                        <app-button-toggler [options]="strainTypeOptions" [(ngModel)]="_package.strainType"></app-button-toggler>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="!environment.shouldShowLabResults">
+                            <div>
+                                <div class="bold-label">{{environment.state == 'MD' ? "Cannabinoids and Terpenes" : "Ingredients"}}:</div>
+                                <div>
+                                    <textarea style="height: 100px;" class="textarea-content" [(ngModel)]="_package.ingredients"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 2rem;" *ngIf="environment.shouldShowLabResults">
+                            <div>
+                                <div style="display: flex;">
+                                    <div class="bold-label" style="margin-top: 1rem; margin-right: 0.5rem;">Cannabinoids:</div>
+                                    <div style="width: 200px;">
+                                        <app-button-toggler [options]="potencyUnitsToggleOptions" [(ngModel)]="_package.LabTestResult.potencyUnits"></app-button-toggler>
+                                    </div>
+                                </div>
+                                <div style="display: flex; flex-direction: row;">
+                                    <div class="lab-result-container">
+                                        <label class="input-label">THC:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.thc"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label">THC-A:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.thcA"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label">CBD:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.cbd"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label">CBD-A:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.cbdA"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label">CBG:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.cbg"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label">CBN:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.cbn"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label">CBG-A:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.cbgA"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="bold-label">Terpenes:</div>
+                                <div style="display: flex; flex-direction: row;">
+                                    <div class="lab-result-container">
+                                        <label class="input-label no-text-transform">&alpha;-Pinene:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.aPinene"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label no-text-transform">&beta;-Pinene:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.bPinene"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label no-text-transform">&beta;-Myrcene:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.bMyrcene"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label no-text-transform">Limonene:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.limonene"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label no-text-transform">Terpinolene:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.terpinolene"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label no-text-transform">Ocimene:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.ocimene"/>
+                                    </div>
+                                </div>
+                                <div style="display: flex; flex-direction: row;">
+                                    <div class="lab-result-container">
+                                        <label class="input-label no-text-transform">Linalool:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.linalool"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label no-text-transform">&beta;-Caryophyllene:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.bCaryophyllene"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label no-text-transform">Humulene:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.humulene"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label no-text-transform">&beta;-Eudesmol:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.bEudesmol"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label no-text-transform">Caryophyllene Oxide:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.caryophylleneOxide"/>
+                                    </div>
+                                    <div class="lab-result-container">
+                                        <label class="input-label no-text-transform">Nerolidol:</label>
+                                        <input type="number" class="lab-result-input" [(ngModel)]="_package.LabTestResult.nerolidol"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="width:30%;margin: 2em auto 0 auto">
+                            <button md-button class="btn secondary blue" (click)="savePackage(true)"><i class="icon icon-save"></i>Save THC Information</button>
+                        </div>
+                        <span class="input-row-label" style="margin-left: 1rem; margin-bottom: 0;">{{packageSavedIndicator ? "Saved!" : ""}}</span>
+
+                    </div>
+                </div>
+                <h3></h3>
+                <div class="content-section">
+                    <div class="overlay-action-buttons">
+                        <button md-button class="btn secondary blue" (click)="saveAllPackagePage()"><i class="icon icon-save"></i>Save All</button>
+                    </div>
+                </div>
+            </ng-container>
+        </ng-container>
+
+        <ng-container *ngIf="mode == 'product' && product">
+            <h3>Product Details</h3>
+            <div class="product content-section">
+
+                <ul *ngIf="productErrors" class="errors" style="padding: 1rem; color: red">
+                    <li *ngFor="let error of productErrors">{{error}}</li>
+                </ul>
+
+                <div class="input-row">
+                    <md-input-container class="default single">
+                        <input mdInput placeholder="Product Name" [(ngModel)]="product.name"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row">
+                    <label class="input-row-label bold-label">Product Type</label>
+                    <app-select2 *ngIf="productTypeSelect2Options"
+                                 [options]="productTypeSelect2Options" class="full-width"
+                                 [(ngModel)]="product.productTypeId"
+                    >
+                    </app-select2>
+                </div>
+
+                <div class="input-row">
+                    <md-input-container class="default single">
+                        <input mdInput placeholder="Product Description" [(ngModel)]="product.description"/>
+                    </md-input-container>
+                </div>
+
+                <div class="input-row" *ngIf="product.inventoryType == 'weight'">
+                    <label class="input-row-label bold-label">Pricing Tier</label>
+
+                    <app-select2 *ngIf="pricingTierSelect2Options"
+                                 [options]="pricingTierSelect2Options" class="full-width"
+                                 [ngModel]="product.pricingTierId" (ngModelChange)="autoSavePricingTier($event)" >
+                    </app-select2>
+                </div>
+
+                <div class="input-row">
+                    <md-checkbox [(ngModel)]="product.eligibleForDiscount">Eligible for Discounts</md-checkbox>
+                </div>
+
+                <div class="input-row">
+                    <md-checkbox [(ngModel)]="product.displayOnMenu">Display Product on Menu</md-checkbox>
+                </div>
+
+                <div class="overlay-action-buttons" style="width:30%">
+                    <button md-button class="btn secondary blue" (click)="saveProduct(product)"><i class="icon icon-save"></i>Save Product Details</button>
+                </div>
+                <span class="input-row-label" style="margin-left: 1rem; margin-bottom: 0;">{{productSavedIndicator ? "Saved!" : ""}}</span>
+
+            </div>
+            <h3>Product Variation Details</h3>
+            <div class="product-variation content-section">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:10%">Name</th>
+                            <th *ngIf="product.inventoryType == 'weight'" class="align-right" style="width:10%">Weight</th>
+                            <th class="align-right" style="width:13%">Price</th>
+                            <th valign="middle" style="width:16%" class="align-center"><i class="material-icons" style="transform: rotate(90deg);">format_align_justify</i></th>
+                            <!--<th class="align-right"></th>-->
+                            <th style="width: 50%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="product && productVariationsWithEdit.length">
+                            <tr *ngFor="let productVariationObj of productVariationsWithEdit">
+
+                                <ng-container *ngIf="!productVariationObj.isEditing">
+                                    <td>{{productVariationObj.productVariation.name}}</td>
+                                    <td *ngIf="product.inventoryType == 'weight' && !productVariationObj.productVariation.isBulkFlower" class="align-right">{{productVariationObj.productVariation.quantity}} {{product.inventoryType == 'weight' ? 'g' : 'ea'}}</td>
+                                    <td *ngIf="product.inventoryType == 'weight' && productVariationObj.productVariation.isBulkFlower" class="align-right">Bulk</td>
+                                    <td class="align-right">{{calculateProductVariationPrice(productVariationObj.productVariation)}}</td>
+                                    <td><div *ngIf="productVariationObj.productVariation.Barcodes && productVariationObj.productVariation.Barcodes.length" class="align-center"><i class="material-icons green-check">check_circle</i></div></td>
+                                    <td style="width: 50%" class="table-buttons">
+                                        <div style="margin-left: 10%; display: flex; flex-direction: row;">
+                                            <button md-button class="btn secondary blue" (click)="editProductVariation(productVariationObj)"><i class="icon icon-edit"></i>Edit</button>
+                                            <button *ngIf="!_package.FinishedDate && _package.wasReceived" md-button class="btn secondary blue" (click)="goToBarcode(productVariationObj.productVariation)" [ngClass]="{'margin-left-50-important' : (product.inventoryType != 'weight')}"><i class="icon icon-add"></i>Barcode</button>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container *ngIf="productVariationObj.isEditing">
+                                    <td>
+                                        <input mdInput placeholder="Variation Name" class="input-border" [(ngModel)]="productVariationObj.productVariation.name"/>
+                                    </td>
+                                    <td *ngIf="product.inventoryType == 'weight'" class="align-right">
+                                        {{productVariationObj.productVariation.quantity}} {{product.inventoryType == 'weight' ? 'g' : 'ea'}}
+                                    </td>
+                                    <td class="align-right" *ngIf="product.inventoryType == 'each'">
+                                        <input mdInput placeholder="Price" class="input-border" [(ngModel)]="productVariationObj.productVariation.price"/>
+                                    </td>
+                                    <td><div *ngIf="productVariationObj.Barcodes && productVariationObj.Barcodes.length" class="align-center"><i class="material-icons green-check">check_circle</i></div></td>
+                                    <td class="align-right" *ngIf="product.inventoryType =='weight'">
+                                        {{calculateProductVariationPrice(productVariationObj.productVariation)}}
+                                    </td>
+                                    <td style="width: 50%" class="table-buttons">
+                                        <div style="margin-left: 10%; display: flex; flex-direction: row;">
+                                            <button md-button class="btn secondary blue" (click)="saveProductVariation(productVariationObj)"><i class="icon icon-save"></i>Save</button>
+                                            <button *ngIf="!_package.FinishedDate && _package.wasReceived" md-button class="btn secondary blue" (click)="goToBarcode(productVariationObj.productVariation)" [ngClass]="{'margin-left-50-important' : (product.inventoryType != 'weight')}"><i class="icon icon-add"></i>Barcode</button>
+                                        </div>
+                                    </td>
+                                </ng-container>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+
+                <div class="overlay-action-buttons" style="margin-left: 30%; margin-right: 30%">
+                    <button md-button class="btn secondary green" (click)="addProductVariation()"><i class="icon icon-add"></i>Add Product Variation</button>
+                </div>
+            </div>
+            <h3></h3>
+            <div class="content-section">
+                <div class="overlay-action-buttons">
+                    <button md-button class="btn secondary blue" (click)="saveAllProductPage()"><i class="icon icon-save"></i>Save All</button>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="mode == 'adjustments'">
+
+            <div *ngIf="shouldShowPurchaseOrders()">
+                <h3>Purchase Orders</h3>
+                <div class="content-section">
+                    <ng-container *ngIf="_package && !purchaseOrderShowing && !adjustmentShowing && !priceAdjustmentShowing">
+                        <!-- Adjustment table -->
+                        <div class="adjustment-table nohover sticky compact" style="padding-bottom: 20px" *ngIf="_package.PurchaseOrders && _package.PurchaseOrders.length">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Purchase Quantity</th>
+                                    <th>Purchase Wholesale Price</th>
+                                    <th>Date</th>
+                                    <th>Employee</th>
+                                    <th>Notes</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td>{{_package.ReceivedQuantity}}</td>
+                                        <td>{{_package.wholesalePrice | currency:'USD':true}}</td>
+                                        <td>{{_package.ReceivedDateTime | date:'shortDate'}} {{_package.ReceivedDateTime | date:'shortTime'}}</td>
+                                        <td></td>
+                                        <td>Package Creation</td>
+                                    </tr>
+
+                                <ng-container *ngFor="let adjustment of this._package.PurchaseOrders">
+                                    <tr>
+                                        <td>{{adjustment.amount}}</td>
+                                        <td>{{adjustment.price | currency:'USD':true}}</td>
+                                        <td>{{adjustment.date | date:'shortDate'}} {{adjustment.date | date:'shortTime'}}</td>
+                                        <td>{{adjustment.User ? adjustment.User.firstName : ''}} {{adjustment.User ? adjustment.User.lastName : ''}}</td>
+                                        <td>{{adjustment.notes}}</td>
+                                    </tr>
+                                </ng-container>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="overlay-action-buttons" style="width:20em;margin:auto" *ngIf="!_package.FinishedDate">
+                            <button class="btn secondary blue" (click)="showPurchaseOrder()"><i class="icon icon-edit"></i>Add Purchase Order</button>
+                        </div>
+                    </ng-container>
+
+                    <!-- Adjustment form -->
+                    <div class="add-adjustment" *ngIf="_package && purchaseOrderShowing">
+
+                        <ul *ngIf="adjustmentErrors" class="errors" style="padding: 1rem; color: red">
+                            <li *ngFor="let error of adjustmentErrors">{{error}}</li>
+                        </ul>
+
+                        <div class="input-row">
+                            <md-input-container class="default single">
+                                <input mdInput type="number" style="text-align: right" placeholder="Purchase Order Quantity" [(ngModel)]="this.purchaseOrder.amount" *ngIf="!errorFlags.amount"/>
+                                <input mdInput type="number" style="text-align: right; border: 1px solid red;" placeholder="Purchase Order Quantity" [(ngModel)]="this.purchaseOrder.amount" *ngIf="errorFlags.amount"/>
+                            </md-input-container>
+                        </div>
+                        <div class="input-row">
+                            <md-input-container class="default single">
+                                <input mdInput type="number" style="text-align: right" placeholder="Purchase Wholesale Price" [(ngModel)]="this.purchaseOrder.price"/>
+                            </md-input-container>
+                        </div>
+
+                        <div class="input-row">
+                            <label for="quantity-notes" class="textarea-label">Purchase Notes</label>
+                            <textarea id="quantity-notes" style="height: 100px;" [(ngModel)]="this.purchaseOrder.notes" class="textarea-content"></textarea>
+                        </div>
+
+                        <div class="overlay-action-buttons" *ngIf="purchaseOrderShowing">
+                            <button class="btn secondary grey" data-overlay-close (click)="cancelPurchaseOrder()"><i class="icon icon-cancel"></i>Cancel
+                            </button>
+                            <button class="btn secondary blue" (click)="savePurchaseOrder()"><i class="icon icon-save"></i>Save</button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <h3>Quantity Adjustments</h3>
+            <div class="package-selected-summary-info">
+                <div class="details-row">
+                    <div class="details-row-label">Qty Received:</div>
+                    <div class="details-row-value" *ngIf="!environment.canEditReceivedQuantity">{{ _package.ReceivedQuantity }}{{ _package.UnitOfMeasureAbbreviation }}</div>
+                    <div class="details-row-value" *ngIf="environment.canEditReceivedQuantity">
+                        <input mdInput placeholder="" type="number" class="input-border" (keyup)="updateReceivedQuantity($event)" [(ngModel)]="_package.ReceivedQuantity"/>
+                    </div>
+                </div>
+                <div class="details-row">
+                    <div class="details-row-label">Qty Remaining:</div>
+                    <div class="details-row-value">{{ _package.Quantity }}{{ _package.UnitOfMeasureAbbreviation }}</div>
+                </div>
+            </div>
+            <div class="content-section">
+                <ng-container *ngIf="_package && !purchaseOrderShowing && !adjustmentShowing && !priceAdjustmentShowing">
+                    <!-- Adjustment table -->
+                    <div class="adjustment-table" style="padding-bottom: 20px" *ngIf="_package.Adjustments && _package.Adjustments.length">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Employee</th>
+                                <th>Adjustment Amount</th>
+                                <th>Qty Remaining</th>
+                                <th>Adjustment Reason</th>
+                                <th>Notes</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <ng-container *ngFor="let adjustment of this._package.Adjustments">
+                                <tr>
+                                    <td>{{adjustment.date | date:'shortDate'}} {{adjustment.date | date:'shortTime'}}</td>
+                                    <td>{{adjustment.User ? adjustment.User.firstName : ''}} {{adjustment.User ? adjustment.User.lastName : ''}}</td>
+                                    <td>{{adjustment.amount}}</td>
+                                    <td><ng-container *ngIf="adjustment.AdjustmentLog && adjustment.AdjustmentLog.quantityAfter">{{ adjustment.AdjustmentLog.quantityAfter }}{{ _package.UnitOfMeasureAbbreviation }}</ng-container></td>
+                                    <td>{{adjustment.reason}}</td>
+                                    <td style="white-space: pre-wrap">{{adjustment.notes}}</td>
+                                </tr>
+                            </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="overlay-action-buttons" style="width:20em;margin:auto">
+                        <button class="btn secondary blue" (click)="showAdjustment()" *ngIf="!_package.FinishedDate"><i class="icon icon-edit"></i>Add Quantity Adjustment</button>
+                    </div>
+                </ng-container>
+
+                <!-- Adjustment form -->
+                <div class="add-adjustment" *ngIf="_package && adjustmentShowing">
+
+                    <ul *ngIf="adjustmentErrors" class="errors" style="padding: 1rem; color: red">
+                        <li *ngFor="let error of adjustmentErrors">{{error}}</li>
+                    </ul>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput type="number" style="width: 50%; text-align: right;" placeholder="Quantity Adjustment Amount" [(ngModel)]="this.adjustment.amount" *ngIf="!errorFlags.amount"/>
+                            <input mdInput type="number" style="width: 50%; text-align: right; border: 1px solid red;" placeholder="Quantity Adjustment Amount" [(ngModel)]="this.adjustment.amount" *ngIf="errorFlags.amount"/>
+                        </md-input-container>
+
+                    </div>
+
+                    <div class="input-row" *ngIf="_package.Item.ProductType.category == 'non-cannabis'">
+                        <md-input-container class="default single">
+                            <input mdInput type="text" style="width: 50%;" placeholder="Adjustment Reason" [(ngModel)]="this.adjustment.reason" [class.error]="errorFlags.reason"/>
+                        </md-input-container>
+                    </div>
+                    <div class="input-row" *ngIf="_package.Item.ProductType.category != 'non-cannabis'">
+                        <app-select2 class="full-width"
+                                     *ngIf="adjustmentOptions"
+                                     style="margin-right: 1rem; width: 50%;"
+                                     [options]="adjustmentOptions"
+                                     [(ngModel)]="this.adjustment.reason"
+                                     >
+                        </app-select2>
+                    </div>
+
+                    <div class="input-row">
+                        <label for="quantity-notes" class="textarea-label">Notes for Adjustment</label>
+                        <textarea id="quantity-notes" style="height: 100px;" [(ngModel)]="this.adjustment.notes" class="textarea-content"></textarea>
+                    </div>
+
+                    <div class="overlay-action-buttons" *ngIf="adjustmentShowing">
+                        <button class="btn secondary grey" data-overlay-close (click)="cancelAdjustment()"><i class="icon icon-cancel"></i>Cancel
+                        </button>
+                        <button class="btn secondary blue" (click)="saveAdjustment()"><i class="icon icon-save"></i>Save</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <h3>Price Adjustments</h3>
+            <div class="package-selected-summary-info">
+                <div class="details-row">
+                    <div class="details-row-label">Total Package Wholesale Price:</div>
+                    <div class="details-row-value">
+                        <span>{{_package.wholesalePrice}}</span>
+                    </div>
+                </div>
+                <div class="details-row">
+                    <div class="details-row-label">Per {{_package.UnitOfMeasureName == "Grams" ? "Gram" : "Unit"}} Wholesale Price:</div>
+                    <div class="details-row-value">
+                        <span>{{_package.perUnitWholesalePrice}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="content-section">
+
+                <ng-container *ngIf="_package && !purchaseOrderShowing && !adjustmentShowing && !priceAdjustmentShowing">
+
+                    <div class="adjustment-table" style="padding-bottom: 20px" *ngIf="_package.PriceAdjustments && _package.PriceAdjustments.length">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Employee</th>
+                                <th>Adjustment Amount</th>
+                                <th>Adjusted Price</th>
+                                <th>Adjustment Reason</th>
+                                <th>Notes</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <ng-container *ngFor="let adjustment of this._package.PriceAdjustments">
+                                <tr>
+                                    <td>{{adjustment.date | date:'shortDate'}} {{adjustment.date | date:'shortTime'}}</td>
+                                    <td>{{adjustment.User ? adjustment.User.firstName : ''}} {{adjustment.User ? adjustment.User.lastName : ''}}</td>
+                                    <td>{{adjustment.amount | currency:'USD':true}}</td>
+                                    <td>{{ adjustment.adjustedAmount | currency:'USD':true }}</td>
+                                    <td>{{adjustment.reason}}</td>
+                                    <td>{{adjustment.notes}}</td>
+                                </tr>
+                            </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="overlay-action-buttons" style="width:20em;margin:auto">
+                        <button class="btn secondary blue" (click)="showPriceAdjustment()" *ngIf="!_package.FinishedDate"><i class="icon icon-edit"></i>Add Price Adjustment</button>
+                    </div>
+                </ng-container>
+
+                <!-- Adjustment form -->
+                <div class="add-adjustment" *ngIf="_package && priceAdjustmentShowing">
+
+                    <ul *ngIf="adjustmentErrors" class="errors" style="padding: 1rem; color: red">
+                        <li *ngFor="let error of adjustmentErrors">{{error}}</li>
+                    </ul>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput type="number" style="width: 50%; text-align: right" placeholder="Price Adjustment Amount" [(ngModel)]="this.priceAdjustment.amount"/>
+                        </md-input-container>
+
+                    </div>
+
+                    <div class="input-row">
+                        <md-input-container class="default single">
+                            <input mdInput type="text" style="width: 50%;" placeholder="Adjustment Reason" [(ngModel)]="this.priceAdjustment.reason" [class.error]="errorFlags.reason"/>
+                        </md-input-container>
+                    </div>
+
+                    <div class="input-row">
+                        <label for="price-notes" class="textarea-label">Notes for Adjustment</label>
+                        <textarea id="price-notes" style="height: 100px;" [(ngModel)]="this.priceAdjustment.notes" class="textarea-content"></textarea>
+                    </div>
+
+                    <div class="overlay-action-buttons" *ngIf="priceAdjustmentShowing">
+                        <button class="btn secondary grey" data-overlay-close (click)="cancelPriceAdjustment()"><i class="icon icon-cancel"></i>Cancel
+                        </button>
+                        <button class="btn secondary blue" (click)="savePriceAdjustment()"><i class="icon icon-save"></i>Save</button>
+                    </div>
+
+                </div>
+
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="mode == 'audit'">
+
+            <h3>Package Audit</h3>
+            <div class="content-section">
+                <table class="report-table sticky" *ngIf="auditData">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Employee</th>
+                        <th>Event</th>
+                        <th style="text-align: right; width: 10%;">Qty. Change</th>
+                        <th style="text-align: right; width: 10%;">Qty. Remaining</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr *ngFor="let data of auditData">
+                        <td>{{data.date | date:'short'}}</td>
+                        <td>{{data.user ? data.user : ''}}</td>
+                        <td>{{data.type | ucfirst}}</td>
+                        <td style="text-align: right;">{{data.change ? data.change.toFixed(2) + ' ' + auditUnits : ''}}</td>
+                        <td style="text-align: right;">{{data.newQuantity + ' ' + auditUnits}}</td>
+                        <td>
+                            <ng-container *ngIf="data.type == 'transaction'">
+                                <a (click)="openReceipt(data.notes)">Receipt ID: {{ data.notes }}</a>
+                            </ng-container>
+                            <ng-container *ngIf="data.type == 'adjustment' && data.adjustmentNotes">
+                                {{data.adjustmentReason}} <a (click)="openReceipt(data.adjustmentNotes, true)">Receipt ID: {{ data.adjustmentNotes }}</a>
+                            </ng-container>
+                            <ng-container *ngIf="(data.type != 'transaction') && (data.type != 'adjustment' || !data.adjustmentNotes)">
+                                {{data.notes}}
+                            </ng-container>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="mode == 'receipts'">
+            <h3>Receipts</h3>
+            <div class="content-section">
+
+                <table class="report-table receipts-table has-subtable" *ngIf="receipts">
+                    <thead>
+                    <tr>
+                        <th>Receipt ID</th>
+                        <th>Date</th>
+                        <th>Employee</th>
+                        <th style="width: inherit;">Payment Method</th>
+                        <th>Sent To Metrc</th>
+                        <th class="col-8rem text-right">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <ng-container *ngIf="!receipts || !receipts.length">
+                        <tr>
+                            <td colspan="6">No receipts found.</td>
+                        </tr>
+                    </ng-container>
+                    <ng-container *ngFor="let receipt of receipts">
+                        <tr (click)="this.toggleReceipt(receipt)" id="R{{ receipt.object.barcode }}" [ngClass]="{'subtable-toggle--expanded': receipt.isToggled, 'subtable-toggle--collapsed': !receipt.isToggled}">
+                            <td>{{receipt.object.barcode}}</td>
+                            <td>{{receipt.object.createdAt | date:'shortDate'}} {{receipt.object.createdAt | date:'shortTime'}}</td>
+                            <td>{{receipt.object.User ? (receipt.object.User.firstName + ' ' + receipt.object.User.lastName) : ''}}</td>
+                            <td>{{(receipt.object.paymentMethod == 'gift-card' ? "gift card" : receipt.object.paymentMethod) | ucwords}}</td>
+                            <td>{{receipt.object.sentToMetrc ? 'Yes' : 'No'}}</td>
+                            <td class="col-8rem text-right">{{receipt.object.total | currency:'USD':true}}</td>
+                        </tr>
+
+                        <tr *ngIf="receipt.isToggled">
+                            <td colspan="6" class="subtable">
+                                <div *ngIf="receipt.object.paymentMethod == 'gift-card'" class="subtable-text">
+                                    <span class="bold-label">Gift Card ID: </span>{{receipt.object.giftcardTransactionId}}
+                                </div>
+
+                                <ng-container *ngFor="let lineItem of receipt.object.LineItems">
+                                    <table class="receipts-table">
+                                        <thead>
+                                        <tr>
+                                            <th class="col-100">Barcode</th>
+                                            <th class="col-260">Package</th>
+                                            <th>Products</th>
+                                            <th class="col-10rem">Variation</th>
+                                            <th class="money-column">Quantity</th>
+                                            <th class="money-column">Total</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <ng-container *ngFor="let transaction of lineItem.Transactions">
+                                            <tr>
+                                                <td class="col-100">
+                                                    <ng-container *ngIf="(!editingReceiptByBarcode || transaction.sentToMetrc) && lineItem.Barcode">
+                                                        {{lineItem.Barcode.barcode}}
+                                                    </ng-container>
+                                                    <ng-container *ngIf="editingReceiptByBarcode && lineItem.Barcode && !transaction.sentToMetrc">
+                                                        <div class="input-row">
+                                                            <app-select2 *ngIf="availableBarcodesSelect2Options"
+                                                                         [options]="availableBarcodesSelect2Options" class="full-width"
+                                                                        [(ngModel)]="lineItem.Barcode.barcodeTemporaryCopy"
+                                                            >
+                                                            </app-select2>
+                                                        </div>
+                                                    </ng-container>
+                                                </td>
+                                                <td class="col-260">
+                                                    <ng-container *ngIf="(!editingReceiptManually || transaction.sentToMetrc || editingTransaction != transaction.id)">
+                                                        {{transaction.Package.Label}}
+                                                    </ng-container>
+                                                    <ng-container *ngIf="editingReceiptManually && !transaction.sentToMetrc && editingTransaction == transaction.id">
+                                                        <div class="input-row">
+                                                            <app-select2 *ngIf="packageSelect2Options"
+                                                                         [options]="packageSelect2Options" class="full-width col-260"
+                                                                        [(ngModel)]="selectedPackageId"
+                                                            >
+                                                            </app-select2>
+                                                        </div>
+                                                    </ng-container>
+                                                </td>
+                                                <td>
+                                                    <ng-container *ngIf="editingReceiptManually && !transaction.sentToMetrc && editingTransaction == transaction.id">
+                                                        {{ selectedPackageItemName }}
+                                                    </ng-container>
+                                                    <ng-container *ngIf="!editingReceiptManually || transaction.sentToMetrc || editingTransaction != transaction.id">
+                                                        {{transaction.Package.Item.name}}
+                                                    </ng-container>
+                                                </td>
+                                                <td class="col-10rem">
+                                                    <ng-container *ngIf="editingReceiptManually && !transaction.sentToMetrc && editingTransaction == transaction.id">
+                                                        <div class="input-row">
+                                                            <app-select2 id="productVariationSelect2" *ngIf="productVariationSelect2Options"
+                                                                         [options]="productVariationSelect2Options"
+                                                                        [(ngModel)]="selectedProductVariationId"
+                                                            >
+                                                            </app-select2>
+                                                        </div>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="!editingReceiptManually || transaction.sentToMetrc || editingTransaction != transaction.id">
+                                                        {{lineItem.ProductVariation ? lineItem.ProductVariation.name : ''}}
+                                                    </ng-container>
+                                                </td>
+                                                <td class="money-column">{{lineItem.quantity}}</td>
+                                                <td *ngIf="!transaction.isReturn" class="money-column">{{transaction.TotalPrice | currency:'USD':true}}</td>
+                                                <td *ngIf="transaction.isReturn" class="money-column">{{-transaction.TotalPrice | currency:'USD':true}}</td>
+                                            </tr>
+                                            <tr *ngIf="user.Permissions.canEditLineItems">
+                                                <td colspan="6" style="text-align:center">
+                                                    <ng-container *ngIf="!transaction.sentToMetrc">
+                                                        <ng-container *ngIf="!editingReceiptByBarcode && !editingReceiptManually">
+                                                            <button *ngIf="lineItem.Barcode" class="btn secondary blue" (click)="editReceiptByBarcode()">Edit by Barcode</button>
+                                                            <button class="btn secondary blue" (click)="editReceiptManually(transaction)">Edit Manually</button>
+                                                        </ng-container>
+                                                        <ng-container *ngIf="editingReceiptByBarcode">
+                                                            <button class="btn secondary grey" (click)="cancelReceiptEditing()">Cancel</button>
+                                                            <button class="btn secondary blue" (click)="saveEditReceiptByBarcode(transaction, lineItem)">Save</button>
+                                                        </ng-container>
+                                                        <ng-container *ngIf="editingReceiptManually && (editingTransaction == transaction.id)">
+                                                            <button class="btn secondary grey" (click)="cancelReceiptEditing()">Cancel</button>
+                                                            <button class="btn secondary blue" (click)="saveEditReceiptManually(transaction, lineItem)">Save</button>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="transaction.sentToMetrc">
+                                                        <i>Can't modify this transaction because of missing permissions or it was already synchronized.</i>
+                                                    </ng-container>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        </tbody>
+                                    </table>
+                                </ng-container>
+                            </td>
+                        </tr>
+
+                    </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="mode == 'barcodes'">
+            <h3>Barcode details</h3>
+            <div class="content-section">
+
+                <ng-container *ngFor="let barcode of barcodes">
+                    <main class="package-barcodes">
+                        <div>
+                            <table class="" (click)="onBarcodeRowClick($event, barcode)">
+                                <tr>
+                                    <td>Barcode</td>
+                                    <td>{{barcode.barcode}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Product</td>
+                                    <td>{{barcode.ProductVariation.Product.name}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Product Variation</td>
+                                    <td>{{barcode.ProductVariation.name}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Created date</td>
+                                    <td>{{barcode.createdAt | date:'short'}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Price</td>
+                                    <td>{{productVariationPrice(barcode.ProductVariation)}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Original Allocation</td>
+                                    <td>{{(barcode.allocatedInventory ? barcode.allocatedInventory : "No allocation")}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Remaining Allocation</td>
+                                    <td>{{(barcode.remainingInventory ? barcode.remainingInventory : "No allocation")}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Qty</th>
+                                        <th>Composition %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of barcode.ProductVariation.Items">
+                                        <td>{{ item.name }}</td>
+                                        <td>{{ item.ProductVariationItem.quantity }}</td>
+                                        <td><span class="align-right" style="width: 60px; padding-left: 0;">{{(((item.ProductVariationItem.quantity / (barcode.ProductVariation.Items | pluck:'ProductVariationItem.quantity' | sum)) * 100) | round:2) + '%'}}</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </main>
+                    <button *ngIf="barcode.allocatedInventory != null" class="btn secondary blue" (click)="viewAllocation(barcode)">View Allocated Inv.</button>
+                    <button *ngIf="barcode.allocatedInventory != null" class="btn secondary blue" (click)="printBarcodes(barcode)">Print Barcodes (PDF)</button>
+                    <button *ngIf="barcode.allocatedInventory != null" class="btn secondary blue" (click)="printBarcodeLabels(barcode)">Print Barcodes (Labels)</button>
+                    <button *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditBarcodes && !_package.FinishedDate && _package.wasReceived" class="btn secondary blue" (click)="goToBarcode(barcode.ProductVariation)"><i class="icon icon-add"></i>Barcode</button>
+                </ng-container>
+
+            <div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listBarcodes()"></div>
+
+            </div>
+        </ng-container>
+    </div>
+</main>
+
+<router-outlet></router-outlet>

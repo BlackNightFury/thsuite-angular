@@ -1,0 +1,29 @@
+<div *ngIf="deviceType">
+    <table>
+        <thead>
+            <th>Name</th>
+            <th>Port</th>
+            <th></th>
+        </thead>
+        <tbody>
+            <ng-container *ngIf="devices && devices.length">
+                <tr *ngFor="let device of devices">
+                    <td style="text-align: left">{{device.name}}</td>
+                    <td style="text-align: left">{{device.port}}</td>
+                    <td><button class="btn secondary blue" (click)="select(device)">Select</button></td>
+                </tr>
+            </ng-container>
+            <ng-container *ngIf="devices && !devices.length">
+                <tr>
+                    <td colspan="3">No devices found.</td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+    <div *ngIf="selectedDevice" style="margin-top: 1rem;">
+        <span>Selected Device: {{selectedDevice.name}}</span>
+    </div>
+    <div *ngIf="noDeviceSelected" style="margin-top: 1rem;">
+        <span style="color: red">No device is selected</span>
+    </div>
+</div>

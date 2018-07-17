@@ -1,0 +1,122 @@
+<div #root class="overlay right active not-hidden-block" [@leave]="animationStatus" (@leave.done)="cancel()">
+
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><img src="/assets/svg/product_details.svg"/></div>
+        <div>
+            <h5 class="subtitle">Item Details</h5>
+            <h1 class="section-title">{{object?.name}}</h1>
+        </div>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'edit'">
+        <div class="svg-icon"><img src="/assets/svg/edit_product.svg"/></div>
+        <h1 class="section-title">Edit Item</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'add'">
+        <div class="svg-icon"><img src="/assets/svg/add_new_product.svg"/></div>
+        <h1 class="section-title">Add New Item</h1>
+    </div>
+    <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+        <li *ngFor="let error of errors">{{error}}</li>
+    </ul>
+
+    <ng-container *ngIf="object">
+
+        <md-button-toggle  (change)="togglePackages()" [checked]="packagesShowing" style="margin-bottom: 2rem; display: flex;" *ngIf="mode != 'add'">Show Packages</md-button-toggle>
+
+        <ng-container *ngIf="mode == 'view'">
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Product Type</span>
+                    <h5 class="product-info">{{object.ProductType.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Item Name</span>
+                    <h5 class="product-info">{{object.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">METRC ID</span>
+                    <h5 class="product-info">{{object.MetrcId ? object.MetrcId : 'None'}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Quantity</span>
+                    <h5 class="product-info">{{object.totalQuantity.toFixed(2)}}&nbsp;{{object.UnitOfMeasureAbbreviation}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Supplier</span>
+                    <h5 class="product-info">{{object.Supplier ? object.Supplier.name : 'Unknown'}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="object.ProductType.unitOfMeasure != 'gram'">
+                <div>
+                    <span class="input-label">THC Weight (in grams)</span>
+                    <h5 class="product-info">{{object.thcWeight}}</h5>
+                </div>
+            </div>
+
+            <div class="overlay-action-buttons" *ngIf="user.Permissions.inventoryManagement == 'edit'">
+                <button class="btn secondary grey" *ngIf="object.ProductType.category == 'non-cannabis'" (click)="remove()"><i class="icon icon-remove"></i>Remove</button>
+                <button class="btn secondary blue" (click)="edit()"><i class="icon icon-edit"></i>Edit</button>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input *ngIf="!errorFlags.name" mdInput placeholder="Item Name" [(ngModel)]="object.name" [readonly]="object.MetrcId"/>
+                    <input *ngIf="errorFlags.name" style="border: 1px solid red" mdInput placeholder="Item Name" [(ngModel)]="object.name" [readonly]="object.MetrcId"/>
+                </md-input-container>
+            </div>
+            <div class="input-row">
+                <label class="input-label">Product Type</label>
+
+                <app-select2 *ngIf="productTypeSelect2Options && !errorFlags.productType"
+                             [options]="productTypeSelect2Options" class="full-width"
+                             [(ngModel)]="object.productTypeId">
+                </app-select2>
+
+                <app-select2 *ngIf="productTypeSelect2Options && errorFlags.productType"
+                             style="border: 1px solid red"
+                             [options]="productTypeSelect2Options" class="full-width"
+                             [(ngModel)]="object.productTypeId">
+                </app-select2>
+            </div>
+            <div class="input-row" *ngIf="object.ProductType && object.ProductType.unitOfMeasure != 'gram'">
+                <md-input-container class="default single">
+                    <input mdInput placeholder="THC Weight (in grams)" [(ngModel)]="object.thcWeight"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row" *ngIf="mode == 'add'">
+                <md-input-container class="default single">
+                    <input mdInput placeholder="Initial Package Quantity" [(ngModel)]="object.initialPackageQuantity" [ngClass]="{error: errorFlags.initPackage}"/>
+                </md-input-container>
+            </div>
+
+            <div class="overlay-action-buttons">
+                <button class="btn secondary grey" (click)="startLeaving()"><i class="icon icon-cancel"></i>Cancel
+                </button>
+                <button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>Save</button>
+            </div>
+        </ng-container>
+
+
+
+    </ng-container>
+</div>
+
+<router-outlet></router-outlet>

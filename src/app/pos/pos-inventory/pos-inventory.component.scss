@@ -1,0 +1,11 @@
+.control-input {
+    align-items: center;
+}
+
+.controls-input-search {
+    width: 100%;
+    margin: 0 0 0 5rem;
+    @media(min-width: 992px){
+        width: 35em;
+    }
+}

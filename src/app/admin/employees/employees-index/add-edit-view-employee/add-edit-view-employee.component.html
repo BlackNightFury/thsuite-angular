@@ -1,0 +1,192 @@
+<div #root class="overlay right active not-hidden-block" [@leave]="animationStatus" (@leave.done)="cancel()">
+
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+
+    <div class="section-heading" *ngIf="mode == 'edit'">
+        <div class="svg-icon"><img src="/assets/svg/edit_product.svg"/></div>
+        <h1 class="section-title">Edit Employee</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'add'">
+        <div class="svg-icon"><img src="/assets/svg/add_new_product.svg"/></div>
+        <h1 class="section-title">Add New Employee</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><img src="/assets/svg/product_details.svg"/></div>
+        <h1 class="section-title">Employee Details</h1>
+    </div>
+
+    <ng-container *ngIf="object">
+        <ng-container *ngIf="mode == 'view'">
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">First Name</span>
+                    <h5 class="product-info">{{object.firstName}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Last Name</span>
+                    <h5 class="product-info">{{object.lastName}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Phone Number</span>
+                    <h5 class="product-info">{{object.phone}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Email</span>
+                    <h5 class="product-info">{{object.email}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">D.O.B</span>
+                    <h5 class="product-info">{{object.dob | date:'shortDate'}}</h5>
+                </div>
+            </div>
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Badge ID</span>
+                    <h5 class="product-info">{{object.badgeId}}</h5>
+                </div>
+            </div>
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Badge Expiration</span>
+                    <h5 class="product-info">{{object.badgeExpiration | date:'shortDate'}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Location</span>
+                    <h5 class="product-info">{{object.Store.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Access Type</span>
+                    <h5 class="product-info">{{(object.type == 'pos' ? 'POS' : object.type | ucfirst)}}</h5>
+                </div>
+            </div>
+
+            <div class="overlay-action-buttons" *ngIf="user.Permissions.employeeManagement == 'edit'">
+                <!-- Cannot delete employees -->
+                <!--<button class="btn secondary grey"><i class="icon icon-remove"></i>Remove</button>-->
+                <button class="btn secondary blue" (click)="edit()"><i class="icon icon-edit"></i>Edit</button>
+            </div>
+
+        </ng-container >
+        <ng-container *ngIf="mode != 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <md-button-toggle (change)="togglePermissions()" [checked]="permissionsShowing" style="margin-bottom: 2rem;" *ngIf="mode == 'edit'">Show Permissions</md-button-toggle>
+
+            <div class="input-row md-input">
+                <md-input-container class="default single">
+                    <input [class.error]="errorFlags.first" mdInput placeholder="First Name" [(ngModel)]="object.firstName"/>
+                </md-input-container>
+            </div>
+            <div class="input-row md-input">
+                <md-input-container class="default single">
+                    <input [class.error]="errorFlags.last" mdInput placeholder="Last Name" [(ngModel)]="object.lastName"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row md-input">
+                <md-input-container class="default single">
+                    <input [class.error]="errorFlags.phone" mdInput placeholder="Phone Number" [(ngModel)]="object.phone" (keyup)="formatPhoneNumber($event)"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row md-input">
+                <md-input-container class="default single">
+                    <input [class.error]="errorFlags.email" mdInput placeholder="Email Address" [(ngModel)]="object.email"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row md-input">
+                <div class="default single input-has-icon datepick">
+                    <label class="input-label">D.O.B.</label>
+                    <input [class.error]="errorFlags.dob" [owlDateTime]="dtDOB" [owlDateTimeTrigger]="dtDOB" placeholder="Date Time" [(ngModel)]="object.dob" [max]="latestBirthDate" placeholder="mm/dd/yyyy">
+                    <i class="icon icon-calendar"></i>                
+                </div>
+                <owl-date-time #dtDOB [pickerType]="'calendar'"></owl-date-time>
+            </div>
+
+            <div class="input-row md-input">
+                <md-input-container class="default single">
+                    <input [class.error]="errorFlags.badgeId" mdInput placeholder="Badge ID" [(ngModel)]="object.badgeId"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row md-input">
+                <div class="default single input-has-icon datepick">
+                    <label class="input-label">Badge Expiration</label>
+                    <input [class.error]="errorFlags.badgeExpiration" [owlDateTime]="dtBadgeExpiration" [owlDateTimeTrigger]="dtBadgeExpiration" [(ngModel)]="object.badgeExpiration" [min]="earliestExpirationDate" placeholder="mm/dd/yyyy">
+                    <i class="icon icon-calendar"></i>                
+                </div>
+                <owl-date-time #dtBadgeExpiration [pickerType]="'calendar'"></owl-date-time>
+            </div>
+
+            <div class="input-row md-input">
+                <label class="input-label">Location</label>
+                <app-select2 *ngIf="storeSelect2Options"
+                             [options]="storeSelect2Options" class="full-width"
+                             [(ngModel)]="object.storeId">
+                </app-select2>
+            </div>
+
+            <div class="input-row md-input">
+                <label class="input-label">Type</label>
+                <md-button-toggle-group [class.error]="errorFlags.type" class="default blue" [(ngModel)]="object.type">
+                    <md-button-toggle value="admin">Admin</md-button-toggle>
+                    <md-button-toggle value="pos">POS</md-button-toggle>
+                </md-button-toggle-group>
+            </div>
+
+            <ng-container *ngIf="environment.pointOfSalePin">
+                <div class="input-row">
+                    <label class="input-label">POS PIN (4 characters, letters or numbers)</label>
+                    <input type="tel" [class.error]="errorFlags.posPin" [(ngModel)]="object.posPin">
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="object.type == 'admin'">
+                <div class="input-row">
+                    <label class="input-label">Manager PIN (4 characters, letters or numbers)</label>
+                    <input type="tel" [class.error]="errorFlags.pin" [(ngModel)]="object.pin" maxlength="4">
+                </div>
+            </ng-container>
+
+            <!--ng-container *ngIf="mode == 'add'">
+                <div class="input-row md-input">
+                    <md-input-container class="default single">
+                        <input type="password" [class.error]="errorFlags.password" mdInput placeholder="Password" [(ngModel)]="object.password"/>
+                    </md-input-container>
+                </div>
+             </ng-container-->
+
+            <div class="overlay-action-buttons">
+                <button class="btn secondary grey" data-overlay-close (click)="startLeaving()"><i class="icon icon-cancel"></i>Cancel
+                </button>
+                <button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>{{this.mode == 'add' ? 'Create' : 'Save'}}</button>
+            </div>
+
+        </ng-container>
+
+    </ng-container>
+</div>
+
+<router-outlet></router-outlet>

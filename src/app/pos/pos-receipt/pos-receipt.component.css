@@ -1,0 +1,36 @@
+.container-pos-settings {
+    margin-right: 0rem;
+}
+
+.container-pos-settings .control-input button {
+    margin-left: auto;
+}
+
+.receipts-table td.void {
+    border-color: red;
+}
+
+.search-wrap {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.export-day-btn {
+    margin-left: 1rem !important;
+}
+
+.export-day-date {
+    margin-left: auto;
+}
+
+.line-breaker {
+  white-space: pre-line;
+}
+
+.deleted {
+    cursor: default;
+}
+
+.deleted td {
+    color: #bdc2ca !important;
+}

@@ -1,0 +1,10 @@
+<div class="pos-product-item-inner">
+    <div class="pos-product-image" [style.background-image]="'url(' + productVariation.Product.image + ')'"></div>
+    <div class="pos-product-info">
+        <div>
+            <h2 class="pos-product-title">{{productVariation.Product.name}} {{productVariation.name}}</h2>
+            <p class="pos-product-description">{{(productVariation.price * productVariation.quantity) | currency:'USD':true}} / {{productVariation.quantity}}{{productVariation.Product.inventoryType == 'weight' ? 'g' : 'ea'}}</p>
+        </div>
+        <a (click)="onAddToCart()" class="pos-product-add"><i class="icon icon-add-pos"></i></a>
+    </div>
+</div>

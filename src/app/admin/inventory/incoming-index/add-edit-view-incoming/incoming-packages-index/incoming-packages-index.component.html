@@ -1,0 +1,80 @@
+<div class="overlay-closearea second double-width" (click)="startLeaving()"></div>
+<div class="overlay right second active not-hidden-block double-width" [@leave]="animationStatus" (@leave.done)="cancel()" *ngIf="transfer">
+
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+
+    <div class="section-heading">
+        <div class="svg-icon"><img src="/assets/svg/inventory.svg"/></div>
+        <div>
+            <h5 class="subtitle">{{transfer.ManifestNumber}} - {{transfer.Supplier.name}}</h5>
+            <h1 class="section-title">Package List</h1>
+        </div>
+    </div>
+
+
+    <ng-container *ngIf="transfer">
+
+        <div class="input-row" style="margin-top: 1rem">
+            <table class="nohover">
+                <thead>
+                <tr>
+                    <th>RFID Label</th>
+                    <th>Product Name</th>
+                    <th>Product Type</th>
+                    <th class="align-right">Shipped</th>
+                    <th class="align-right">Received</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr *ngFor="let _package of packages">
+                    <td>{{_package.PackageLabel}}</td>
+                    <td>{{_package.ProductName}}</td>
+                    <td>{{_package.ProductCategoryName}}</td>
+                    <td class="align-right">{{(_package.ShippedQuantity ? _package.ShippedQuantity.toFixed(2) : 0.00 )}}&nbsp;{{_package.ShippedUnitOfMeasureName}}</td>
+                    <td class="align-right">{{(_package.ReceivedQuantity ? _package.ReceivedQuantity.toFixed(2) : 0.00 )}}&nbsp;{{_package.ShippedUnitOfMeasureName}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="add-adjustment" *ngIf="priceAdjustmentShowing">
+
+            <ul *ngIf="adjustmentErrors" class="errors" style="padding: 1rem; color: red">
+            <li *ngFor="let error of adjustmentErrors">{{error}}</li>
+            </ul>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input mdInput type="number" style="text-align: right" placeholder="Price Adjustment Amount" [(ngModel)]="priceAdjustment.amount"/>
+                </md-input-container>
+
+            </div>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input mdInput type="text" placeholder="Adjustment Reason" [(ngModel)]="priceAdjustment.reason" [class.error]="errorFlags.reason"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row">
+                <label for="price-notes" class="textarea-label">Notes for Adjustment</label>
+                <textarea id="price-notes" style="height: 100px;" [(ngModel)]="this.priceAdjustment.notes" class="textarea-content"></textarea>
+            </div>
+
+            <div class="overlay-action-buttons" *ngIf="priceAdjustmentShowing">
+                <button class="btn secondary grey" data-overlay-close (click)="cancelPriceAdjustment()"><i class="icon icon-cancel"></i>Cancel
+                </button>
+                <button class="btn secondary blue" (click)="savePriceAdjustment()"><i class="icon icon-save"></i>Save</button>
+            </div>
+
+        </div>
+
+        <div class="overlay-action-buttons">
+            <button class="btn secondary blue" (click)="showPriceAdjustment()" *ngIf="!priceAdjustmentShowing"><i class="icon icon-edit"></i>Add Price Adjustment</button>
+        </div>
+    </ng-container>
+</div>
+
+
+<router-outlet></router-outlet>

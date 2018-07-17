@@ -1,0 +1,112 @@
+<main class="modal--add-edit-visitor" *ngIf="object">
+    <input type="hidden" autofocus name="focus-target"/>
+    <div style="margin-top: 1.5em;" class="modal--add-edit-visitor--inner">
+        <ng-container *ngIf="mode != 'view' && !saving">
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red; text-align:left;">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+            <table class="nohover">
+                <tr>
+                    <td>First Name</td>
+                    <td>
+                        <input [ngClass]="{error: errorFlags.firstName}" [(ngModel)]="object.firstName"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Last Name</td>
+                    <td>
+                        <input [ngClass]="{error: errorFlags.lastName}" [(ngModel)]="object.lastName"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Reason for Visit</td>
+                    <td>
+                        <app-select2 *ngIf="visitReasonsSelect2Options && !addingNewVisitReason"
+                            [options]="visitReasonsSelect2Options" class="full-width"
+                            [ngModel]="object.visitReason"
+                            [ngClass]="{error: errorFlags.visitReason}"
+                            (select)="onVisitReasonChange($event)">
+                        </app-select2>
+                        <ng-container *ngIf="addingNewVisitReason">
+                            <div class="double-input no-justify">
+                                <input [ngClass]="{error: errorFlags.visitReason}" [(ngModel)]="object.visitReason"/>
+                                <button class="btn btn-primary margin-left-20" style="background-color: black;" (click)="backToPredefinedReasons()">Back to<br/>predefined list</button>
+                            </div>
+                        </ng-container>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Photo ID</td>
+                    <td class="image-upload-cell">
+                        <div *ngIf="!object.idImage" [ngClass]="{error: errorFlags.idImage}">
+                            <th-image-upload #idImageUpload
+                                [max]="1"
+                                [preview]="true"
+                                [buttonCaption]="'Upload ID Image'"
+                                [dropBoxMessage]=""
+                                (uploadFinished)="prepareIdImage($event, object)"
+                            ></th-image-upload>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Signature</td>
+                    <td class="image-upload-cell">
+                        <div *ngIf="!object.signature" [ngClass]="{error: errorFlags.signature}">
+                            <th-image-upload #signatureUpload
+                                [max]="1"
+                                [preview]="true"
+                                [buttonCaption]="'Upload Signature'"
+                                [dropBoxMessage]=""
+                                (uploadFinished)="prepareSignature($event, object)"
+                            ></th-image-upload>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="action-buttons-container">
+                <button class="btn primary grey large" (click)="cancel()">
+                    Cancel
+                </button>
+                <button class="btn primary green large" (click)="checkIn()">
+                    Check In
+                </button>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="mode == 'view' && !saving">
+            <div class="margin-bottom-20">
+                <div class="visitor-row">
+                    <div>
+                        <div class="visitor-field-label">First Name:</div><div class="visitor-field-value">{{object.firstName}}</div>
+                    </div>
+                    <div>
+                        <div class="visitor-field-label">Last Name:</div><div class="visitor-field-value">{{object.lastName}}</div>
+                    </div>
+                    <div>
+                        <div class="visitor-field-label">Reason for Visit:</div><div class="visitor-field-value">{{object.visitReason}}</div>
+                    </div>
+                    <div>
+                        <div class="visitor-field-label">Date Check In:</div><div class="visitor-field-value">{{object.clockIn | date:'shortDate'}}</div>
+                    </div>
+                    <div>
+                        <div class="visitor-field-label">Time Check In:</div><div class="visitor-field-value">{{object.clockIn | date:'shortTime'}}</div>
+                    </div>
+                    <div class="view-button-container">
+                        <a class="view-button" (click)="viewId()">View ID and Signature</a>
+                    </div>
+                </div> 
+            </div>
+            <div class="action-buttons-container">
+                <button class="btn primary blue large margin-bottom-20" (click)="close()">
+                    Close
+                </button>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="saving">
+            <div style="margin:auto">
+                Checking In...
+            </div>
+        </ng-container>
+    </div>
+</main>

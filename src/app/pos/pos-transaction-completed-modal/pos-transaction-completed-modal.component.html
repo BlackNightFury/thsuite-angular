@@ -1,0 +1,20 @@
+<section *ngIf="receipt">
+    <header>
+        <div>Transaction Complete</div>
+        <div>Receipt ID: {{receipt.barcode}}</div>
+    </header>
+    <div class="change-due">
+        <span>Change Due:</span>
+        <span>{{changeDue | currency:'USD':true}}</span>
+    </div>
+    <div class="sales-total">
+        <span>Sales total</span>
+        <span>{{salesTotal | currency:'USD':true}}</span>
+    </div>
+    <div class="action-row">
+        <ng-container *ngIf="environment.shouldShowReprintLabels">
+            <button class="btn primary green" (click)="reprintLabels()">Re-print Labels</button>
+        </ng-container>
+        <button class="btn primary green" (click)="reprintReceipt()">Re-print Receipt</button>
+    </div>
+</section>

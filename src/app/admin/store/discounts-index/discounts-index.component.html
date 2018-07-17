@@ -1,0 +1,114 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Discounts</h2>
+
+        <button md-button class="btn tertiary green" (click)="createNewDiscount()" *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditDiscounts"><i class="icon icon-add"></i>Discount</button>
+        <!--<button md-button class="btn tertiary blue btn-export"><i class="icon icon-export"></i>Export</button>-->
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-select2 *ngIf="discountEntitySelect2Options"
+                     [options]="discountEntitySelect2Options"
+                     [(ngModel)]="selectedDiscountEntity">
+        </app-select2>
+
+        <app-select2 *ngIf="productSelect2Options && flags.productId"
+                     [options]="productSelect2Options"
+                     [(ngModel)]="selectedProduct">
+        </app-select2>
+
+        <app-select2 *ngIf="productTypeSelect2Options && flags.productTypeId"
+                     [options]="productTypeSelect2Options"
+                     [(ngModel)]="selectedProductType">
+        </app-select2>
+
+        <app-select2 *ngIf="packageSelect2Options && flags.packageId"
+                     [options]="packageSelect2Options"
+                     [(ngModel)]="selectedPackage">
+        </app-select2>
+        
+        <label class="input-label">Show</label>
+        <app-button-toggler class="multiple" [options]="toggleStatusOptions" [(ngModel)]="statusOptions" ></app-button-toggler>
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-products-table green-hl-tr">
+        <thead>
+        <tr>
+            <th sortBy="name" [(ngModel)]="sortByModel">Name</th>
+            <th>Applicable Entity</th>
+            <th>Discount</th>
+            <th>Date Range</th>
+            <th>Times</th>
+            <th>Days</th>
+            <th sortBy="isActive" [(ngModel)]="sortByModel" *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditDiscounts">Status</th>
+            <th *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditDiscounts"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let discount of objects | async" (click)="onRowClick($event, discount)">
+            <td>{{discount.name}}</td>
+            <td>
+                <ng-container *ngIf="discount.ProductType">
+                    {{discount.ProductType.name}}
+                </ng-container>
+                <ng-container *ngIf="discount.Product">
+                    {{discount.Product.name}}
+                </ng-container>
+                <ng-container *ngIf="discount.Package">
+                    {{discount.Package.Label}}
+                </ng-container>
+                <ng-container *ngIf="discount.Supplier">
+                    {{discount.Supplier.name}}
+                </ng-container>
+                <ng-container *ngIf="!discount.ProductType && !discount.Product && !discount.Package && !discount.Supplier">
+                    All Items
+                </ng-container>
+            </td>
+            <td>
+                {{discount.amountType == 'dollar' ? '$' : ''}}{{discount.amount}}{{discount.amountType == 'percent' ? '%' : ''}}
+                off
+            </td>
+            <td>
+                <ng-container *ngIf="discount.startDate">
+                    {{discount.startDate | date:'shortDate'}} - {{discount.endDate | date:'shortDate'}}
+                </ng-container>
+                <ng-container *ngIf="!discount.startDate">
+                    All Dates
+                </ng-container>
+            </td>
+            <td>
+                <ng-container *ngIf="discount.startTime">
+                    {{discount.startTime | date:'shortTime'}} - {{discount.endTime | date:'shortTime'}}
+                </ng-container>
+                <ng-container *ngIf="!discount.startTime">
+                    All Times
+                </ng-container>
+            </td>
+            <td>
+                {{discount.days | formatArray:'All Days'}}
+            </td>
+            <td *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditDiscounts">
+                <label class="tgl-btn-wrapper">
+                    <input class="tgl tgl-skewed" type="checkbox" (change)="toggleActive(discount, $event.target.checked)" [checked]="discount.isActive">
+                    <span class="tgl-btn" data-tg-off="Inactive" data-tg-on="Active"></span>
+                </label>
+            </td>
+            <td class="table-action" *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditDiscounts">
+                <i class="icon icon-edit" (click)="editDiscount(discount)"></i>
+                <!--<i class="icon icon-my-account" (click)="viewDiscount(discount)"></i>-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listDiscounts()"></div>
+
+<router-outlet></router-outlet>

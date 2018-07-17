@@ -1,0 +1,40 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Item Purchase Orders<ng-container *ngIf="name">{{' - ' + name}}</ng-container></h2>
+    </div>
+</div>
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-select2 *ngIf="itemSelect2Options"
+                     [options]="itemSelect2Options"
+                     [(ngModel)]="selectedItemId">
+        </app-select2>
+    </div>
+</div>
+<main class="content">
+    <div *ngIf="!tableData">An Inventory Entity must be selected</div>
+
+
+    <table class="sticky nohover" *ngIf="tableData">
+        <thead>
+        <tr>
+            <th>Purchase Quantity</th>
+            <th>Purchase Wholesale Price</th>
+            <th>Date/Time</th>
+            <th>Employee</th>
+            <th>Notes</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let data of tableData">
+            <td>{{data.amount + ' ' + units}}</td>
+            <td>{{data.price | currency:'USD':true }}</td>
+            <td>{{data.date | storeTimeZone:this.store.timeZone:'short'}}</td>
+            <td>{{data.user}}</td>
+            <td>{{data.notes}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+</main>

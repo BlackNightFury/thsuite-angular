@@ -1,0 +1,48 @@
+<div class="topbar-controls">
+
+    <div class="controls-row">
+        <h2 class="page-subtitle">Caregivers</h2>
+        
+        <input type="text" class="controls-input-search"  #searchBar (keyup)="search(searchBar.value)" placeholder="Search Caregivers..."/>
+        
+        <button md-button class="btn tertiary green" (click)="createNewCaregiver()"><i class="icon icon-add"></i>Caregiver</button>
+        <!--<button md-button class="btn tertiary blue btn-export" (click)="exportPatients()"><i class="icon icon-export"></i>Export</button>-->
+    </div>
+
+</div>
+
+<main class="content">
+    <table class="inventory-products-table green-hl-tr">
+        <thead>
+        <tr>
+            <th sortBy="firstName" [(ngModel)]="sortByModel">First Name</th>
+            <th sortBy="lastName" [(ngModel)]="sortByModel">Last Name</th>
+            <th sortBy="medicalStateId" [(ngModel)]="sortByModel">Medical / State ID</th>
+            <th sortBy="phoneNumber" [(ngModel)]="sortByModel">Phone Number</th>
+
+
+            <th *ngIf="user.Permissions.patientManagement == 'edit' && user.Permissions.canEditPatients"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let caregiver of objects | async" (click)="onRowClick($event, caregiver)">
+
+            <td>{{caregiver.firstName}}</td>
+            <td>{{caregiver.lastName}}</td>
+            <td>{{caregiver.medicalStateId | toMedID}}</td>
+            <td>{{caregiver.phoneNumber | toPhoneNumber}}</td>
+
+            <td class="table-action" *ngIf="user.Permissions.patientManagement == 'edit' && user.Permissions.canEditPatients">
+                <i class="icon icon-edit" (click)="editCaregiver(caregiver)"></i>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listCaregivers()"></div>
+
+<router-outlet></router-outlet>

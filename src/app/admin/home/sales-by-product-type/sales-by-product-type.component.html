@@ -1,0 +1,28 @@
+<div class="section-box">
+    <div class="section-title">
+        <div class="section-heading">
+            <div class="svg-icon">
+                <img src="assets/svg/product_type.svg"/>
+            </div>
+            <h1 class="section-title">Sales By Product Type</h1>
+        </div>
+
+        <div class="report-control inside-fullwidth" style="width: 70%; margin-left: 0;">
+            <div style="display: flex; flex-direction: row; margin-left: 1em;">
+                <app-date-range-selector style="margin-right: 1em" [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+
+                <app-select2 style="margin-right: 1em"
+                            *ngIf="typeSelect2Options"
+                             [options]="typeSelect2Options"
+                             [(ngModel)]="selectedType">
+                </app-select2>
+            </div>
+
+        </div>
+    </div>
+    <main class="content">
+
+        <div *ngIf="chartData" id="column_chart" style="height:100%;" [chartData]="chartData" [chartOptions]= "chartOptions" chartType="ColumnChart" GoogleChart></div>
+        <div *ngIf="!chartData">No data available for current selection.</div>
+    </main>
+</div>

@@ -1,0 +1,141 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Patient Reports</h2>
+        <button class="btn tertiary blue flex-right btn-export" (click)="onClickExport()" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-date-range-selector preselectedTimeFrame="thisQuarter" [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+    </div>
+</div>
+
+    <div id="export-container">
+    <main class="content">
+        <div class="section-box">
+
+            <div class="controls-row">
+                <h2 class="page-subtitle" id="aggregate-totals">Aggregate Totals</h2>
+            </div>
+
+            <div *ngIf="chartData && chartData.length" id="line_chart" [chartData]="chartData" [chartOptions]= "chartOptions" chartType="LineChart" GoogleChart></div>
+            <br /><br />
+
+            <table class="report-table first-wide">
+                <thead>
+                <tr>
+                    <th>Total Patients Served</th>
+                    <th style="width: 20%">Total Transactions</th>
+                    <th style="width: 20%">THC Revenue</th>
+                    <th style="width: 20%">Non-THC Revenue</th>
+                    <th style="width: 20%">Total Revenue</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{ salesTotals.totalPatients }}</td>
+                    <td>{{ salesTotals.totalTransactions }}</td>
+                    <td>{{ salesTotals.thcRevenue | currency:'USD':true }}</td>
+                    <td>{{ salesTotals.nonThcRevenue | currency:'USD':true }}</td>
+                    <td>{{ salesTotals.totalRevenue | currency:'USD':true }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <main class="content">
+        <div class="topbar-controls">
+            <div class="controls-row">
+                <h2 class="page-subtitle">By Type and Amount of Medical Cannabis Dispensed</h2>
+            </div>
+        </div>
+
+        <table class="report-table first-wide">
+            <thead>
+            <tr>
+                <th sortBy="category" [(ngModel)]="sortByModelByType">Item Category</th>
+                <th style="width: 20%" sortBy="quantity" [(ngModel)]="sortByModelByType">Quantity Sold</th>
+                <th style="width: 20%" sortBy="weight" [(ngModel)]="sortByModelByType">Weight Sold</th>
+                <th style="width: 20%" sortBy="totalRevenue" [(ngModel)]="sortByModelByType">Dollar Amount</th>
+                <th style="width: 20%" sortBy="totalTransactions" [(ngModel)]="sortByModelByType">Transactions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr *ngFor="let row of salesDataByType">
+                <td>{{ row.category }}</td>
+                <td>{{ row.quantity }}</td>
+                <td>{{ row.weight }}</td>
+                <td>{{ row.totalRevenue | currency:'USD':true }}</td>
+                <td>{{ row.totalTransactions }}</td>
+            </tr>
+
+            </tbody>
+        </table>
+        <app-pager [numPages]="numPagesOfDataByCounty" [(ngModel)] = "pageModelOfDataByCounty"></app-pager>
+    </main>
+
+    <main class="content">
+        <div class="topbar-controls">
+            <div class="controls-row">
+                <h2 class="page-subtitle">By County</h2>
+            </div>
+        </div>
+
+        <table class="report-table first-wide">
+            <thead>
+            <tr>
+                <th sortBy="patientCounty" [(ngModel)]="sortByModelByCounty">County of Residence</th>
+                <th style="width: 20%" sortBy="totalQuantitySold" [(ngModel)]="sortByModelByCounty">Qty/Weight Sold</th>
+                <th style="width: 20%" sortBy="totalPatients" [(ngModel)]="sortByModelByCounty">Total Patients Served</th>
+                <th style="width: 20%" sortBy="totalTransactions" [(ngModel)]="sortByModelByCounty">Total Transactions</th>
+                <th style="width: 20%" sortBy="totalRevenue" [(ngModel)]="sortByModelByCounty">Total Revenue</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr *ngFor="let row of salesDataByCounty">
+                <td>{{ row.patientCounty ? row.patientCounty : 'N/A' }}</td>
+                <td>{{ row.totalQuantitySold ? row.totalQuantitySold : 0 }}</td>
+                <td>{{ row.totalPatients }}</td>
+                <td>{{ row.totalTransactions }}</td>
+                <td>{{ row.totalRevenue | currency:'USD':true }}</td>
+            </tr>
+
+            </tbody>
+        </table>
+        <app-pager [numPages]="numPagesOfDataByCounty" [(ngModel)] = "pageModelOfDataByCounty"></app-pager>
+    </main>
+
+    <main class="content">
+        <div class="topbar-controls">
+            <div class="controls-row">
+                <h2 class="page-subtitle">By Medical Condition</h2>
+            </div>
+        </div>
+
+        <table class="report-table">
+            <thead>
+            <tr>
+                <th style="width: 25%" sortBy="patientMedicalCondition" [(ngModel)]="sortByModelByMedicalCondition">Medical Condition</th>
+                <th sortBy="productName" [(ngModel)]="sortByModelByMedicalCondition">Recommended Product</th>
+                <th style="width: 15%" sortBy="quantitySold" [(ngModel)]="sortByModelByMedicalCondition">Quantity Sold</th>
+                <th style="width: 15%" sortBy="totalRevenue" [(ngModel)]="sortByModelByMedicalCondition">Revenue</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr *ngFor="let row of salesDataByMedicalCondition">
+                <td>{{ row.patientMedicalCondition ? row.patientMedicalCondition : 'N/A' }}</td>
+                <td>{{ row.productName }}</td>
+                <td>{{ row.quantitySold }} {{ row.UnitOfMeasureAbbreviation }}</td>
+                <td>{{ row.totalRevenue | currency:'USD':true }}</td>
+            </tr>
+
+            </tbody>
+        </table>
+        <app-pager [numPages]="numPagesOfDataByMedicalCondition" [(ngModel)] = "pageModelOfDataByMedicalCondition"></app-pager>
+    </main>
+</div>

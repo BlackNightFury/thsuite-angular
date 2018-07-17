@@ -1,0 +1,91 @@
+<div #root class="overlay right active not-hidden-block">
+    <i class="icon icon-close overlay-close" (click)="cancel()"></i>
+    <div class="section-heading" *ngIf="mode == 'edit'">
+        <div class="svg-icon"><img src="/assets/svg/edit_product.svg"/></div>
+        <h1 class="section-title">Edit Location {{object.metrcAlias}}</h1>
+    </div>
+
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><img src="/assets/svg/product_details.svg"/></div>
+        <h1 class="section-title">Location Details {{object.metrcAlias}}</h1>
+    </div>
+
+    <ng-container *ngIf="object">
+
+        <ng-container *ngIf="mode == 'view'">
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Name</span>
+                    <h5 class="product-info">{{object.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">City</span>
+                    <h5 class="product-info">{{object.city}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">State</span>
+                    <h5 class="product-info">{{object.state}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Store Manager</span>
+                    <h5 class="product-info">{{object.storeManager}}</h5>
+                </div>
+            </div>
+
+            <div class="overlay-action-buttons" *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditStores">
+                <button class="btn secondary grey"><i class="icon icon-remove"></i>Remove</button>
+                <button class="btn secondary blue" (click)="edit()"><i class="icon icon-edit"></i>Edit</button>
+            </div>
+
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <div class="input-row">
+                <label class="input-label">Name</label>
+                <input *ngIf="!errorFlags.name" type="text" [(ngModel)]="object.name">
+                <input *ngIf="errorFlags.name" style="border: 1px solid red" type="text" [(ngModel)]="object.name">
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">City</label>
+                <input *ngIf="!errorFlags.city" type="text" [(ngModel)]="object.city">
+                <input *ngIf="errorFlags.city" style="border: 1px solid red" type="text" [(ngModel)]="object.city">
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">State</label>
+                <input *ngIf="!errorFlags.state" type="text" [(ngModel)]="object.state">
+                <input *ngIf="errorFlags.state" style="border: 1px solid red" type="text" [(ngModel)]="object.state">
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">Store Manager</label>
+                <input *ngIf="!errorFlags.manager" type="text" [(ngModel)]="object.storeManager">
+                <input *ngIf="errorFlags.manager" style="border: 1px solid red" type="text" [(ngModel)]="object.storeManager">
+            </div>
+
+            <div class="overlay-action-buttons">
+                <button class="btn secondary grey" (click)="cancel()"><i class="icon icon-cancel"></i>Cancel</button>
+                <button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>Save</button>
+            </div>
+
+        </ng-container>
+
+    </ng-container>
+
+</div>

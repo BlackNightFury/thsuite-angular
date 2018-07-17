@@ -1,0 +1,101 @@
+<div #root class="overlay right pos-overlay active not-hidden-block">
+    <i class="icon icon-close overlay-close" (click)="cancel()"></i>
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><i class="material-icons">receipt</i></div>
+        <div>
+            <h5 class="subtitle">Receipt Details</h5>
+        </div>
+    </div>
+
+    <ng-container *ngIf="object">
+        <ng-container *ngIf="mode == 'view'">
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Receipt Number</span>
+                    <h5 class="product-info">{{object.barcode}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Charged At</span>
+                    <h5 class="product-info">{{object.createdAt | date:'short'}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Payment Type</span>
+                    <h5 class="product-info">{{object.paymentMethod | ucwords}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="object.paymentMethod == 'gift-card'">
+                <div>
+                    <span class="input-label">Gift Card ID</span>
+                    <h5 class="product-info">{{object.giftcardTransactionId}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Device</span>
+                    <h5 class="product-info">{{object.Drawer && object.Drawer.Device ? object.Drawer.Device.name : ''}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Employee</span>
+                    <h5 class="product-info">{{object.User ? object.User.firstName + " " + object.User.lastName : ''}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Customer</span>
+                    <h5 class="product-info">{{object.Patient ? object.Patient.firstName + " " + object.Patient.lastName : ''}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Subtotal</span>
+                    <h5 class="product-info">{{object.subtotal | currency:'USD':true}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Discount</span>
+                    <h5 class="product-info">{{object.discount | currency:'USD':true}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Refund</span>
+                    <h5 class="product-info">{{object.refund | currency:'USD':true}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Tax{{store.taxesIncluded ? ' (Included)':''}}</span>
+                    <h5 class="product-info">{{object.tax | currency:'USD':true}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Total</span>
+                    <h5 class="product-info">{{object.total | currency:'USD':true}}</h5>
+                </div>
+            </div>
+
+        </ng-container>
+
+    </ng-container>
+</div>
+
+<router-outlet></router-outlet>

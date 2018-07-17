@@ -1,0 +1,66 @@
+<div class="topbar-controls patient-management">
+  <div class="controls-row">
+    <h2 class="page-subtitle">Items</h2>
+    
+    <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search Items..."/>
+
+    <button md-button class="btn tertiary green flex-right" (click)="createNewItem()" *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditItems"><i class="icon icon-add"></i>Non-Cannabis Item</button>
+
+    <button md-button class="btn tertiary blue btn-export" (click)="exportItems()" ><i class="icon icon-export"></i>Export</button>
+  </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-select2 *ngIf="productTypeSelect2Options"
+                     [options]="productTypeSelect2Options"
+                     [(ngModel)]="selectedProductTypeId">
+        </app-select2>
+
+        <app-select2 *ngIf="supplierSelect2Options"
+                     [options]="supplierSelect2Options"
+                     [(ngModel)]="selectedSupplierId"
+                     [renderOptionsAsHTML]="true">
+        </app-select2>
+
+        <app-button-toggler class="multiple" [options]="toggleStockOptions" [(ngModel)]="inStockOptions" ></app-button-toggler>
+        
+        <app-button-toggler class="multiple" [options]="toggleMeasurementTypeOptions" [(ngModel)]="measurementType"></app-button-toggler>
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-products-table sticky">
+        <thead>
+        <tr>
+            <!--th sortBy="MetrcId" [(ngModel)]="sortByModel">Metrc ID</th-->
+            <th class="col-225" sortBy="name" [(ngModel)]="sortByModel">Item Name</th>
+            <th class="col-160" sortBy="ProductType.name" [(ngModel)]="sortByModel">Product Type</th>
+            <th class="col-225" sortBy="Supplier.name" [(ngModel)]="sortByModel">Supplier</th>
+            <th class="col-100-fixed">Measure Type</th>
+            <th class="col-150-fixed" sortBy="Quantity" [(ngModel)]="sortByModel">Quantity</th>
+            <th *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditItems"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let item of objects | async" (click)="onRowClick($event, item)">
+            <!--td>{{item.MetrcId ? item.MetrcId : 'N/A'}}</td-->
+            <td [ngClass]="{low: item.isLow}" >{{item.name}}</td>
+            <td>{{item.ProductType.name}}</td>
+            <td>{{item.Supplier? item.Supplier.name : ''}}</td>
+            <td>{{(item.UnitOfMeasureName.trim() == 'Each' ? item.UnitOfMeasureName.trim() : 'Weight') | ucfirst}}</td>
+            <td>{{item.totalQuantity.toFixed(2)}}&nbsp;{{item.UnitOfMeasureAbbreviation}}</td>
+            <td class="table-action" *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditItems">
+                <i class="icon icon-edit" (click)="editItem(item)"></i>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listItems()"></div>
+
+<router-outlet></router-outlet>

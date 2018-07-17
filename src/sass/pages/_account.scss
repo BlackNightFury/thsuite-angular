@@ -1,0 +1,10 @@
+.avatar-change {
+    @extend %v-c;
+
+    .avatar {
+        @include blockcircle(100px);
+        background-repeat: no-repeat;
+        background-size: cover;
+        margin-right: 30px;
+    }
+}

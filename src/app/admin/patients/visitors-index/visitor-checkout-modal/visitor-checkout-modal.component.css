@@ -1,0 +1,93 @@
+.header{
+    display: flex;
+    flex-direction: row;
+}
+
+button.large {
+    width: 250px;
+    height: 50px;
+    margin: 0.5rem;
+}
+
+a{
+    text-decoration: none;
+    transition: color 200ms ease;
+    font-size: 15px;
+    color: #169fd3;
+    cursor: pointer;
+}
+
+.visitor-id-image, .visitor-signature {
+    max-width:300px;
+    max-height:200px;
+    margin-bottom:30px;
+}
+
+table {
+    border:0;
+}
+
+.visitor-row {
+    text-align:left;
+    margin-bottom:10px;
+    padding-left:20px;
+    padding-right:20px;
+    background-color:white;
+    border:1px solid #e2e7eb;
+    color: hsl(194, 12%, 49%);
+}
+
+.visitor-row div {
+    width:100%;
+    margin:auto;
+    margin-top:20px;
+    margin-bottom:20px;
+    font-weight:bold;
+}
+
+.visitor-id-image, .visitor-signature {
+    max-width:100%;
+    max-height:400px;
+    margin-bottom:10px;
+}
+
+.action-buttons-container {
+    width:100%;
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.action-buttons-container button {
+    margin-left:40px;
+    margin-right:40px;
+}
+
+.visitor-row .visitor-field-label, 
+.visitor-row .visitor-field-value {
+    display:inline-block;
+    text-align:left;
+    font-weight:bold;
+    margin:0;
+}
+
+.visitor-row .visitor-field-label{
+    width:22%;
+}
+
+.visitor-row .visitor-field-value {
+    width:78%;
+    font-weight:normal;
+}
+
+.visitor-row .view-button-container {
+    width:100%;
+    text-align:center;
+}
+
+.visitor-row .view-button {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: inline-block;
+    padding:20px;
+    cursor:pointer;
+}

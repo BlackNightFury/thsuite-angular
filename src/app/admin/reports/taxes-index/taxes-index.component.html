@@ -1,0 +1,132 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Taxes</h2>
+        <button class="btn tertiary blue btn-export" (click)="export()" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+        <app-button-toggler class="multiple" [options]="togglePaymentMethodOptions" [(ngModel)]="paymentMethod" ></app-button-toggler>
+    </div>
+</div>
+
+<main class="content">
+    <h4>Aggregate Taxes</h4>
+    <table class="receipts-table nohover sticky" *ngIf="receipts">
+        <thead>
+            <tr>
+                <th class="col-6rem">Total Tax</th>
+                <ng-container *ngFor="let tax of taxes">
+                    <th class="money-column">{{tax.name + ' (' + tax.percent + '%)'}}</th>
+                </ng-container>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="col-6rem">{{receipts | pluck:'totalTax' | without:[undefined] | sum | currency:'USD':true}}</td>
+                <ng-container *ngFor="let tax of taxes">
+                    <td class="money-column">{{receipts | pluck:'taxById' | pluck:tax.id | without:[undefined] | sum | currency:'USD':true}}</td>
+                </ng-container>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4>Taxes Breakdown</h4>
+    <div *ngIf="!receipts">No breakdown available</div>
+    <table class="report-table receipts-table sticky table-tax-breakdown" *ngIf="receipts">
+        <thead>
+        <tr>
+            <th class="col-8rem">Receipt ID</th>
+            <th class="col-10rem">Date/Time</th>
+            <th class="col-6rem">Payment Method</th>
+            <th class="col-8rem">Total Tax</th>
+            <ng-container *ngFor="let tax of taxes">
+                <th class="col-8rem text-right">{{tax.name + ' (' + tax.percent + '%)'}}</th>
+            </ng-container>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container *ngFor="let receipt of receiptsPage">
+            <tr (click)="toggleReceipt(receipt)" [ngClass]="{'subtable-toggle--expanded': receipt.isToggled, 'subtable-toggle--collapsed': !receipt.isToggled}">
+                <td class="col-8rem">{{receipt.barcode}}</td>
+                <td class="col-10rem">{{receipt.createdAt | storeTimeZone:this.store.timeZone:'short' }}</td>
+                <td class="col-6rem">{{(receipt.paymentMethod == 'gift-card' ? "gift card" : receipt.paymentMethod) | ucwords}}</td>
+                <td class="col-8rem">{{(receipt.totalTax ? receipt.totalTax : 0) | currency:'USD':true}}</td>
+                <ng-container *ngFor="let tax of taxes">
+                    <td class="col-8rem text-right">{{(receipt.taxById[tax.id] ? receipt.taxById[tax.id] : 0)  | currency:'USD':true}}</td>
+                </ng-container>
+            </tr>
+
+            <tr class="nohover" *ngIf="receipt.isToggled">
+                <td [attr.colspan]="lineItemColspan" class="subtable">
+                    <table class="receipts-table" style="width:100%;margin:0">
+                        <thead>
+                        <tr>
+                            <th class="col-8rem">Product</th>
+                            <th class="col-10rem"></th>
+                            <th class="col-6rem"></th>
+                            <th class="col-8rem">Total Tax</th>
+                            <ng-container *ngFor="let tax of taxes">
+                                <th class="col-8rem text-right">{{tax.name + ' (' + tax.percent + '%)'}}</th>
+                            </ng-container>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ng-container *ngFor="let lineItem of receipt.LineItems">
+                            <tr>
+                                <td colspan="3">{{lineItem.Product.name}} {{lineItem.ProductVariation.name}}</td>
+                                <td class="col-8rem">{{(lineItem.totalTax ? lineItem.totalTax : 0) | currency:'USD':true}}</td>
+                                <ng-container *ngFor="let tax of taxes">
+                                    <td class="col-8rem text-right">{{(lineItem.taxById[tax.id] ? lineItem.taxById[tax.id] : 0)  | currency:'USD':true}}</td>
+                                </ng-container>
+                            </tr>
+                            <!-- Hidden because table gets too cluttered Uncomment to show item breakdowns -->
+                            <!--<tr>-->
+                                <!--<td colspan="5">-->
+                                    <!--<table class="receipts-table">-->
+                                        <!--<thead>-->
+                                        <!--<tr>-->
+                                            <!--<th>Item</th>-->
+                                            <!--<th>Label</th>-->
+                                            <!--<th class="col-8rem">Quantity</th>-->
+
+                                            <!--<ng-container *ngFor="let tax of taxes">-->
+                                                <!--<th class="col-8rem"></th>-->
+                                            <!--</ng-container>-->
+                                            <!--&lt;!&ndash;<th class="col-8rem"></th>&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<th class="col-8rem"></th>&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<th class="col-8rem"></th>&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<th class="col-8rem"></th>&ndash;&gt;-->
+                                        <!--</tr>-->
+                                        <!--</thead>-->
+                                        <!--<tbody>-->
+                                        <!--<tr *ngFor="let transaction of lineItem.Transactions">-->
+                                            <!--<td>{{transaction.Package.Item.name}}</td>-->
+                                            <!--<td>{{transaction.Package.Label}}</td>-->
+                                            <!--<td class="col-8rem">{{transaction.QuantitySold}}</td>-->
+                                            <!--<ng-container *ngFor="let tax of taxes">-->
+                                                <!--<td class="col-8rem">{{(transaction.taxByType[tax.id] ? transaction.taxByType[tax.id] : 0)  | currency:'USD':true}}</td>-->
+                                            <!--</ng-container>-->
+                                            <!--&lt;!&ndash;<td class="col-8rem">{{transaction.subtotal | currency:'USD':true}}</td>&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<td class="col-8rem">{{transaction.discountAmount | currency:'USD':true}}</td>&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<td class="col-8rem">{{transaction.tax | currency:'USD':true}}</td>&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<td class="col-8rem">{{transaction.TotalPrice | currency:'USD':true}}</td>&ndash;&gt;-->
+                                        <!--</tr>-->
+                                        <!--</tbody>-->
+                                    <!--</table>-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                        </ng-container>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+
+        </ng-container>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)]="page"></app-pager>
+</main>

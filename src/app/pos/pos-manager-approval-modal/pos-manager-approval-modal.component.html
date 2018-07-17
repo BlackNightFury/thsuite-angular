@@ -1,0 +1,8 @@
+<div class="modal-row" (keyup.enter)="enterPressed()" (keyup)="focusNextInput($event)">
+    <input class="modal-input-small" type="password" maxlength="1" [(ngModel)]="digits[0]">
+    <input class="modal-input-small" type="password" maxlength="1" [(ngModel)]="digits[1]">
+    <input class="modal-input-small" type="password" maxlength="1" [(ngModel)]="digits[2]">
+    <input class="modal-input-small" type="password" maxlength="1" [(ngModel)]="digits[3]">
+</div>
+<p *ngIf="!pinConfirmed" class="notice--error">PIN is invalid</p>
+

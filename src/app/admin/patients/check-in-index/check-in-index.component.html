@@ -1,0 +1,59 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Patient Check-In</h2>
+        
+        <input type="text" class="controls-input-search" (keyup)="search($event.target.value)" placeholder="Patient Search">
+        
+        <button md-button class="btn tertiary green" (click)="addToQueue()"><i class="icon icon-add"></i>Add To Queue</button>
+    </div>
+
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <span style="margin-right: 1rem; margin-bottom: 1rem;">{{date}} {{type | ucfirst}}</span>
+
+        <app-button-toggler [options]="typeOptions" [(ngModel)]="type"></app-button-toggler>
+    </div>
+</div>
+
+<main class="content">
+
+    <table class="inventory-products-table green-hl-tr">
+        <thead>
+        <tr>
+            <th sortBy="patient" [(ngModel)]="sortByModel">Patient</th>
+            <th sortBy="medicalId" [(ngModel)]="sortByModel">Medical ID</th>
+            <th sortBy="limit" [(ngModel)]="sortByModel">Limit</th>
+            <th>Caregiver?</th>
+            <th>History</th>
+            <th *ngIf="user.Permissions.canReleaseBudtender && type == 'entered'" sortBy="budtender" [(ngModel)]="sortByModel">Budtender</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let patientQueue of objects | async" (click)="onRowClick($event, patientQueue.Patient)">
+            <td>{{patientQueue.Patient.firstName}} {{patientQueue.Patient.lastName}}</td>
+            <td>{{formatMedID(patientQueue.Patient.medicalStateId)}}</td>
+            <td>{{patientQueue.Patient.gramLimit}}</td>
+            <td>{{patientQueue.caregiverId ? "Yes" : "No"}}</td>
+            <td><a class="hover-underline" (click)="viewPurchaseHistory(patientQueue.Patient)">View Purchases</a></td>
+            <td *ngIf="user.Permissions.canReleaseBudtender && type == 'entered'"><a class="hover-underline" (click)="viewBudtender(patientQueue)" *ngIf="patientQueue.Budtender">{{patientQueue.Budtender.firstName + ' ' + patientQueue.Budtender.lastName}}</a></td>
+            <td>
+                <button *ngIf="type == 'queue'" class="btn primary blue" (click)="verifyOrEnter(patientQueue)">{{patientQueue.verifiedAt ? "Enter" : "Verify"}}</button>
+                <button class="btn primary remove" (click)="remove(patientQueue)">Remove</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="viewQueue()"></div>
+
+<router-outlet></router-outlet>
+
+<app-previous-purchases-modal *ngIf="isPreviousPurchasesModalShowing"></app-previous-purchases-modal>
+<app-release-budtender-modal *ngIf="isReleaseBudtenderModalShowing"></app-release-budtender-modal>

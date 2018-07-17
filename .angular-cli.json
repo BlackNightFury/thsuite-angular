@@ -1,0 +1,77 @@
+{
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "project": {
+        "name": "thsuite"
+    },
+    "apps": [
+        {
+            "root": "src",
+            "outDir": "dist",
+            "assets": [
+                "assets",
+                "favicon.ico"
+            ],
+            "index": "index.html",
+            "main": "main.ts",
+            "polyfills": "polyfills.ts",
+            "tsconfig": "tsconfig.app.json",
+            "testTsconfig": "tsconfig.app.json",
+            "prefix": "app",
+            "serviceWorker": false,
+            "styles": [
+                "sass/app.scss",
+                "assets/css/extra.css",
+                "../node_modules/datatables.net-dt/css/jquery.dataTables.css",
+                "../node_modules/timepicker/jquery.timepicker.css",
+                "../node_modules/ng4-pick-datetime/assets/style/picker.min.css",
+                "assets/css/jquery-ui/jquery-ui.css",
+                "sass/thsuite.scss"
+            ],
+            "scripts": [
+                "../node_modules/jquery/dist/jquery.js",
+                "../node_modules/moment/min/moment.min.js",
+                "js/lib/select2.full.min.js",
+                "../node_modules/datatables.net/js/jquery.dataTables.js",
+                "../node_modules/socket.io-client/dist/socket.io.js",
+                "../node_modules/timepicker/jquery.timepicker.min.js",
+                "js/lib/notify.js",
+                "js/lib/html-capture.js",
+                "js/lib/jquery-ui.js",
+                "js/lib/jquery-ui-thsuite-patch.js",
+                "js/lib/number-input-disable-scroll.js"
+            ],
+            "environmentSource": "environments/environment.ts",
+            "environments": {
+                "dev": "environments/environment.ts",
+                "demo": "environments/environment.demo.ts",
+                "staging": "environments/environment.staging.ts",
+                "co-grow": "environments/environment.co-grow.ts",
+                "karing-kind": "environments/environment.karing-kind.ts",
+                "other-place": "environments/environment.other-place.ts",
+                "hi-tide": "environments/environment.hi-tide.ts",
+                "herban-legends": "environments/environment.herban-legends.ts",
+                "amedicanna": "environments/environment.amedicanna.ts",
+                "mana-supply": "environments/environment.mana-supply.ts",
+                "arminas-staging": "environments/environment.arminas-staging.ts",
+                "joe-staging": "environments/environment.joe-staging.ts",
+                "pete-staging": "environments/environment.pete-staging.ts",
+                "anne-staging": "environments/environment.anne-staging.ts",
+                "dev-staging": "environments/environment.dev-staging.ts",
+                "mike-staging": "environments/environment.mike-staging.ts",
+                "david-staging": "environments/environment.david-staging.ts",
+                "leon-staging": "environments/environment.leon-staging.ts",
+                "yuri-staging": "environments/environment.yuri-staging.ts"
+            }
+        }
+    ],
+    "lint": [
+        {
+            "project": "src/tsconfig.app.json"
+        }
+    ],
+    "defaults": {
+        "styleExt": "scss",
+        "component": {
+        }
+    }
+}

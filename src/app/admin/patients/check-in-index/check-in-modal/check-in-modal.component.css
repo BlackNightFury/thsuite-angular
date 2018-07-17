@@ -1,0 +1,81 @@
+td > input {
+    display: block;
+}
+
+.double-input,
+.triple-input {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.double-input input {
+    width: 49%;
+}
+
+.triple-input input {
+    width: 32%;
+}
+
+button.large {
+    width: 250px;
+    height: 50px;
+    margin: 0.5rem;
+}
+
+.select-condition {
+    display: flex;
+}
+
+.select-condition button {
+    flex-shrink: 0;
+    margin-left: 1em;
+}
+
+.btn.remove{
+    background-color: #d12b28;
+    transition: background-color 200ms ease;
+}
+
+.btn.remove:hover{
+    background-color: #ab2320;
+}
+
+.td-with-button{
+    display: flex;
+}
+
+.td-with-button input{
+    width: 75%
+}
+
+.td-with-button button{
+    max-height: 32px;
+    margin: auto;
+}
+
+tr.highlight{
+    border: 1px solid red !important;
+}
+
+a {
+    color : #169fd3;
+    cursor:pointer;
+}
+
+.fixed-width-button-container {
+    display:inline-block;
+    width:120px;
+}
+
+.modal--patient-verification .editing input.mat-input-element {
+    border: 1px solid #d8dfe6;
+    padding-left: 0.75rem;
+}
+.modal--patient-verification .editing input.mat-input-element:focus {
+    border-color: #18A9E2;
+}
+
+.modal--patient-verification section.padded {
+    padding: 12px 20px;
+}

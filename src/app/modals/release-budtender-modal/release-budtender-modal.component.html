@@ -1,0 +1,9 @@
+<main class="modal-release-budtender modal-pagination-possible">
+    <span style="font-weight: bold;">Would you like to release the Patient from the current Budtender and return the Patient back to the POS Queue?</span>
+    <div style="margin-top: 2rem; margin-bottom: 1.5rem;">
+        <ng-container>
+            <button class="btn secondary green aligned" (click)="yes()" [disabled]="!this.patientQueue">Yes</button>
+            <button class="btn secondary green aligned" (click)="no()" [disabled]="!this.patientQueue">No</button>
+        </ng-container>
+    </div>
+</main>

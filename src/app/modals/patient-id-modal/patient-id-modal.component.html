@@ -1,0 +1,18 @@
+<main class="modal-patient-id modal-pagination-possible">
+    <ng-container *ngIf="patient">
+        <div class="header" *ngIf="patient">
+            <div style="margin: auto;">
+                <h2>Patient: {{patient.firstName}} {{patient.lastName}}</h2>
+                <h3>Medical ID: {{formatMedID(patient.medicalStateId)}}</h3>
+            </div>
+        </div>
+        <div *ngIf="patient.idImage" autofocus>
+            <img [src]="patient.idImage" class="patient-id-image"/>
+        </div>
+        <div *ngIf="!patient.idImage" autofocus>
+            <div class="missing-id-image-container">
+                No Image Available
+            </div>
+        </div>
+    </ng-container>
+</main>

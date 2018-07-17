@@ -1,0 +1,38 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Daily Sales For {{reportDate | date:'shortDate'}}</h2>
+        <button class="btn tertiary blue flex-right btn-export" (click)="onClickExport('daily')" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <div class="input-has-icon datepick">
+            <input [owlDateTime]="dtReportDate" [owlDateTimeTrigger]="dtReportDate" [(ngModel)]="reportDate" (ngModelChange)="dateChanged()" placeholder="mm/dd/yyyy">
+            <i class="icon icon-calendar"></i>                
+            <owl-date-time #dtReportDate [pickerType]="'calendar'"></owl-date-time>
+        </div>
+    </div>
+</div>
+
+<main class="content">
+    <div *ngIf="chartData" id="line_chart" style="height:100%;" [chartData]="chartData" [chartOptions]= "chartOptions" chartType="LineChart" GoogleChart></div>
+    <div *ngIf="!chartData">No data found for this date.</div>
+
+    <h4>Hourly Breakdown</h4>
+    <table class="report-table discounts-by-type-table has-total nohover">
+        <thead>
+            <tr>
+                <th>Hour</th>
+                <th sortBy="amount" [(ngModel)]="sortByModel" class="align-right">Total Sales</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of tableData">
+                <td>{{data.hour}}</td>
+                <td class="align-right">{{data.amount}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+</main>

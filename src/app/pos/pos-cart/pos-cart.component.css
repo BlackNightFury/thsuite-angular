@@ -1,0 +1,137 @@
+table.patient-card td.red,
+.error,
+.return {
+    color: red;
+}
+
+.checkout-info .error {
+    display: inline-block;
+    margin: 15px 20px 12px;
+}
+
+.price.return::before {
+    content: "-";
+}
+
+.discount {
+    line-height: 28px;
+}
+
+.btn.remove{
+    margin-left: 1em;
+    background-color: #d12b28;
+    transition: background-color 200ms ease;
+}
+
+.btn.remove:hover{
+    background-color: #ab2320;
+}
+
+.sidebar-separated-heading {
+    min-height: auto;
+    font-size: 21px;
+    font-weight: 500;
+}
+
+.topbar-container {
+    width: 100%;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.topbar {
+    background: #e1f0e6;
+    width: 100%;
+    height: 45px;
+    padding: 0 0 0 20px;
+}
+
+.topbar .name {
+    width: 73%;
+    float: left;
+    font-size: 18px;
+    display: inline-flex;
+    padding: 11px 0;
+}
+
+.topbar .name.with-topbar-pos-patient-gram-limit {
+    width: 50%;
+    float: left;
+    font-size: 18px;
+    display: inline-flex;
+    padding: 11px 0;
+}
+
+.topbar .time {
+    width: 17%;
+    float: left;
+    font-size: 15px;
+    text-align: center;
+    border-left: 1px solid #ddd;
+    padding: 13px 0;
+}
+
+.topbar .topbar-pos-patient-gram-limit {
+    width: 40%;
+    float: left;
+    font-size: 15px;
+    text-align: center;
+    border-left: 1px solid #ddd;
+    padding: 13px 0px;
+}
+
+.time-expandable {
+    float: right;
+    width: 175px;
+    text-align: center;
+}
+
+.time .icon-clock {
+    position: relative;
+    top: -1px;
+}
+
+.topbar .cart-menu {
+    width: 10%;
+    float: right;
+    border-left: 1px solid #ddd;
+    text-align: center;
+    height: 45px;
+}
+
+.topbar-expandable-dropdown {
+    background: #d3ddd6;
+    height: 37px;
+    padding: 8px 0 0 20px;
+    font-size: 17px;
+}
+
+.topbar-expandable-dropdown .points-grams {
+    width: 94%;
+    float: left;
+}
+
+.topbar-expandable-dropdown .icon-close {
+    width: 5%;
+    float: left;
+    cursor: pointer;
+    width: 18px;
+    position: relative;
+    right: 2px;
+}
+
+.icon-dropdown-status {
+    display: inline-block;
+    margin: -1px 5px;
+}
+
+.icon-close-cart {
+    display: inline-block;
+}
+
+.package-error {
+    display: inline-block;
+    margin-bottom: 10px;
+}

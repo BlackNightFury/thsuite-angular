@@ -1,0 +1,37 @@
+<div class="topbar-controls patient-management">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Outgoing</h2>
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-products-table sticky">
+        <thead>
+        <tr>
+            <th>Manifest Number</th>
+            <th sortBy="CreatedByUserName" [(ngModel)]="sortByModel">Created By</th>
+            <th sortBy="PackageCount" [(ngModel)]="sortByModel">Package Count</th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let transfer of objects | async" (click)="onRowClick($event, transfer)">
+            <td>{{transfer.ManifestNumber}}</td>
+            <td>{{transfer.CreatedByUserName}}</td>
+            <td>{{transfer.PackageCount}}</td>
+            <td class="table-action">
+                <!--<i class="icon icon-my-account" (click)="viewTransfer(transfer)"></i>-->
+                <!--<i class="icon icon-remove"></i>-->
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)]="pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listItems()"></div>
+
+<router-outlet></router-outlet>

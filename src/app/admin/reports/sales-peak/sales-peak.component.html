@@ -1,0 +1,96 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+      <h2 class="page-subtitle">Peak Sales Report {{(todDayView == 'all') ? ((modeOptions == 'dow') ? "by Day of Week" : " by Time of Day") : 'for ' + todDayView}}</h2>
+      <button class="btn tertiary blue btn-export" (click)="onClickExport('peak-sales')" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+  <div class="controls-row align-items-bottom">
+    <div class="paired-inputs compact">
+        <label class="input-label">Primary Date Range: </label>
+        <div class="datepick">
+            <input placeholder="Start Date" [owlDateTime]="dtReportPrimaryStartDate" [owlDateTimeTrigger]="dtReportPrimaryStartDate" [(ngModel)]="selectedPrimaryStartDate" class="narrow-date">            
+            <owl-date-time #dtReportPrimaryStartDate [pickerType]="'calendar'"></owl-date-time>
+        </div>
+        <span class="range-separator">&mdash;</span>
+        <div class="datepick">
+            <input placeholder="End Date" [owlDateTime]="dtReportPrimaryEndDate" [owlDateTimeTrigger]="dtReportPrimaryEndDate" [(ngModel)]="selectedPrimaryEndDate" class="narrow-date">             
+            <owl-date-time #dtReportPrimaryEndDate [pickerType]="'calendar'"></owl-date-time>
+        </div>
+    </div>
+
+    <div class="paired-inputs compact">
+        <md-checkbox [(ngModel)]="secondaryDateRangeToggle"></md-checkbox>
+        <label class="input-label" style="margin-left: 0.5em;">
+          Secondary Date Range:
+        </label>
+        <div class="datepick">
+            <input placeholder="Start Date" [owlDateTime]="dtReportSecondaryStartDate" [owlDateTimeTrigger]="dtReportSecondaryStartDate" [(ngModel)]="selectedSecondaryStartDate" class="narrow-date">            
+            <owl-date-time #dtReportSecondaryStartDate [pickerType]="'calendar'"></owl-date-time>
+        </div>
+        <span class="range-separator">&mdash;</span>
+        <div class="datepick">
+            <input placeholder="End Date" [owlDateTime]="dtReportSecondaryEndDate" [owlDateTimeTrigger]="dtReportSecondaryEndDate" [(ngModel)]="selectedSecondaryEndDate" class="narrow-date">              
+            <owl-date-time #dtReportSecondaryEndDate [pickerType]="'calendar'"></owl-date-time>
+        </div>
+    </div>
+    <app-button-toggler class="multiple" [options]="toggleModeOptions" [(ngModel)]="modeOptions" ></app-button-toggler>
+  </div>
+</div>
+<main class="content">
+    <div *ngIf="chartData" id="line_chart" style="height:100%;" [chartData]="chartData" [chartOptions]= "chartOptions" chartType="LineChart" GoogleChart></div>
+    <div *ngIf="!chartData">No data available for this selection.</div>
+
+    <h4 *ngIf="(dowTableData || todTableData) && todDayView == 'all'">{{(modeOptions == 'dow') ? "Day of Week" : " Time of Day"}} Sales Breakdown for {{selectedPrimaryStartDate + ' - ' + selectedPrimaryEndDate}}</h4>
+    <h4 *ngIf="(dowTableData || todTableData) && todDayView != 'all'">{{(modeOptions == 'dow') ? "Day of Week" : " Time of Day"}} Sales Breakdown for {{todDayView}} during {{selectedPrimaryStartDate + ' - ' + selectedPrimaryEndDate}}</h4>
+    <h4 *ngIf="!dowTableData && !todTableData">Sales Breakdown</h4>
+    <div *ngIf="!dowTableData && !todTableData">No breakdown available</div>
+    <table class="report-table" *ngIf="dowTableData && modeOptions == 'dow' && todDayView == 'all'">
+        <thead>
+        <tr>
+            <th>Day of Week</th>
+            <th>Busiest Time of Day</th>
+            <th>Top Product</th>
+            <th class="align-right">Total Revenue</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let data of dowTableData" (click)="onRowClick($event, data.day)">
+            <td>{{data.day}}</td>
+            <td>{{data.busiest}}</td>
+            <td>{{data.product}}</td>
+            <td class="align-right">{{data.revenue | currency:'USD':true | commify }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="report-table" *ngIf="(todTableData && modeOptions == 'tod') || (todTableData && todDayView != 'all')">
+        <thead>
+        <tr>
+            <th *ngIf="todDayView != 'all'" (click)="backToDoW($event)" style="cursor: pointer; display: flex; flex-direction: column; padding-right: 0; padding-left: 15px;" class="btn--back">
+              <!-- TODO: Use a directive to inline this SVG from /assets/svg/left-arrow.svg -->
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 31.494 31.494" style="enable-background:new 0 0 31.494 31.494;" xml:space="preserve" width="512px" height="512px"><path d="M10.273,5.009c0.444-0.444,1.143-0.444,1.587,0c0.429,0.429,0.429,1.143,0,1.571l-8.047,8.047h26.554  c0.619,0,1.127,0.492,1.127,1.111c0,0.619-0.508,1.127-1.127,1.127H3.813l8.047,8.032c0.429,0.444,0.429,1.159,0,1.587  c-0.444,0.444-1.143,0.444-1.587,0l-9.952-9.952c-0.429-0.429-0.429-1.143,0-1.571L10.273,5.009z" /></svg>
+              <span style="width: 60px;">All Days</span>
+            </th>
+            <th style="width: 175px;">Time of Day</th>
+            <th *ngIf="(todTableData && modeOptions == 'tod')">Busiest Day of Week</th>
+            <th>Top Product</th>
+            <th class="align-right">Total Revenue</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let data of todTableData">
+            <td *ngIf="todDayView != 'all'"></td>
+            <td>{{data.hour}}</td>
+            <td *ngIf="(todTableData && modeOptions == 'tod')">{{data.busiest}}</td>
+            <td>{{data.product}}</td>
+            <td class="align-right">{{data.revenue | currency:'USD':true | commify }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+</main>
+

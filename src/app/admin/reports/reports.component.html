@@ -1,0 +1,116 @@
+<div class="container-separate has-left-sidebar" id="mainPanel">
+
+    <div class="left-sidebar">
+        <h5 class="sidebar-subtitle" (click)="toggleCollapsable('bestselling')" [ngClass]="{open: sectionShowing.bestselling}">
+            Best selling
+            <i *ngIf="!sectionShowing.bestselling" class="material-icons md-18">keyboard_arrow_down</i>
+            <i *ngIf="sectionShowing.bestselling" class="material-icons md-18">keyboard_arrow_up</i>
+        </h5>
+        <div class="collapsable" [ngClass]="{open: sectionShowing.bestselling}">
+            <a routerLink="/admin/reports/top-product-types" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Top Product
+                Types</a>
+            <a routerLink="/admin/reports/top-products" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Top Products</a>
+            <a routerLink="/admin/reports/top-brands" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Top Brands</a>
+        </div>
+
+        <div class="left-sidebar-separator"></div>
+
+        <h5 class="sidebar-subtitle" (click)="toggleCollapsable('sales')" [ngClass]="{open: sectionShowing.sales}">
+            Sales
+            <i *ngIf="!sectionShowing.sales" class="material-icons md-18">keyboard_arrow_down</i>
+            <i *ngIf="sectionShowing.sales" class="material-icons md-18">keyboard_arrow_up</i>
+        </h5>
+        <div class="collapsable" [ngClass]="{open: sectionShowing.sales}">
+            <a routerLink="/admin/reports/index" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Overall</a>
+            <a routerLink="/admin/reports/product-type" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">By Product Type</a>
+            <a routerLink="/admin/reports/product" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">By Product</a>
+            <!--<a routerLink="/admin/reports/patient" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">By Patients</a>-->
+            <a routerLink="/admin/reports/employee" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">By Employees</a>
+            <a routerLink="/admin/reports/transaction-time" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">By POS Time</a>
+            <a routerLink="/admin/reports/peak-sales" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Peak Sales</a>
+            <a routerLink="/admin/reports/daily" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Daily</a>
+            <a routerLink="/admin/reports/sales-breakdown" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Breakdown</a>
+            <a routerLink="/admin/reports/drawer-breakdown" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Drawer Breakdown</a>
+        </div>
+
+        <div class="left-sidebar-separator"></div>
+
+        <ng-container *ngIf="environment.shouldShowMedicalReports">
+            <h5 class="sidebar-subtitle" (click)="toggleCollapsable('patients')" [ngClass]="{open: sectionShowing.patients}">
+                Patients
+                <i *ngIf="!sectionShowing.patients" class="material-icons md-18">keyboard_arrow_down</i>
+                <i *ngIf="sectionShowing.patients" class="material-icons md-18">keyboard_arrow_up</i>
+            </h5>
+            <div class="collapsable" [ngClass]="{open: sectionShowing.patients}">
+                <a routerLink="/admin/reports/patients-index" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Overall</a>
+            </div>
+
+            <div class="left-sidebar-separator"></div>
+        </ng-container>
+
+        <h5 class="sidebar-subtitle" (click)="toggleCollapsable('inventory')" [ngClass]="{open: sectionShowing.inventory}">
+            Inventory
+            <i *ngIf="!sectionShowing.inventory" class="material-icons md-18">keyboard_arrow_down</i>
+            <i *ngIf="sectionShowing.inventory" class="material-icons md-18">keyboard_arrow_up</i>
+        </h5>
+        <div class="collapsable" [ngClass]="{open: sectionShowing.inventory}">
+          <!-- a routerLink="/admin/reports/inventory" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Overall</a -->
+          <a routerLink="/admin/reports/inventory-breakdown" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Breakdown</a>
+          <a routerLink="/admin/reports/inventory-daily" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Daily</a>
+          <a routerLink="/admin/reports/inventory-package" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Package Audit</a>
+          <a routerLink="/admin/reports/inventory-non-thc-po" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Non-THC P.O.</a>
+          <a routerLink="/admin/reports/wholesale-purchase-adjustment" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Wholesale Purchase Adjustment</a>
+        </div>
+
+        <div class="left-sidebar-separator"></div>
+
+        <h5 class="sidebar-subtitle" (click)="toggleCollapsable('discounts')" [ngClass]="{open: sectionShowing.discounts}">
+            Discounts
+            <i *ngIf="!sectionShowing.discounts" class="material-icons md-18">keyboard_arrow_down</i>
+            <i *ngIf="sectionShowing.discounts" class="material-icons md-18">keyboard_arrow_up</i>
+        </h5>
+        <div class="collapsable" [ngClass]="{open: sectionShowing.discounts}">
+            <a routerLink="/admin/reports/discounts-index" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Overall</a>
+            <a routerLink="/admin/reports/discounts-by-type" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">By Type</a>
+            <a routerLink="/admin/reports/discounts-by-employee" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">By Employee</a>
+            <a routerLink="/admin/reports/discounts-by-product" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">By Product</a>
+            <a routerLink="/admin/reports/discounts-by-product-type" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">By Product Type</a>
+        </div>
+
+        <div class="left-sidebar-separator"></div>
+
+        <h5 class="sidebar-subtitle" (click)="toggleCollapsable('transfers')" [ngClass]="{open: sectionShowing.transfers}">
+            Transfers
+            <i *ngIf="!sectionShowing.transfers" class="material-icons md-18">keyboard_arrow_down</i>
+            <i *ngIf="sectionShowing.transfers" class="material-icons md-18">keyboard_arrow_up</i>
+        </h5>
+        <div class="collapsable" [ngClass]="{open: sectionShowing.transfers}">
+            <a routerLink="/admin/reports/inbound-transfers" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Inbound</a>
+        </div>
+
+        <div class="left-sidebar-separator"></div>
+
+        <h5 class="sidebar-subtitle" (click)="toggleCollapsable('taxes')" [ngClass]="{open: sectionShowing.taxes}">
+            Taxes
+            <i *ngIf="!sectionShowing.taxes" class="material-icons md-18">keyboard_arrow_down</i>
+            <i *ngIf="sectionShowing.taxes" class="material-icons md-18">keyboard_arrow_up</i>
+        </h5>
+        <div class="collapsable" [ngClass]="{open: sectionShowing.taxes}">
+            <a routerLink="/admin/reports/taxes-index" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Overall</a>
+        </div>
+
+        <div class="left-sidebar-separator"></div>
+
+        <h5 class="sidebar-subtitle" (click)="toggleCollapsable('timeClocks')" [ngClass]="{open: sectionShowing.timeClocks}">
+            Time Clocks
+            <i *ngIf="!sectionShowing.timeClocks" class="material-icons md-18">keyboard_arrow_down</i>
+            <i *ngIf="sectionShowing.timeClocks" class="material-icons md-18">keyboard_arrow_up</i>
+        </h5>
+        <div class="collapsable" [ngClass]="{open: sectionShowing.timeClocks}">
+            <a routerLink="/admin/reports/time-clocks-index" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Overall</a>
+        </div>
+    </div>
+
+    <router-outlet></router-outlet>
+
+</div>

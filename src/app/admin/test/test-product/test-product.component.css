@@ -1,0 +1,31 @@
+.half {
+    width: 49%;
+    float: left;
+}
+
+.half:first-child {
+    margin-right: 2%;
+}
+
+.half textarea {
+    width: 100%;
+}
+
+textarea {
+    height: 20em;
+}
+
+.status {
+    padding: 1em;
+    border: 1px solid #333;
+}
+
+.spacer {
+    margin: 1em 0;
+}
+
+md-checkbox {
+    width: auto;
+    margin-right: 1em;
+    display: inline-block;
+}

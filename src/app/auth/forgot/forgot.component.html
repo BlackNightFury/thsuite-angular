@@ -1,0 +1,24 @@
+<main class="single-padded" (keyup.enter)="sendResetEmail()">
+    <div class="page-topbar">
+        <!--<div class="right">-->
+            <!--Don't have an account?-->
+            <!--<a href="#" class="btn tertiary green">Get Started</a>-->
+        <!--</div>-->
+    </div>
+    <section class="padded">
+        <div class="padded-title">
+            <div class="padded-icon"><img src="/assets/svg/logo.svg"/></div>
+            <h2 class="bold-title">Forgot Password?</h2>
+            <p class="descr">Enter your email address below and we'll get you back on the track.</p>
+        </div>
+        <div class="input-row">
+            <label class="input-label">Your Email</label>
+            <input type="email" placeholder="Enter your email" [(ngModel)]="email">
+        </div>
+        <div *ngIf="error" class="error">{{error}}</div>
+        <div class="section-action center">
+            <button class="btn secondary blue" (click)="sendResetEmail()">Request Reset Link</button>
+            <!--<div><a href="#" class="blue">Forgot password?</a></div>-->
+        </div>
+    </section>
+</main>

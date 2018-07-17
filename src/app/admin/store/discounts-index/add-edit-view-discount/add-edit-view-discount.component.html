@@ -1,0 +1,366 @@
+<div #root class="overlay right active not-hidden-block">
+    <i class="icon icon-close overlay-close" (click)="cancel()"></i>
+
+    <div class="section-heading" *ngIf="mode == 'edit'">
+        <div class="svg-icon"><img src="/assets/svg/discount_details.svg"/></div>
+        <h1 class="section-title">Edit Discount</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'add'">
+        <div class="svg-icon"><img src="/assets/svg/discount_details.svg"/></div>
+        <h1 class="section-title">Add New Discount</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><img src="/assets/svg/discount_details.svg"/></div>
+        <h1 class="section-title">Discount Details</h1>
+    </div>
+
+    <ng-container *ngIf="object">
+
+        <ng-container *ngIf="mode == 'view'">
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Discount Name</span>
+                    <h5 class="product-info">{{object.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Application Method</span>
+                    <h5 class="product-info">{{object.isAutomatic ? "Automatically" : "Manually"}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="!object.isAutomatic">
+                <div>
+                    <span class="input-label">Requires Manager Approval</span>
+                    <h5 class="product-info">{{object.managerApproval ? "Yes" : "No"}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Applicable Patient Type</span>
+                    <h5 class="product-info">{{object.patientType | ucfirst}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="object.patientType == 'medical'">
+                <div>
+                    <span class="input-label">Applicable Patient Group</span>
+                    <h5 class="product-info">{{object.PatientGroup ? object.PatientGroup.name : "All Patient Groups"}}</h5>
+                </div>
+            </div>
+
+             <div class="detail-row">
+                <div>
+                    <span class="input-label">Applicable Product Category</span>
+                    <h5 class="product-info">{{object.thcType.toUpperCase()}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="object.patientType == 'medical'">
+                <div>
+                    <span class="input-label">Applicable Patient Group</span>
+                    <h5 class="product-info">{{object.PatientGroup ? object.PatientGroup.name : "All Patient Groups"}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Discount Entity</span>
+                    <h5 class="product-info">
+                        <ng-container *ngIf="object.ProductType">
+                            Product Type
+                        </ng-container>
+                        <ng-container *ngIf="object.Product">
+                            Product
+                        </ng-container>
+                        <ng-container *ngIf="object.Package">
+                            Package
+                        </ng-container>
+                        <ng-container *ngIf="object.Supplier">
+                            Supplier
+                        </ng-container>
+                        <ng-container *ngIf="!object.ProductType && !object.Product && !object.Package && !object.Supplier">
+                            All Items
+                        </ng-container>
+                    </h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="entityDiscountMode == 'productType' && object.ProductType">
+                <div>
+                    <span class="input-label">Applicable Product Type</span>
+                    <h5 class="product-info">{{object.ProductType.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="entityDiscountMode == 'product'">
+                <div>
+                    <span class="input-label">Applicable Product</span>
+                    <h5 class="product-info">{{object.Product.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="entityDiscountMode == 'package'">
+                <div>
+                    <span class="input-label">Applicable Package</span>
+                    <h5 class="product-info">{{object.Package.Label}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="entityDiscountMode == 'supplier'">
+                <div>
+                    <span class="input-label">Applicable Supplier</span>
+                    <h5 class="product-info">{{object.Supplier.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Discount Amount</span>
+                    <h5 class="product-info">{{(object.amountType == 'dollar' ? '$' : '') + object.amount + (object.amountType == 'percent' ? '%' : '')}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Minimum Purchase</span>
+                    <h5 class="product-info">{{(object.minimumType == 'price' ? '$' : '') + object.minimum + (object.minimumType == 'items' ? (object.minimum > 1 ? ' items' : ' item') : '')}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Maximum Discount Amount</span>
+                    <h5 class="product-info">{{object.maximum ? (object.maximum | currency:'USD':true) : "None"}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Applicable Date Range</span>
+                    <h5 class="product-info" *ngIf="object.startDate">
+                        {{object.startDate | date:'shortDate'}} - {{object.endDate | date:'shortDate'}}
+                    </h5>
+                    <h5 class="product-info" *ngIf="!object.startDate">
+                        All Dates
+                    </h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Applicable Time Range</span>
+                    <h5 class="product-info" *ngIf="object.startTime">
+                        {{object.startTime | date:'shortTime'}} - {{object.endTime | date:'shortTime'}}
+                    </h5>
+                    <h5 class="product-info" *ngIf="!object.startTime">
+                        All Times
+                    </h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Applicable Days of the Week</span>
+                    <h5 class="product-info">{{object.days | formatArray:'All Days'}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Status</span>
+                    <h5 class="product-info">{{object.isActive ? 'Active' : 'Inactive'}}</h5>
+                </div>
+            </div>
+
+            <div class="overlay-action-buttons" *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditDiscounts">
+                <button class="btn secondary grey" (click)="remove()"><i class="icon icon-remove"></i>Remove</button>
+                <button class="btn secondary blue" (click)="edit()"><i class="icon icon-edit"></i>Edit</button>
+            </div>
+
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+
+            <div class="input-row md-input">
+                <md-input-container class="default single">
+                    <input *ngIf="!errorFlags.name" mdInput placeholder="Discount Name" [(ngModel)]="object.name" required/>
+                    <input *ngIf="errorFlags.name" style="border: 1px solid red" mdInput placeholder="Discount Name" [(ngModel)]="object.name" required/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">Applied</label>
+                <md-button-toggle-group class="default blue" [(ngModel)]="isAutomatic">
+                    <md-button-toggle [value]="true">Automatically</md-button-toggle>
+                    <md-button-toggle [value]="false">Manually</md-button-toggle>
+                </md-button-toggle-group>
+            </div>
+
+            <div class="input-row" *ngIf="!isAutomatic">
+                <label class="input-label">Requires Manager Approval</label>
+                <md-button-toggle-group class="default blue" [(ngModel)]="object.managerApproval">
+                    <md-button-toggle [value]="true">Yes</md-button-toggle>
+                    <md-button-toggle [value]="false">No</md-button-toggle>
+                </md-button-toggle-group>
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">Applicable Patient Type</label>
+                <app-button-toggler class="multiple" [options]="patientTypeOptions" [(ngModel)]="object.patientType"></app-button-toggler>
+            </div>
+
+            <div class="input-row" *ngIf="object.patientType == 'medical'">
+                <label class="input-label">Applicable Patient Group</label>
+                <app-select2 [options]="patientGroupSelect2Options" class="full-width"
+                             [(ngModel)]="object.patientGroupId">
+                </app-select2>
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">Applicable Product Category</label>
+                <app-button-toggler class="multiple" [options]="thcTypeOptions" [(ngModel)]="object.thcType"></app-button-toggler>
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">Discount Entity</label>
+                <app-button-toggler class="multiple" [options]="entityDiscountModeOptions" [(ngModel)]="entityDiscountMode" [optional]="true" [allowClear]="true" [fontSize]="15"></app-button-toggler>
+            </div>
+
+            <div class="input-row" *ngIf="productTypeSelect2Options && entityDiscountMode == 'productType'">
+                <label class="input-label">Applicable Product Type</label>
+
+                <app-select2 [options]="productTypeSelect2Options" class="full-width"
+                             [(ngModel)]="object.productTypeId">
+                </app-select2>
+            </div>
+
+            <div class="input-row" *ngIf="productSelect2Options && entityDiscountMode == 'product'">
+                <label class="input-label">Applicable Product</label>
+
+                <app-select2 [options]="productSelect2Options" class="full-width"
+                             [(ngModel)]="object.productId">
+                </app-select2>
+            </div>
+
+            <div class="input-row" *ngIf="packageSelect2Options && entityDiscountMode == 'package'">
+                <label class="input-label">Applicable Package</label>
+
+                <app-select2 [options]="packageSelect2Options" class="full-width"
+                             [(ngModel)]="object.packageId">
+                </app-select2>
+            </div>
+
+            <div class="input-row" *ngIf="supplierSelect2Options && entityDiscountMode == 'supplier'">
+                <label class="input-label">Applicable Supplier</label>
+                <app-select2 [options]="supplierSelect2Options" class="full-width"
+                             [(ngModel)]="object.supplierId">
+                </app-select2>
+            </div>
+
+            <!--<div class="input-row" *ngIf="discount.productTypeId">-->
+            <!---->
+            <!--</div>-->
+
+            <div class="input-row aligned">
+                <div>
+                    <label class="input-label">Discount Amount</label>
+                    <div class="input-units">
+                        <input [class.error]="errorFlags.amount" type="number" [(ngModel)]="object.amount" required/>
+                        <app-button-toggler [options]="amountTypeOptions" [(ngModel)]="object.amountType"></app-button-toggler>
+                    </div>
+                </div>
+                <div>
+                    <label class="input-label">Minimum Purchase</label>
+                    <div class="input-units">
+                        <input type="number" [(ngModel)]="object.minimum" required>
+                        <app-button-toggler [options]="minimumTypeOptions" [(ngModel)]="object.minimumType"></app-button-toggler>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">Maximum Discount Amount</label>
+                <div style="display: flex; flex-direction: row;">
+                    <span style="margin: auto">$</span>
+                    <input type="number" [(ngModel)]="object.maximum">
+                </div>
+            </div>
+
+            <p class="input-note">{{stringDescription}}</p>
+
+            <label class="input-label separate separated-top">Applicable Date Range</label>
+
+            <div class="input-row aligned" style="margin-bottom: 10px;">
+                <md-button-toggle-group class="default blue" [(ngModel)]="hasDateRequirement">
+                    <md-button-toggle [value]="false">All Dates</md-button-toggle>
+                    <md-button-toggle [value]="true">Specific Dates</md-button-toggle>
+                </md-button-toggle-group>
+            </div>
+
+            <div class="input-row range-to" *ngIf="hasDateRequirement">
+                <div class="input-has-icon datepick" [class.error]="errorFlags.date">
+                    <input placeholder="Start Date" [owlDateTime]="dtStartDate" [owlDateTimeTrigger]="dtStartDate" [(ngModel)]="object.startDate" [max]="object.endDate">
+                    <i class="icon icon-calendar"></i>                
+                    <owl-date-time #dtStartDate [pickerType]="'calendar'"></owl-date-time>
+                </div>
+                <p class="small">to</p>
+                <div class="input-has-icon datepick" [class.error]="errorFlags.date">
+                    <input placeholder="End Date" [owlDateTime]="dtEndDate" [owlDateTimeTrigger]="dtEndDate" [(ngModel)]="object.endDate" [max]="object.startDate">
+                    <i class="icon icon-calendar"></i>                
+                    <owl-date-time #dtEndDate [pickerType]="'calendar'"></owl-date-time>
+                </div>
+            </div>
+
+            <label class="input-label separate separated-top">Applicable Times</label>
+
+            <div style="margin-bottom: 10px;">
+                <md-button-toggle-group class="default blue" [(ngModel)]="hasTimeRequirement">
+                    <md-button-toggle [value]="false">All Times</md-button-toggle>
+                    <md-button-toggle [value]="true">Specific Times</md-button-toggle>
+                </md-button-toggle-group>
+            </div>
+
+            <div class="input-row range-to" *ngIf="hasTimeRequirement">
+                <div class="input-has-icon datepick" [class.error]="errorFlags.time">
+                    <app-time-picker placeholder="Start Time" [(ngModel)]="object.startTime"></app-time-picker>
+                </div>
+                <p class="small">to</p>
+                <div class="input-has-icon datepick" [class.error]="errorFlags.time">
+                    <app-time-picker placeholder="End Time" [(ngModel)]="object.endTime"></app-time-picker>
+                </div>
+            </div>
+
+
+            <div class="input-row" >
+                <label class="input-label separate separated-top">Applicable Days of the Week</label>
+                <md-button-toggle-group class="default blue" [(ngModel)]="hasDaysOfWeekRequirement">
+                    <md-button-toggle [value]="false">All Days</md-button-toggle>
+                    <md-button-toggle [value]="true">Specific Days</md-button-toggle>
+                </md-button-toggle-group>
+                <div style="margin-top: 10px;"  *ngIf="hasDaysOfWeekRequirement">
+                    <app-button-toggler multiple [options]="dayOptions" [(ngModel)]="object.days"></app-button-toggler>
+                </div>
+            </div>
+
+
+
+
+            <div class="overlay-action-buttons">
+                <button md-button class="btn secondary grey" (click)="cancel()"><i class="icon icon-cancel"></i>Cancel</button>
+                <button md-button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>Save</button>
+            </div>
+
+        </ng-container>
+
+    </ng-container>
+</div>

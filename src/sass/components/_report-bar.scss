@@ -1,0 +1,71 @@
+$indicator-default-bg: #EAEEF2;
+$indicator-value-bg: #18A9E2;
+$bar-indicator-height: 40px;
+$bar-indicator-height-compact: 32px;
+
+.report-bar {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+
+    @include max-width($mobile) {
+        padding-bottom: $bar-indicator-height-compact + 10;
+        position: relative;
+    }
+}
+
+.bar-circle {
+    @include circle(40px);
+    background-color: $circle-grey;
+    font-size: 16px;
+    color: #FFF;
+    margin-right: 14px;
+}
+
+.bar-title {
+    margin-right: 10px;
+    min-width: 200px;
+    max-width: 200px;
+
+    span {
+        font-size: 13px;
+        color: $green;
+    }
+}
+
+.bar-indicator {
+    height: $bar-indicator-height;
+    width: 50%;
+    position: relative;
+    margin-right: 20px;
+    background-color: $indicator-default-bg;
+
+    .fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 0;
+        height: 100%;
+        background-color: $indicator-value-bg;
+    }
+
+    @include max-width($compact) {
+        height: $bar-indicator-height-compact;
+    }
+
+    @include max-width($mobile) {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+    }
+}
+
+.bar-price {
+    @include max-width($mobile) {
+        margin-left: auto;
+    }
+}

@@ -1,0 +1,970 @@
+$thead-bg: #fcfcfd;
+$table-border: #e2e7eb;
+$td-default-color: #6e858c;
+$td-left: 36px;
+$th-padding-y: 22px;
+$th-padding: $th-padding-y $td-left;
+$tr-highlight: #f2fbf8;
+$table-action: #c0cddb;
+$table-action-active: $select-highlight;
+
+$patient-cell-left: 40px;
+$patient-cell-left-compact: 22px;
+$patient-th: 22px;
+$patient-td: 30px;
+
+$compact-padding-y: 11px;
+$compact-padding-x: 18px;
+
+$inventory-padding-y: 18px;
+$inventory-padding-x: 14px;
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid $table-border;
+}
+
+th {
+    color: #4c6379;
+    font-size: 13px;
+    font-weight: $bold;
+    text-transform: uppercase;
+    padding: $th-padding;
+    background-color: $thead-bg;
+    text-align: left;
+}
+
+.table-subheading th {
+    text-transform: none;
+    font-weight: normal;
+    font-size: 15px;
+    padding-top: 0 !important;
+}
+
+td {
+    color: $td-default-color;
+    padding: $th-padding;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+tbody {
+    tr {
+        border-top: 1px solid $table-border;
+        background-color: #ffffff;
+        transition: border-color 200ms ease,
+        background-color 200ms ease;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $tr-highlight;
+            border-color: #d4f2e8;
+
+            + tr {
+                border-color: #d4f2e8;
+            }
+        }
+
+        &:last-child {
+            border-bottom: 1px solid $table-border;
+        }
+
+        &:active {
+            box-shadow: inset 0 0 15px rgba(0,0,0,.18);
+        }
+    }
+}
+
+tr.active {
+    background-color: #9dabb9;
+
+    td {
+        color: #fff !important;
+    }
+
+    &:hover {
+        background-color: #9dabb9;
+
+        td {
+            color: #fff;
+        }
+    }
+}
+
+
+// Table action button
+//////////////////////
+
+.table-action {
+    text-align: center;
+    color: $table-action;
+    font-weight: 600;
+    font-family: 'open-sans';
+    font-size: 12px;
+    text-transform: uppercase;
+
+    .icon {
+        font-size: 15px;
+        @extend %transition;
+
+        &:hover {
+            color: $table-action-active;
+        }
+    }
+
+    &:active {
+        box-shadow: inset 0px 0px 13px 0px rgba(0, 0, 0, 0.25);
+    }
+}
+tr:hover .table-action {
+    color: $table-action-active;
+
+    .icon {
+        color: $table-action-active !important;
+    }
+}
+
+
+// Table buttons
+////////////////
+
+.table-buttons {
+    .btn + .btn {
+        margin-left: 1rem;
+    }
+}
+
+
+// Header row styles
+////////////////////
+
+.green-hl-tr {
+    tr {
+        box-shadow: inset 11px 0px 0px -8px transparent;
+        transition: box-shadow 190ms ease;
+
+        &:hover {
+            box-shadow: inset 11px 0px 0px -8px $green;
+            .table-action {
+                .icon {
+                    color: $table-action;
+                }
+            }
+        }
+    }
+}
+
+// Pagination
+/////////////
+
+.table-pagination {
+    background-color: #fff;
+    border: 1px solid $table-border;
+    margin-top: 15px;
+
+    &-content {
+        display: flex;
+        justify-content: center;
+        height: 3em;
+
+        & > * {
+            margin: 0 0.3em;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+    }
+
+    &-item {
+        @extend %all-c;
+        height: 100%;
+        text-align: center;
+        border-left: 1px solid $table-border;
+        position: relative;
+        font-size: 18px;
+        color: #d9dee0;
+        transition: all 200ms ease;
+        cursor: pointer;
+        padding: 0 0.3em;
+
+        &:last-child {
+            border-right: 1px solid $table-border;
+        }
+
+        @include active(8px, .4);
+
+        &:hover {
+            color: #335a66;
+        }
+
+        &:after,
+        &:before {
+            @extend %pseudo;
+            height: 1px;
+            left: 0;
+            right: 0;
+            background-color: $select-highlight;
+            opacity: 0;
+        }
+
+        &:after {
+            bottom: -1px;
+        }
+
+        &:before {
+            top: -1px;
+        }
+
+        &.active {
+            border-color: $select-highlight;
+            background-color: #e4f5fc;
+            color: #335a66;
+
+            &:after,
+            &:before {
+                opacity: 1;
+            }
+
+            + .table-pagination-item {
+                border-left-color: $select-highlight;
+            }
+
+            &:last-child {
+                border-right-color: $select-highlight !important;
+            }
+        }
+    }
+
+    .last-page-link,
+    .first-page-link {
+        color: $select-highlight;
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+            color: $green;
+        }
+
+        &:active {
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+        }
+    }
+
+    .next-page-link,
+    .prev-page-link {
+        cursor: pointer;
+        color: $select-highlight;
+
+        .icon {
+            font-size: 20px;
+        }
+
+        &:hover {
+            color: $green;
+        }
+    }
+
+    .next-page-link .icon {
+        transform: rotateZ(180deg);
+    }
+}
+
+
+// Table typography
+///////////////////
+
+th a {
+    color: #4c6379;
+}
+
+
+// Utility classes: padding
+///////////////////////////
+
+.inventory-table {
+    th, td {
+        padding: $inventory-padding-y $inventory-padding-x;
+    }
+}
+
+.receipts-table {
+    td, th {
+        padding: $th-padding-y;
+    }
+}
+
+
+// Utility classes: alignment
+/////////////////////////////
+
+.icon-middle {
+    // Use this when the parent element does not have `display: flex`
+    i {
+        vertical-align: middle;
+        transform: translateY(-0.2rem);
+    }
+}
+
+
+// Utility classes: column widths
+/////////////////////////////////
+
+.table-tax-breakdown {
+    // Meant to be put on the table
+    max-width: 100rem !important;
+}
+
+.col-narrow {
+    min-width: 5rem;
+}
+
+.col-tenth {
+    width: 10%;
+}
+
+.col-100 {
+    min-width: 100px;
+}
+
+.col-100-fixed {
+    width: 100px;
+    min-width: 100px;
+}
+
+.col-120-fixed {
+    width: 120px;
+    min-width: 120px;
+}
+
+.col-175-fixed {
+    width: 175px;
+    min-width: 175px;
+}
+
+
+.col-150-fixed {
+    width: 150px;
+    min-width: 150px;
+}
+
+.col-200-fixed {
+    width: 200px;
+    min-width: 200px;
+}
+
+.col-225-fixed {
+    width: 225px;
+    min-width: 225px;
+}
+
+.col-250-fixed {
+    width: 250px;
+    min-width: 250px;
+}
+
+.col-275-fixed {
+    width: 275px;
+    min-width: 275px;
+}
+
+.col-160 {
+    min-width: 160px;
+}
+
+.col-225 {
+    min-width: 225px;
+}
+
+.col-260 {
+    min-width: 260px;
+}
+
+.col-275 {
+    min-width: 275px;
+}
+
+.col-300 {
+    min-width: 300px;
+}
+
+.report-table th:nth-child(4).col-260 {
+    width: 260px;
+    min-width: 260px;
+}
+
+.col-6rem {
+    width: 6rem !important;
+}
+
+.money-column {
+    text-align: right !important;
+    width: 6.5rem !important;
+}
+
+.col-6-5rem {
+    width: 6.5rem !important;
+}
+
+.col-8rem {
+    width: 8rem !important;
+}
+
+.package-barcodes table {
+    width: auto;
+}
+
+.receipts-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.col-qty,
+.col-12rem {
+    width: 12rem !important;
+}
+
+.col-10rem {
+    width: 10rem !important;
+}
+
+.sent-to-metrc {
+    width: 10em !important;
+}
+
+
+// Hide next table row
+//////////////////////
+
+tr.hide-next {
+    border-bottom: 1px solid $table-border;
+
+    & + tr {
+        display: none;
+    }
+}
+
+
+// Compact tables in overlays
+/////////////////////////////
+
+.overlay table td,
+.overlay table th {
+    padding: $compact-padding-y $compact-padding-x;
+}
+
+// Sortable table headers
+/////////////////////////
+
+th[sortBy] {
+    background: #fcfcfd url(/assets/svg/sort-double.svg) no-repeat center right;
+    cursor: pointer;
+}
+th[sortBy].asc {
+    background: #fcfcfd url(/assets/svg/sort-up.svg) no-repeat center right;
+}
+th[sortBy].desc {
+    background: #fcfcfd url(/assets/svg/sort-down.svg) no-repeat center right;
+}
+
+// No-hover table
+/////////////////
+
+table.nohover tr {
+    cursor: auto;
+}
+table.nohover tbody tr:hover {
+    background-color: white;
+}
+table.nohover tbody tr:hover,
+table.nohover tbody tr:hover + tr {
+    border-color: $table-border;
+    box-shadow: none;
+}
+table.nohover tbody tr:hover td {
+    background-color: white;
+    box-shadow: none;
+}
+table.nohover.green-hl-tr tr:hover {
+    box-shadow: none;
+}
+table.nohover tr:active,
+table.nohover tbody tr:active,
+table.nohover.green-hl-tr tr:active {
+    box-shadow: none;
+}
+
+// Nohover only on a specific row
+tr.nohover:hover {
+    cursor: auto;
+    background-color: white;
+    border-color: $table-border;
+
+    & + tr {
+        border-color: $table-border;
+    }
+}
+
+
+// Sticky table headers
+///////////////////////
+
+table.sticky > thead th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: calc(#{$topnav-height} - 1px);
+
+    @include max-width($compact) {
+        top: calc(#{$topnav-height-compact} - 1px);
+    }
+
+    @include max-width($tablet) {
+        top: calc(#{$topnav-height-tablet} - 1px);
+    }
+
+    @include max-width($mobile) {
+        top: calc(#{$topnav-height-mobile} - 1px);
+    }
+}
+
+// Compact table styles
+///////////////////////
+
+table.compact {
+    @include max-width($compact) {
+        td,
+        th {
+            font-size: 13px;
+            padding: 0.75em 1.5em 0.75em 0;
+
+            &:first-child {
+                padding-left: 1.5em;
+            }
+        }
+
+        td {
+            vertical-align: bottom;
+        }
+
+        th[sortBy] {
+            background-position: center right -1.25em;
+        }
+
+        .hide-on-compact {
+            display: none;
+        }
+    }
+
+    @include min-width($compact + 1) {
+        .show-on-compact {
+            display: none;
+        }
+    }
+}
+
+// Collapse first four columns to save horizontal space
+app-inventory-breakdown table.compact {
+    @include max-width($compact) {
+        td:not(:last-child) {
+            &:first-child,
+            &:nth-child(2),
+            &:nth-child(3),
+            &:nth-child(4) {
+                display: block;
+                padding-left: 1.5em;
+
+                &.align-right {
+                    text-align: left!important;
+                }
+            }
+
+            &:nth-child(2),
+            &:nth-child(3),
+            &:nth-child(4) {
+                padding-top: 0;
+            }
+
+            &:nth-child(1),
+            &:nth-child(2),
+            &:nth-child(3) {
+                padding-bottom: 0;
+            }
+
+            &:nth-child(4) {
+                &.hide-compact {
+                    display: none
+                }
+                font-weight: bold;
+            }
+        }
+
+        th {
+            &:nth-child(2),
+            &:nth-child(3),
+            &:nth-child(4) {
+                display: none;
+            }
+        }
+    }
+}
+
+
+// Subtable (e.g. receipt detail)
+/////////////////////////////////////
+
+// Toggle caret icons
+.subtable-toggle--collapsed,
+.subtable-toggle--expanded {
+    &:not(.nohover) {
+        td:last-child {
+            background-image: url(/assets/svg/caret-expand.svg);
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 2rem auto;
+        }
+    }
+}
+.subtable-toggle--expanded,
+.subtable-toggle--expanded:hover { // Applied to the <tr> above the subtable (the one that gets clicked)
+    &:not(.nohover) {
+        background-color: #d6ece6;
+        border: 1px solid $td-default-color;
+        border-bottom: none;
+
+
+        td {
+            font-weight: bold;
+        }
+
+        td:last-child {
+            background-image: url(/assets/svg/caret-collapse.svg);
+        }
+    }
+}
+.has-subtable > thead th:last-child,
+td.subtable td:last-child,
+td.subtable th:last-child,
+.subtable-toggle--collapsed td:last-child,
+.subtable-toggle--expanded td:last-child {
+    // same padding as the toggle row, to make room for the arrow
+    padding-right: 3rem;
+}
+
+table td.subtable { // class="subtable" goes on the <td> element which contains the actual table
+    padding: 0 0 1.5em;
+    background-color: #d6ece6;
+    border: 1px solid $td-default-color;
+    border-top: none;
+
+    table, tr, td, th, tr:hover, td:hover, th:hover {
+        border: none;
+        background: transparent !important;
+    }
+
+    th {
+        font-weight: normal;
+        text-transform: none;
+        padding-bottom: 0.5rem;
+    }
+
+    td {
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+    }
+
+    .subtable-text,
+    td,
+    th,
+    h4,
+    .bold-label {
+        font-size: 13px;
+    }
+
+    .subtable-text { padding-left: 3rem; }
+    table {
+        margin-left: calc(3rem - 22px);
+        width: calc(100% - 5rem)
+    }
+    table:first-child th { padding-top: 0; }
+}
+
+
+// Inventory products table
+///////////////////////////
+
+.inventory-products-table {
+    th,
+    td {
+        text-align: left;
+
+        &.table-action {
+            text-align: center;
+        }
+    }
+
+    @include max-width($compact) {
+        th,
+        td {
+            padding: $inventory-padding-y $inventory-padding-x;
+        }
+
+        td {
+            font-size: 15px;
+        }
+    }
+}
+
+
+// Report tables
+////////////////
+
+.report-table {
+    th {
+        text-align: left;
+
+        &:nth-child(4) {
+            width: 40%;
+        }
+    }
+
+    &.overall-sales-table {
+        th {
+            &:first-child {
+                width: 25%;
+            }
+        }
+
+        tr {
+            td {
+                &:first-child {
+                    @extend %table-summary;
+                }
+            }
+        }
+    }
+
+    &.has-total {
+        tr {
+            &:last-child {
+                td {
+                    @extend %table-summary;
+                }
+            }
+        }
+    }
+
+    &.first-wide {
+      th {
+        width: 12%;
+
+        &:first-child {
+          width: 33%;
+        }
+      }
+    }
+}
+
+
+// POS tables
+/////////////
+
+.pos-table {
+    td,
+    th {
+        padding: 12px 15px;
+    }
+}
+
+
+// Patients tables and modals
+/////////////////////////////
+
+.patient-groups-table {
+    thead {
+        tr {
+            th {
+                &:first-child {
+                    width: 20%;
+                }
+            }
+        }
+    }
+
+    tbody {
+        tr {
+            td {
+                &:first-child {
+                    font-size: 16px;
+                    font-weight: $semi;
+                    color: #506f79;
+                }
+
+                &:nth-child(2) {
+                    color: #6e848c;
+                    font-size: 15px;
+                    font-weight: 400;
+                }
+            }
+        }
+    }
+    .table-action {
+        width: 15%;
+    }
+}
+
+.patients-main-table {
+    th,
+    td {
+        text-align: left;
+
+        &.table-action {
+            text-align: center;
+        }
+    }
+
+    td {
+        padding-top: $patient-td;
+        padding-bottom: $patient-td;
+
+        @include max-width($compact) {
+            padding-top: $patient-th;
+            padding-bottom: $patient-th;
+        }
+    }
+
+    thead {
+        th:last-child {
+            width: 162px;
+        }
+    }
+
+    tr {
+        box-shadow: inset 11px 0px 0px -8px transparent;
+        transition: box-shadow 190ms ease;
+
+        &:hover {
+            box-shadow: inset 11px 0px 0px -8px $green;
+            .table-action {
+                .icon {
+                    color: $table-action;
+                }
+            }
+        }
+    }
+}
+
+.modal--patient-verification {
+    margin-bottom: 2em;
+
+    .padded {
+        margin-bottom: 1em;
+    }
+
+
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        h1 {
+            font-size: 24px;
+        }
+    }
+
+    table {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        border: none;
+    }
+
+    tr,
+    td,
+    tbody tr:hover,
+    tbody tr:hover td {
+        background-color: transparent !important;
+        border-color: $table-border;
+    }
+
+    .editing tr,
+    .editing tr:hover,
+    .editing tr:hover + tr,
+    .editing td,
+    .editing tr:hover td {
+        border-color: transparent;
+    }
+
+    td {
+        text-align: left;
+        padding: 8px 0;
+
+        &:first-child {
+            font-weight: bold;
+            width: 200px;
+        }
+    }
+}
+
+// Drawer breakdown table
+/////////////////////////
+
+#drawerReportBreakdown {
+    padding: 2rem;
+
+    .drawer-breakdown-table {
+        min-width: 85rem;
+    }
+}
+
+#drawerReportClosing .drawer-breakdown-table {
+    width: 100%;
+}
+
+.drawer-breakdown-table {
+    width: auto;
+    border-collapse: collapse;
+    margin: 0 auto 3rem;
+
+    th,
+    td {
+        padding: 0.75rem 2rem;
+        color: #4c6379;
+        white-space: nowrap;
+        background: white;
+    }
+
+    th {
+        background: white;
+        font-weight: normal;
+        text-transform: none;
+        font-size: 1.25rem;
+    }
+
+    .bottom-border {
+        border-bottom: 1px solid $table-border;
+    }
+
+    .right-border {
+        border-right: 1px solid $table-border;
+    }
+
+    tr:first-child th,
+    .top-border th,
+    .top-border td {
+        border-top: 1px solid $table-border;
+    }
+
+    tr:last-child th,
+    tr:last-child td {
+        border-bottom: 1px solid $table-border;
+    }
+
+    .heading {
+        color: grey;
+    }
+
+    .subheading {
+        color: grey;
+    }
+}
+

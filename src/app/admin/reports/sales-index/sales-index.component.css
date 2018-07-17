@@ -1,0 +1,32 @@
+.incoming-alert {
+    color: #e6555c;
+}
+
+.overall-sales-summary {
+    display: flex;
+    flex-direction: row;
+    padding: 0 40px;
+    justify-content: space-evenly;
+}
+
+.overall-sales-summary-box {
+    border: 1px solid #e2e7eb;
+    padding: 50px 80px;
+    background-color: #fcfcfd;
+    color: #6e858c;
+    font-size: 20px;
+    text-align: center;
+    margin-top: 30px;
+}
+
+@media (max-width: 640px) {
+    .overall-sales-summary-box {
+        padding: 20px;
+        font-size: 14px;
+    }
+}
+
+.overall-sales-summary-box-value {
+    font-size: 30px;
+    margin-top: 20px;
+}

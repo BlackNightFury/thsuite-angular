@@ -1,0 +1,67 @@
+<div class="overlay-closearea third" (click)="startLeaving()"></div>
+<div class="overlay right third active not-hidden-block" [@leave]="animationStatus" (@leave.done)="cancel()">
+
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+
+    <div class="section-heading">
+        <div class="svg-icon"><img src="/assets/svg/inventory.svg"/></div>
+        <h1 class="section-title">Package Details</h1>
+    </div>
+
+    <ng-container *ngIf="transfer && _package">
+
+        <div class="detail-row">
+            <div>
+                <span class="input-label">Package Label</span>
+                <h5 class="product-info">{{_package.PackageLabel}}</h5>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div>
+                <span class="input-label">Product Name</span>
+                <h5 class="product-info">{{_package.ProductName}}</h5>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div>
+                <span class="input-label">Product Type</span>
+                <h5 class="product-info">{{_package.ProductCategoryName}}</h5>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div>
+                <span class="input-label">Shipped Quantity</span>
+                <h5 class="product-info">{{(_package.ShippedQuantity ? _package.ShippedQuantity.toFixed(2) : 0.00 )}}&nbsp;{{_package.ShippedUnitOfMeasureName}}</h5>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div>
+                <span class="input-label">Received Quantity</span>
+                <h5 class="product-info">{{(_package.ReceivedQuantity ? _package.ReceivedQuantity.toFixed(2) : 0.00 )}}&nbsp;{{_package.ShippedUnitOfMeasureName}}</h5>
+            </div>
+        </div>
+
+        <!--<div class="input-row">-->
+            <!--<md-input-container class="default single">-->
+                <!--<input mdInput placeholder="Label" readonly [(ngModel)]="_package.Label"/>-->
+            <!--</md-input-container>-->
+        <!--</div>-->
+
+        <!--<div class="input-row">-->
+            <!--<md-input-container class="default single">-->
+                <!--<input type="number" style="text-align: right" mdInput placeholder="Quantity" readonly [(ngModel)]="_package.Quantity"/>-->
+            <!--</md-input-container>-->
+        <!--</div>-->
+
+        <!--<div class="input-row">-->
+            <!--<md-input-container class="default single">-->
+                <!--<input type="number" style="text-align: right" mdInput placeholder="Wholesale Price" [(ngModel)]="_package.wholesalePrice"/>-->
+            <!--</md-input-container>-->
+        <!--</div>-->
+
+    </ng-container>
+</div>

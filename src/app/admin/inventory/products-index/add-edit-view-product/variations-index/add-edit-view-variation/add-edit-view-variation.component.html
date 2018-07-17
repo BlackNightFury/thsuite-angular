@@ -1,0 +1,264 @@
+<div class="overlay-closearea third" (click)="startLeaving()"></div>
+<div #root class="overlay right third active not-hidden-block" [@leave]="animationStatus" (@leave.done)="cancel()">
+
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+
+    <div class="section-heading">
+        <div class="svg-icon"><img src="/assets/svg/inventory.svg"/></div>
+        <div>
+            <h5 class="subtitle" *ngIf="product">{{product.name}}</h5>
+            <h1 class="section-title" *ngIf="mode == 'edit'">Edit Product Variation</h1>
+            <h1 class="section-title" *ngIf="mode == 'add'">Add Product Variation</h1>
+            <h1 class="section-title" *ngIf="mode == 'view'">View Product Variation</h1>
+        </div>
+    </div>
+
+    <ng-container *ngIf="product && productVariation">
+
+        <ng-container *ngIf="mode == 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Product Variation Name</span>
+                    <h5 class="product-info">{{productVariation.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="product.inventoryType == 'weight'">
+                <div>
+                    <span class="input-label">Total Weight per Unit</span>
+                    <h5 class="product-info" *ngIf="!productVariation.isBulkFlower">{{(productVariationItems | pluck:'ProductVariationItem.quantity' | sum) + ' ' + (productVariationItems[0].UnitOfMeasureAbbreviation)}}</h5>
+                    <h5 class="product-info" *ngIf="productVariation.isBulkFlower">Bulk</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="product.inventoryType != 'weight'">
+                <div>
+                    <span class="input-label">Price</span>
+                    <h5 class="product-info">{{productVariation.price | currency:'USD':true}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="product.inventoryType == 'weight'">
+                <div>
+                    <span class="input-label">Price</span>
+                    <h5 class="product-info" *ngIf="!productVariation.isBulkFlower">{{pricingTierPrice}}</h5>
+                    <h5 class="product-info" *ngIf="productVariation.isBulkFlower">{{product.PricingTier.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="!productVariation.isBulkFlower">
+                <div>
+                    <span class="input-label">Available Units for Allocation</span>
+                    <h5 class="product-info">{{totalProductVariationsAvailable}}</h5>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">Tags</label>
+                <app-select2 *ngIf="tagSelectOptions" [options]="tagSelectOptions" class="full-width"
+                             [(ngModel)]="selectedTagIds">
+
+                </app-select2>
+            </div>
+
+            <div class="detail-row" *ngIf="barcodes.length">
+                <div>
+                    <span class="input-label">Total Barcodes Remaining</span>
+                    <h5 class="product-info">{{barcodes | pluck:'remainingInventory' | sum}} barcodes</h5>
+                </div>
+            </div>
+
+            <div class="input-row" *ngIf="!productVariation.isBulkFlower">
+
+                <label class="input-label">Composition</label>
+                <app-select2 [options]="itemSelectOptions" class="full-width"
+                             [(ngModel)]="selectedItemIds">
+
+                </app-select2>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th class="align-right">{{product.inventoryType == 'weight' ? "Weight" : "Quantity"}}</th>
+                        <th class="align-right" style="width: 40%;">Composition %</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr *ngFor="let item of productVariationItems">
+                        <td>{{item.name}}</td>
+                        <td>
+                            <div style="display: flex; float: right;">
+                                <span class="align-right" style="width: 40px; padding-left: 0;">{{item.ProductVariationItem.quantity + " " + item.UnitOfMeasureAbbreviation}}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; float: right;">
+                                <span class="align-right" style="width: 40px; padding-left: 0;">{{((item.ProductVariationItem.quantity / (productVariationItems | pluck:'ProductVariationItem.quantity' | sum)) * 100) | round:2}}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input id="variationName1" *ngIf="!errorFlags.name" class="variation-name" mdInput placeholder="Variation Name" [(ngModel)]="productVariation.name" />
+                    <input id="variationName2" *ngIf="errorFlags.name"  class="variation-name" mdInput placeholder="Variation Name" [(ngModel)]="productVariation.name" style="border: 1px solid red" />
+                    <a class="input-note no-margin" (click)="toggleVariationNameExplanation()" style="cursor: pointer;">Need help choosing a name? (click to toggle)</a>
+                    <ng-container *ngIf="variationNameExplanationShowing">
+                        <p class="input-note no-margin">Product variation names are used to identify a product variation.</p>
+                        <p class="input-note no-margin">Enter your variation name based on how the product will be identified during the time of sale.</p>
+                        <p class="input-note no-margin">The variation name can include any information that will help budtenders and customers identify the product.</p>
+                        <p class="input-note no-margin">The variation name will appear in the cart when it is rung up at the register and on the item barcode.</p>
+                        <p class="input-note no-margin">An example of a product variation name for a weighted cannabis item can be named after the weight being sold (i.e. 1g).</p>
+                        <p class="input-note no-margin">An example of a product variation name for an itemized cannabis item can be named after the number of units individually sold (i.e. 1ea).</p>
+                        <p class="input-note no-margin">A product variation name for a non-cannabis item could be named after the number of units individually sold or the different versions of how one product type is sold (i.e. a graphic t-shirt can have variations small, medium, large, etc).</p>
+                    </ng-container>
+                </md-input-container>
+            </div>
+
+            <div class="input-row" *ngIf="product.inventoryType == 'weight'">
+                <md-input-container class="default single" *ngIf="!productVariation.isBulkFlower">
+                    <input *ngIf="!errorFlags.quantity" style="background-color: #d7dcda;" mdInput placeholder="Total Weight per Unit" [ngModel]="productVariationItems | pluck:'ProductVariationItem.quantity' | sum" readonly/>
+                    <input *ngIf="errorFlags.quantity" style="border: 1px solid red; background-color: #d7dcda;" mdInput placeholder="Total Weight per Unit" [ngModel]="productVariationItems | pluck:'ProductVariationItem.quantity' | sum" readonly/>
+                </md-input-container>
+                <div *ngIf="productVariation.isBulkFlower">
+                    <span class="input-label">Total Weight per Unit</span>
+                    <h5 class="product-info">Bulk</h5>
+                </div>
+            </div>
+
+            <div class="input-row" *ngIf="product.inventoryType != 'weight'">
+                <md-input-container class="default single">
+                    <input *ngIf="!errorFlags.price" mdInput placeholder="Price" [(ngModel)]="productVariation.price"/>
+                    <input *ngIf="errorFlags.price" style="border: 1px solid red" mdInput placeholder="Price" [(ngModel)]="productVariation.price"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row" *ngIf="product.inventoryType == 'weight'">
+                <md-input-container class="default single" *ngIf="!productVariation.isBulkFlower">
+                    <input style="background-color: #d7dcda;" mdInput placeholder="Price" [(ngModel)]="pricingTierPrice" readonly/>
+                </md-input-container>
+                <div *ngIf="productVariation.isBulkFlower">
+                    <span class="input-label">Price</span>
+                    <h5 class="product-info">{{product.PricingTier.name}}</h5>
+                </div>
+            </div>
+
+            <div class="input-row" *ngIf="mode != 'add' && !productVariation.isBulkFlower">
+                <md-input-container class="default single">
+                    <input style="background-color: #d7dcda;" mdInput placeholder="Available Units for Allocation" [ngModel]="totalProductVariationsAvailable" readonly/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row" *ngIf="barcodes.length">
+                <md-input-container class="default single">
+                    <input mdInput style="background-color: #d7dcda;" placeholder="Total Barcodes Remaining" [value]="barcodes | pluck:'remainingInventory' | sum" readonly/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">Tags</label>
+                <app-select2 *ngIf="tagSelectOptions" [options]="tagSelectOptions" class="full-width"
+                             [(ngModel)]="selectedTagIds">
+
+                </app-select2>
+            </div>
+
+            <div class="input-row" *ngIf="(product.ProductType.cannabisCategory == 'Buds' || product.ProductType.cannabisCategory == 'ShakeTrim') && mode == 'add' && environment.bulkFlowerMode">
+                <md-checkbox [(ngModel)]="productVariation.isBulkFlower">Bulk Flower Variation</md-checkbox>
+                <p class="input-note">Note: Only for weighing out flower at POS, not for prepackaging.</p>
+            </div>
+
+            <div class="input-row" *ngIf="!productVariation.isBulkFlower">
+
+                <label class="input-label">Composition</label>
+                <app-select2 [options]="itemSelectOptions" class="full-width"
+                             [(ngModel)]="selectedItemIds">
+
+                </app-select2>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th class="align-right">{{product.inventoryType == 'weight' ? "Weight" : "Quantity"}}</th>
+                        <th class="align-right" style="width: 40%;">Composition %</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr *ngFor="let item of productVariationItems">
+                        <td>{{item.name}}</td>
+                        <td>
+                            <div style="display: flex; float: right;">
+                                <input type="number" [(ngModel)]="item.ProductVariationItem.quantity" class="align-right" style="width: 40px; padding-left: 0;" *ngIf="!productVariation.readOnly"/>
+                                <input type="number" [(ngModel)]="item.ProductVariationItem.quantity" class="align-right" style="width: 40px; padding-left: 0; background-color: #d7dcda;" readonly *ngIf="productVariation.readOnly"/>
+                                <span style="margin-top: 15px; margin-left: 3px;">{{item.UnitOfMeasureAbbreviation}}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; float: right;">
+                                <input type="number" [value]="((item.ProductVariationItem.quantity / (productVariationItems | pluck:'ProductVariationItem.quantity' | sum)) * 100) | round:2" class="align-right" style="background-color: #d7dcda; width: 60px; padding-left: 0;" readonly/>
+                                <span style="margin-top: 15px; margin-left: 3px;">%</span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </ng-container>
+
+
+        <div class="input-row" *ngIf="barcodes.length">
+            <label class="input-label">Created Barcodes</label>
+            <table>
+                <thead>
+                <tr>
+                    <th>Barcode</th>
+                    <th class="align-right">Qty. Remaining</th>
+                    <th class="align-right">Price</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr *ngFor="let barcode of barcodes" (click)="onBarcodeClick($event, barcode)">
+                    <td>{{barcode.barcode}}</td>
+                    <td class="align-right">{{(barcode.remainingInventory ? barcode.remainingInventory + " barcodes" : "No allocation")}}</td>
+                    <td class="align-right">{{barcode.ProductVariation.price | currency:'USD':true}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <ng-container *ngIf="mode == 'view'">
+            <button class="btn secondary grey" (click)="remove()"><i class="icon icon-remove"></i>Remove</button>
+            <button class="btn secondary green" (click)="addBarcode()"><i class="icon icon-add"></i>Barcode</button>
+        </ng-container>
+        <ng-container *ngIf="mode != 'view'">
+            <div class="overlay-action-buttons">
+                <button class="btn secondary grey" data-overlay-close (click)="startLeaving()"><i class="icon icon-cancel"></i>Cancel
+                </button>
+                <button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>Save</button>
+                <button *ngIf="mode != 'add'" class="btn secondary green" (click)="addBarcode()"><i class="icon icon-add"></i>Barcode</button>
+            </div>
+        </ng-container>
+    </ng-container>
+</div>

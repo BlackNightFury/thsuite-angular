@@ -1,0 +1,263 @@
+$topbar-controls-padding: 1rem 40px 0;
+
+.topbar-controls {
+    background-color: #fff;
+    box-shadow: 0px 1px 1px 0px rgb(193, 198, 210);
+    padding: $topbar-controls-padding;
+
+    .pos-drawer & {
+        padding-bottom: 1rem;
+    }
+}
+
+.topbar-filters {
+    padding: $topbar-controls-padding;
+    padding-bottom: 0 !important;
+}
+
+.topbar-controls,
+.topbar-filters {
+    @extend %v-c;
+
+    flex-direction: column;
+    align-items: stretch;
+
+    input {
+        height: 50px;
+        line-height: 50px;
+
+        @include max-width($mobile) {
+            height: 42px;
+            line-height: 42px;
+        }
+    }
+
+    .btn.secondary {
+        padding-left: 1em;
+        padding-right: 1em;
+        white-space: nowrap;
+    }
+
+    .controls-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        md-select {
+            margin-right: 15px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+
+        & > .page-subtitle, & > .control-input, & > .controls-input-search, & > app-select2, & > .paired-inputs, & > p, & > .btn, & > app-button-toggler, & > .input-label, & > .datepick, & > app-date-range-selector, & > .time-frame-selector, & > .report-type, & > .btn-toggler, & > .btn-togglers {
+            margin-bottom: 1rem;
+
+            &:not(:last-child) {
+                margin-right: 1rem;
+            }
+        }
+
+        .controls-input-search,
+        &:last-child .btn:first-of-type {
+            margin-left: auto;
+        }
+    }
+
+    .controls-row + .controls-row {
+        margin-top: -0.5rem;
+    }
+
+    .align-items-bottom {
+        align-items: flex-end;
+    }
+
+    .flex-right {
+        margin-left: auto !important;
+    }
+
+    .flex-left {
+        margin-right: auto !important;
+    }
+
+    @include ipad-portrait {
+        padding: 15px 20px;
+
+        input {
+            height: 42px;
+            line-height: 42px;
+        }
+
+        > * {
+            width: 100% !important;
+            margin-bottom: 10px;
+        }
+
+        .controls-input-icon {
+            height: 42px;
+            line-height: 42px;
+            width: 42px;
+            cursor: pointer;
+        }
+    }
+
+    @include max-width($mobile) {
+        padding: 15px 20px;
+
+        > * {
+            width: 100% !important;
+            margin-bottom: 10px;
+        }
+
+        .controls-input-icon {
+            height: 42px;
+            line-height: 42px;
+            width: 42px;
+        }
+    }
+
+    .input-label.error {
+        color: red;
+
+    }
+}
+
+.control-input {
+    display: flex;
+}
+
+// Search bar
+/////////////
+
+.controls-input-search {
+    color: $text-color;
+    font-size: 15px;
+    width: 20em;
+    max-width: 100%;
+    background-image: url('/assets/svg/search-grey.svg');
+    background-position: left 0.75rem center;
+    background-size: 1rem auto;
+    background-repeat: no-repeat;
+    border-radius: 1rem;
+    height: 36px !important;
+    line-height: 36px !important;
+    padding: 5px 2.25rem;
+
+    @include placeholder {
+        opacity: .65;
+        color: $text-color;
+        font-family: 'proxima-nova';
+        font-size: 15px;
+    }
+}
+
+// Select2 dropdown menus - compact styles
+//////////////////////////////////////////
+
+.topbar-controls app-select2,
+.topbar-filters app-select2 {
+    width: 200px;
+}
+
+.select2-dropdown--below.compact {
+    min-width: 200px;
+    width: auto !important;
+
+    .select2-results__option {
+        white-space: nowrap;
+        padding-right: 2rem;
+
+        .flex-row div + div {
+            margin-left: 1rem;
+        }
+    }
+}
+
+[data-switch-target] {
+    display: none;
+    opacity: 0;
+    transform: translateY(-15%);
+    transition: none;
+    will-change: transform, opacity;
+
+    &.active {
+        opacity: 1;
+        display: block;
+        transform: translateX(0);
+        pointer-events: auto;
+        @include trans($prop: opacity, $prop1: transform, $timing: 300ms, $fn: $cb-switch);
+    }
+}
+    
+.control-input.right {
+    margin-left: auto !important;
+}
+
+.btn-export {
+    @include max-width($mobile) {
+        display: none !important;
+    }
+}
+
+
+// Toggler checkbox button
+//////////////////////////
+
+.btn-toggler--checkbox {
+    white-space: nowrap;
+
+    .toggle-checkbox {
+      width: 35px;
+      height: 20px;
+      border-radius: 50px;
+      display: inline-block;
+      vertical-align: middle;
+      transform: translateY(-1px);
+      position: relative;
+      background: lightgrey;
+      cursor: pointer;
+      transition: background-color .40s ease-in-out;
+      
+      &:after {
+        content: '';
+        width: 16px;
+        height: 16px;
+        background-color: #fff;
+        border-radius: 50%;
+        display: inline-block;
+        position: absolute;
+        left: 3px;
+        top: 50%;
+        margin-top: -8px;
+        transition: all .30s ease-in-out;
+      }
+    }
+
+    &.active .toggle-checkbox{
+      background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAmUlEQVQ4T6WT0RWDMAhFeZs4ipu0mawZpaO4yevBc6hUIWLNd+4NeQDk5sE/PMkZwFvZywKSTxF5iUgH0C4JHGyF97IggFVSqyCFga0CvQSg70Mdwd8QSSr4sGBMcgavAgdvwQCtApvA2uKr1x7Pu++06ItrF5LXPB/CP4M0kKTwYRIDyRAOR9lJTuF0F0hOAJbKopVHOZN9ACS0UgowIx8ZAAAAAElFTkSuQmCC') no-repeat 4px center $btn-sky;
+      background-size: 10px 10px;
+
+      &:after {
+        left: calc(100% - 16px - 2px);
+      }
+    }
+
+    // Small hover effect
+    &:not(.active) {
+        &:hover,
+        &:focus {
+            .toggle-checkbox {
+                background-color: rgba(111, 145, 177, 0.45);
+            }
+        }
+    }
+
+    // Undo regular .btn-toggler styles
+    &.btn-toggler,
+    &.btn-toggler.active {
+        box-shadow: none;
+        border: none;
+        background-color: transparent;
+    }
+}

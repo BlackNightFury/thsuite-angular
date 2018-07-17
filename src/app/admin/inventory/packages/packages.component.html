@@ -1,0 +1,70 @@
+<app-export-options-modal
+    [isExportOptionsModalShowing]="isSalesIndexExportModalShowing"
+    [isExportOptionsModalAboutToClose]="isSalesIndexExportModalAboutToClose"
+    (onModalClosed)="onSalesIndexExportModalClosed($event)"
+    (onExport)="onSalesIndexExportModalExport($event)"
+     *ngIf="isSalesIndexExportModalShowing"></app-export-options-modal>
+     
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Packages</h2>
+
+        <input type="text" class="controls-input-search" #searchBar (keyup)="search($event.target.value)" placeholder="Search Packages..." [ngModel]="localSearchTerms">
+
+        <button class="btn tertiary blue btn-export" (click)="onClickExport()" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-select2 *ngIf="supplierSelect2Options"
+                     [options]="supplierSelect2Options"
+                     [(ngModel)]="selectedSupplierId"
+                     [renderOptionsAsHTML]="true">
+        </app-select2>
+
+        <label class="input-label">Unreceived<br>Packages:</label>
+        <app-button-toggler class="multiple" [options]="showHideToggleOptions" [(ngModel)]="unreceivedToggle"></app-button-toggler>
+
+        <label class="input-label">Finished<br>Packages:</label>
+        <app-button-toggler class="multiple" [options]="showHideToggleOptions" [(ngModel)]="finishedToggle"></app-button-toggler>
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-packages-table inventory-table sticky">
+        <thead>
+        <tr>
+            <th sortBy="ReceivedDateTime" [(ngModel)]="sortByModel" style="width: 12%">Received</th>
+            <th>Package</th>
+            <th>Product</th>
+            <th>Supplier</th>
+            <!--<th>Qty Rec.</th>-->
+            <th>Qty Rem.</th>
+            <th class="col-narrow icon-middle">WS<i class="material-icons">attach_money</i></th>
+            <th><i class="material-icons">attach_money</i></th>
+            <th><i class="material-icons" style="transform: rotate(90deg);">format_align_justify</i></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr [ngClass]="{'fade': item.object.FinishedDate}" *ngFor="let item of packages | async" (click)="onRowClick($event, item.object)">
+            <td *ngIf="item.object.wasReceived">{{item.object.ReceivedDateTime | date:'short'}}</td>
+            <td class="red text-center" *ngIf="!item.object.wasReceived">!!!!!</td>
+            <td>{{item.object.Label}}</td>
+            <td>{{item.productName}}</td>
+            <td>{{item.object.Supplier ? item.object.Supplier.name : ''}}</td>
+            <!--<td>{{item.ReceivedQuantity}}</td>-->
+            <td>{{item.object.Quantity}}</td>
+            <td><i *ngIf="item.object.wholesalePrice || item.object.wholesalePrice == 0" class="material-icons color-green">check_circle</i></td>
+            <td><i *ngIf="item.object.hasPrices" class="material-icons color-green">check_circle</i></td>
+            <td><i *ngIf="item.hasBarcodesForEachVariation" class="material-icons color-green">check_circle</i></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<router-outlet></router-outlet>
+

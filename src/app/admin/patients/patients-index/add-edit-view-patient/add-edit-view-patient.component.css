@@ -1,0 +1,23 @@
+h5.link{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+h5.link:hover{
+    color: #28bd8b;
+}
+
+.button-label {
+  display: inline-block;
+  width: 150px;
+}
+
+a {
+    color : #169fd3;
+    cursor:pointer;
+}
+
+.fixed-width-button-container {
+    display:inline-block;
+    width:120px;
+}

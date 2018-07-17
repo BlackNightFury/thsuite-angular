@@ -1,0 +1,9 @@
+.timesheet-heading {
+    margin: 17px 0 45px;
+    @extend %v-c;
+
+    img {
+        @include blockcircle(60px);
+        margin-right: 25px;
+    }
+}

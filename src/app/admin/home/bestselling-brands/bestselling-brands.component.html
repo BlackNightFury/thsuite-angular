@@ -1,0 +1,29 @@
+<div class="section-box">
+    <div class="section-title">
+        <div class="section-heading">
+            <div class="svg-icon">
+                <img src="assets/svg/bestselling_brands.svg"/>
+            </div>
+            <h1 class="section-title">Bestselling Supplier</h1>
+        </div>
+    </div>
+
+    <div class="report-control single">
+        <!--<div class="select-box" *ngIf="stores">-->
+            <!--<app-select2 [data]="stores | async" disabled="true"></app-select2>-->
+        <!--</div>-->
+
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+    </div>
+
+    <div class="report-bars">
+        <div class="report-bar" *ngFor="let row of salesData; let i = index">
+            <div class="bar-circle">{{ i + 1 }}</div>
+            <div class="bar-title">{{ row.name }}</div>
+            <div class="bar-indicator">
+                <div class="fill" style.width="{{ 82/(i+1) }}%"></div>
+            </div>
+            <div class="bar-price">{{ row.sum | currency:'USD':true }}</div>
+        </div>
+    </div>
+</div>

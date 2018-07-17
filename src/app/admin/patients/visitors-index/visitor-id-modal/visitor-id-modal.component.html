@@ -1,0 +1,10 @@
+<main class="modal-visitor-id">
+    <ng-container *ngIf="visitor">
+        <div *ngIf="visitor.idImage" autofocus>
+            <img [src]="visitor.idImage" class="visitor-id-image"/>
+        </div>
+        <div *ngIf="visitor.signature" autofocus>
+            <img [src]="visitor.signature" class="visitor-signature"/>
+        </div>
+    </ng-container>
+</main>

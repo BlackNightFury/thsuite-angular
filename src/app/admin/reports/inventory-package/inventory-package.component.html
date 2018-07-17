@@ -1,0 +1,42 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Package Audit<ng-container *ngIf="name">{{' - ' + name}}</ng-container></h2>
+    </div>
+</div>
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-select2 *ngIf="packageSelect2Options"
+                     [options]="packageSelect2Options"
+                     [(ngModel)]="selectedPackageId">
+        </app-select2>
+    </div>
+</div>
+<main class="content">
+    <div *ngIf="!tableData">An Inventory Entity must be selected</div>
+
+
+    <table class="report-table sticky nohover" *ngIf="tableData">
+        <thead>
+        <tr>
+            <th>Date/Time</th>
+            <th>User</th>
+            <th>Type</th>
+            <th style="text-align: right; width: 10%;">Change</th>
+            <th style="text-align: right; width: 10%;">New Quantity</th>
+            <th>Notes</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let data of tableData">
+            <td>{{data.date | storeTimeZone:this.store.timeZone:'short'}}</td>
+            <td>{{data.user ? data.user : ''}}</td>
+            <td>{{data.type | ucfirst}}</td>
+            <td style="text-align: right;">{{data.change.toFixed(2) + ' ' + units}}</td>
+            <td style="text-align: right;">{{data.newQuantity + ' ' + units}}</td>
+            <td>{{data.notes}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+</main>

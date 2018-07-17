@@ -1,0 +1,74 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Inbound Transfers Report</h2>
+    </div>
+</div>
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+        
+        <app-select2 *ngIf="viewTypeSelect2Options"
+                     [options]="viewTypeSelect2Options"
+                     [(ngModel)]="selectedViewType">
+        </app-select2>
+
+        <app-select2 *ngIf="inventoryEntitySelect2Options"
+                     [options]="inventoryEntitySelect2Options"
+                     [(ngModel)]="selectedInventoryEntity">
+        </app-select2>
+
+        <app-select2 *ngIf="productSelect2Options && flags.productId"
+                     [options]="productSelect2Options"
+                     [(ngModel)]="selectedProduct">
+        </app-select2>
+
+        <app-select2 *ngIf="productTypeSelect2Options && flags.productTypeId"
+                     [options]="productTypeSelect2Options"
+                     [(ngModel)]="selectedProductType">
+        </app-select2>
+
+        <app-select2 *ngIf="supplierSelect2Options && flags.supplierId"
+                     [options]="supplierSelect2Options"
+                     [(ngModel)]="selectedSupplier">
+        </app-select2>
+
+    </div>
+</div>
+<main class="content">
+    <div *ngIf="chartData" id="line_chart" style="height:100%;" [chartData]="chartData" [chartOptions]= "chartOptions" chartType="LineChart" GoogleChart></div>
+    <!--<div *ngIf="!(flags.productId || flags.productTypeId || flags.packageId || flags.supplierId)">Not sure if this div is needed</div>-->
+    <div *ngIf="!chartData">No data available for this selection.</div>
+
+    <h4>Transfer Breakdown</h4>
+    <div *ngIf="!chartData">No breakdown available</div>
+    <table class="report-table nohover sticky" *ngIf="chartData">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th sortBy="unit" [(ngModel)]="sortByModel" class="align-right" *ngIf="selectedProduct || selectedProductType || (selectedSupplier && !typeUndefined)">{{(selectedViewType == 'quantity') ? 'Quantity' : 'Package Count'}}</th>
+            <ng-container *ngIf="!selectedProduct && !selectedProductType && (!selectedSupplier || typeUndefined) && selectedViewType == 'quantity'">
+                <th sortBy="Grams" [(ngModel)]="sortByModel" class="align-right">Quantity in Grams</th>
+                <th sortBy="Each" [(ngModel)]="sortByModel" class="align-right">Quantity in Unit Count</th>
+            </ng-container>
+            <ng-container *ngIf="!selectedProduct && !selectedProductType && !selectedSupplier && selectedViewType == 'volume'">
+                <th sortBy="count" [(ngModel)]="sortByModel" class="align-right">Package Count</th>
+            </ng-container>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let data of tableData">
+            <td>{{data.date}}</td>
+            <td class="align-right" *ngIf="selectedProduct || selectedProductType || (selectedSupplier && !typeUndefined)">{{(selectedViewType == 'quantity') ? (data.value.type == "Grams" ? data.value.Grams + ' g' : data.value.Each + ' ea') : data.value.count}}</td>
+            <ng-container *ngIf="!selectedProduct && !selectedProductType && (!selectedSupplier || typeUndefined) && selectedViewType == 'quantity'">
+                <td class="align-right">{{data.value.Grams + ' g'}}</td>
+                <td class="align-right">{{data.value.Each + ' ea'}}</td>
+            </ng-container>
+            <ng-container *ngIf="!selectedProduct && !selectedProductType && !selectedSupplier && selectedViewType == 'volume'">
+                <td class="align-right">{{data.value.count}}</td>
+            </ng-container>
+        </tr>
+        </tbody>
+    </table>
+
+</main>

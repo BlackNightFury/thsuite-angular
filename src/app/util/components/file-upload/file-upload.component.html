@@ -1,0 +1,27 @@
+<div
+     fileDrop
+     [accept]="supportedExtensions"
+     (fileOver)="onFileOver($event)"
+     (fileDrop)="onFileChange($event)"
+     [ngClass]="cssClass"
+     [ngClass]="{'file-ul-file-is-over': fileOver}"     
+>
+  <div class="file-ul-file-upload file-ul-hr-inline-group"> 
+    <ul *ngIf="files && files.length > 0">
+      <li *ngFor="let file of files">
+          <a (click)="onFileClick(file)">{{file.name}}</a>
+      </li>
+    </ul>
+    <label class="file-ul-upload file-ul-button">
+      <span [innerText]="buttonCaption"></span>
+      <input
+        type="file"
+        [accept]="supportedExtensions"
+        (change)="onFileChange(input.files)"
+        #input>
+    </label>
+    <div class="file-ul-drag-box-msg" [innerText]="dropBoxMessage"></div>
+  </div>
+
+  <p class="file-ul-file-too-large" *ngIf="showFileTooLargeMessage" [innerText]="fileTooLargeMessage"></p>
+</div>

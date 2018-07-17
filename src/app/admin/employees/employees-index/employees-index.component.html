@@ -1,0 +1,65 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Employees</h2>
+
+        <input type="text" class="controls-input-search" placeholder="Search Employees" #searchBar (keyup)="search(searchBar.value)">
+
+        <button class="btn tertiary green" (click)="createNewEmployee()"><i class="icon icon-add"></i>Employee</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-button-toggler class="multiple" [options]="employeeToggleOptions" [(ngModel)]="employeeToggle"></app-button-toggler>
+    </div>
+</div>
+
+<main class="content active">
+    <table class="patients-main-table sticky">
+        <thead>
+        <tr>
+            <th sortBy="firstName" [(ngModel)]="sortByModel">First Name</th>
+            <th sortBy="lastName" [(ngModel)]="sortByModel">Last Name</th>
+            <th sortBy="badgeId" [(ngModel)]="sortByModel">Badge ID</th>
+            <th sortBy="type" [(ngModel)]="sortByModel">Type</th>
+            <th sortBy="phone" [(ngModel)]="sortByModel">Phone</th>
+            <th sortBy="email" [(ngModel)]="sortByModel">Email Address</th>
+            <th sortBy="isActive" [(ngModel)]="sortByModel">Status</th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr *ngFor="let employee of objects | async" (click)="onRowClick($event, employee)">
+            <td style="display: flex;" *ngIf="employee.isAPIUser">
+                <div class="api-marker" (click)="generateToken(employee.id)">API</div>
+                <span style="margin: auto; margin-left: 0.5rem;">{{employee.firstName}}</span>
+            </td>
+            <td *ngIf="!employee.isAPIUser">{{employee.firstName}}</td>
+            <td>{{employee.lastName}}</td>
+            <td>{{employee.badgeId}}</td>
+            <td>{{employee.type | ucfirst}}</td>
+            <td>{{employee.phone}}</td>
+            <td>{{employee.email}}</td>
+            <td>
+                <label class="tgl-btn-wrapper">
+                    <input class="tgl tgl-skewed" type="checkbox" (change)="toggleActive(employee, $event.target.checked)" [checked]="employee.isActive">
+                    <span class="tgl-btn" data-tg-off="Inactive" data-tg-on="Active"></span>
+                </label>
+            </td>
+            <td class="table-action">
+                <i class="icon icon-edit" (click)="editEmployee(employee)"></i>
+                <!--<i class="icon icon-my-account" (click)="viewEmployee(employee)"></i>-->
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listEmployees()"></div>
+
+<router-outlet></router-outlet>

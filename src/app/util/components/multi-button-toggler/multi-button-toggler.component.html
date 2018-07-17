@@ -1,0 +1,12 @@
+<div class="btn-togglers multiple">
+
+    <div
+        *ngFor="let option of _options"
+        [class.active]="option.selected"
+        class="btn-toggler blue"
+        (click)="toggleValue(option)">
+        {{option.value.label}}
+    </div>
+</div>
+
+<!-- @@Zack .multiple is a modifier class used for good looks when number of buttons > 2 to avoid double borders -->

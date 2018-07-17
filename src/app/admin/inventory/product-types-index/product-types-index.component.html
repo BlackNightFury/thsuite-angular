@@ -1,0 +1,39 @@
+<div class="topbar-controls patient-management patients-active">
+
+    <div class="controls-row">
+        <h2 class="page-subtitle">Product Types</h2>
+        <button md-button class="btn tertiary green" (click)="createNewProductType()" *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditProductTypes"><i class="icon icon-add"></i>Non-Cannabis Product Type</button>
+        <button md-button class="btn tertiary blue btn-export" (click)="exportProductTypes()" ><i class="icon icon-export"></i>Export</button> 
+    </div>
+
+</div>
+
+<main class="content">
+    <table class="inventory-products-table sticky">
+        <thead>
+        <tr>
+            <th sortBy="category" [(ngModel)]="sortByModel">CATEGORY</th>
+            <th sortBy="name" [(ngModel)]="sortByModel">PRODUCT TYPE</th>
+            <th sortBy="unitOfMeasure" [(ngModel)]="sortByModel">MEASUREMENT</th>
+            <th *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditProductTypes"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let productType of objects | async" (click)="onRowClick($event, productType)">
+            <td>{{productType.category | ucfirst}}</td>
+            <td>{{productType.name}}</td>
+            <td>{{productType.unitOfMeasure | ucfirst}}</td>
+            <td class="table-action" *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditProductTypes">
+                <i class="icon icon-edit" (click)="editProductType(productType)" *ngIf="productType.category == 'non-cannabis'"></i>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listProductTypes()"></div>
+
+<router-outlet></router-outlet>

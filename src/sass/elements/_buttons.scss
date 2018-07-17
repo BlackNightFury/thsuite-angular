@@ -1,0 +1,128 @@
+$btn-green: #28bd8b;
+$btn-blue: #18a9e2;
+$btn-grey: #c8d0d8;
+
+.btn {
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    color: #FFF;
+    outline: none;
+    box-shadow: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 8px 14px;
+    line-height: 1;
+    position: relative;
+    overflow: hidden;
+    transition: all 200ms ease;
+    z-index: 0;
+
+    @extend .waves-effect;
+    //@TEMP
+    @include active(6px);
+
+    &.secondary {
+        padding: 17px 40px;
+        border-radius: 19px;
+        font-weight: $bold;
+        text-transform: uppercase;
+        font-size: 14px;
+
+        .icon {
+            font-size: 17px;
+            margin-right: 10px;
+        }
+    }
+
+    &.tertiary {
+        padding: 11px 16px;
+        border-radius: 16px;
+        font-size: 13px;
+        font-weight: $semi;
+        text-transform: uppercase;
+        
+        .icon {
+            font-size: 17px;
+            margin-right: 10px;
+        }
+    }
+
+    &.blue {
+        @include darken-btn($btn-blue);
+    }
+
+    &.green {
+        @include darken-btn($btn-green);
+    }
+
+    &.grey {
+        @include darken-btn($btn-grey);
+    }
+
+    &.overlay-checkout-btn {
+        height: 60px;
+        border-radius: 0;
+        line-height: 60px;
+        @include darken-btn($btn-sky);
+        font-weight: 600;
+        color: #fff;
+        font-size: 20px;
+        text-align: center;
+        padding: 0;
+    }
+
+    &.squared {
+        @include darken-btn($btn-sky);
+        border-radius: 0;
+        padding: 12px 30px;
+        font-size: 14px;
+        text-transform: none;
+        font-weight: 600;
+    }
+
+    &.aligned {
+      height: 50px;
+      line-height: 50px;
+      border-radius: 0;
+      margin-left: 12px;
+      padding: 0 12px;
+      min-width: 82px;
+
+      @include max-width(1440px) {
+        height: 45px;
+        line-height: 45px;
+      }
+    }
+}
+
+.flat-ripple {
+    display: inline-block;
+    padding: 9px;
+    @extend .waves-effect;
+    @extend %waves-grey;
+    transition: all 200ms ease !important;
+}
+
+.section-action {
+    margin-top: 10px;
+
+    &.right {
+        text-align: right;
+    }
+
+    &.center {
+        text-align: center;
+    }
+
+    div {
+        text-align: center;
+        margin-top: 15px;
+    }
+}
+
+.center-btn {
+    text-align: center;
+    margin-top: 20px;
+}

@@ -1,0 +1,16 @@
+.header{
+    display: flex;
+    flex-direction: row;
+}
+
+a{
+    text-decoration: none;
+    transition: color 200ms ease;
+    font-size: 15px;
+    color: #169fd3;
+    cursor: pointer;
+}
+
+.release-budtender {
+    
+}

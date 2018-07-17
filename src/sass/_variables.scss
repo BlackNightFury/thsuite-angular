@@ -1,0 +1,74 @@
+$light: 300;
+$semi: 600;
+$bold: 700;
+
+// Body
+$body-bg: #f6f6f6;
+$font-family: 'proxima-nova', sans-serif;
+$line-height: 1.2;
+$text-color: #4C6379;
+
+// Borders
+$container-border: #d4dcde;
+
+// Icons
+$icon-active: #43B391;
+$icon-orange: #FFA032;
+$icon-gradient-start: #32AE9C;
+$icon-gradient-end: #73C272;
+
+// Colors
+$green-border: #71C174;
+$select-highlight: #18A9E2;
+$link-color: #929FB1;
+$circle-grey: #92A2B1;
+$green: #28bd8b;
+$dd-caret-grey: #a2b2c1;
+$input-border: #d8dfe6;
+$leftnav-bg-active: #2B2F3B;
+$link-like: #18a9e1;
+$light-green: $green;
+$teal: #335966;
+$link-blue: #169fd3;
+$btn-sky: #16a2d6;
+
+// Dimensions
+$topnav-height: 50px;
+$leftnav-width: 120px;
+$logout-width: 90px;
+$select-height: 50px;
+$input-height: 50px;
+
+// dimensions - compact
+$topnav-height-compact: $topnav-height;
+$leftnav-width-compact: 120px;
+$logout-width-compact: 65px;
+$select-height-compact: 45px;
+$btn-height-compact: 42px;
+$left-sidebar-width: 160px;
+
+// dimensions - tablet
+$topnav-height-tablet: $topnav-height;
+$leftnav-width-tablet: 120px;
+
+// dimensions - mobile
+$topnav-height-mobile: $topnav-height;
+$leftnav-width-mobile: 120px;
+
+// Font sizes
+$link-size: 14px;
+$font-small: 11px;
+
+// Z indexes
+$topnav-z: 1000;
+$leftnav-z: 1000;
+
+// Breakpoints
+$desktop: 1024px;
+$tablet: 1024px;
+$compact: 1440px;
+$mobile: 640px;
+
+// Cubic Beziers
+$cb-qck: cubic-bezier(0.23, 1, 0.32, 1);
+$cb-switch: cubic-bezier(.07, 1.13, .68, .94);

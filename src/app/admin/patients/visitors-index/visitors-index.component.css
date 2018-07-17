@@ -1,0 +1,20 @@
+a{
+    text-decoration: none;
+    transition: color 200ms ease;
+    font-size: 15px;
+    color: #169fd3;
+    cursor: pointer;
+}
+
+.view-visitor-button {
+    min-width:100px;
+}
+
+.auto-clocked-out {
+    color: hsl(0, 0%, 100%);
+    background-color: hsl(0, 100%, 50%);
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin: 0 4px;
+}

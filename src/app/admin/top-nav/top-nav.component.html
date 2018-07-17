@@ -1,0 +1,48 @@
+<div class="topnav">
+    <div class="topnav-logo">
+        <div class="mobile-bars" (click)="toggleLeftNav()">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <img src="/assets/svg/logo_F-2017.svg"/>
+    </div>
+
+    <h1 class="topnav-page-title">
+        {{ sectionTitle }}
+    </h1>
+
+    <div class="topnav-menu">
+        <a md-button class="topnav-menu-item user-menu-item notification-item" routerLink="/admin/inventory/alerts">
+            <img src="/assets/svg/bell.svg" alt="Alerts">
+            <div class="notification-count" *ngIf="alertCount">{{alertCount}}</div>
+        </a>
+        <a md-button class="topnav-menu-item user-menu-item" (click)="toggleMenu()">
+            <div class="avatar">
+                <img [src]="user.image" *ngIf="user?.image"/>
+                <img src="/assets/img/jim.jpg" alt="" *ngIf="!user?.image">
+            </div>
+            <div>
+                <div class="name">{{user?.firstName}} {{user?.lastName}}</div>
+                <!--<div class="title">Owner/Administrator</div>-->
+            </div>
+        </a>
+        <div class="topnav-toggle-target" data-dropdown-target="userMenu">
+            <a md-button class="topnav-menu-item account-menu" routerLink="/admin/account">
+                <i class="icon icon-my-account"></i>
+                My Account
+            </a>
+            <a md-button class="topnav-menu-item help-item" routerLink="/help">
+                <i class="icon icon-help"></i>
+                Help
+            </a>
+            <a md-button class="topnav-menu-item logout-item account-menu" (click)="logout()">
+                <i class="icon icon-sign-out"></i>
+                <span>Log out</span>
+            </a>
+        </div>
+    </div>
+</div>

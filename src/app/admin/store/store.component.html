@@ -1,0 +1,16 @@
+<div class="container-separate has-left-sidebar" id="mainPanel">
+
+    <div class="left-sidebar">
+        <a routerLink="/admin/store/locations" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Locations</a>
+        <a routerLink="/admin/store/discounts" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Discounts</a>
+        <a routerLink="/admin/store/taxes" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Taxes</a>
+        <a routerLink="/admin/store/rewards" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Loyalty Rewards</a>
+        <a routerLink="/pos/all" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Register</a>
+        <a routerLink="/admin/store/time-clocks" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Time Clocks</a>
+        <a *ngIf="user.Permissions.canEditStoreSettings" routerLink="/admin/store/settings" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Store Settings</a>
+        <a routerLink="/admin/store/drawers" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Drawers</a>
+        <a routerLink="/admin/store/tags" routerLinkActive="active" class="left-sidebar-item" (click)="hideLeftNav()">Tags</a>
+    </div>
+
+    <router-outlet></router-outlet>
+</div>

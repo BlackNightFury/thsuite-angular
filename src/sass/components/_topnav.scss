@@ -1,0 +1,592 @@
+$topnav-border: #DFE4E9;
+$logout-grey: #92a2b1;
+$title-left-padding: 26px;
+$menu-item-pading: 10px 22px;
+$topnav-icon-gap: 11px;
+$avatar-size: 50px;
+$notify-count-bg: #e6555c;
+
+.topnav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: $topnav-height;
+    background-color: #fff;
+    border-bottom: 1px solid $topnav-border;
+    backface-visibility: hidden;
+    z-index: 1010;
+    @extend %v-c;
+    transition: width 200ms ease,
+    width 200ms ease;
+
+    @include max-width($compact) {
+        height: $topnav-height-compact;
+    }
+
+    &.topnav-pos {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        @include max-width($tablet) {
+            width: calc(100% - #{$leftnav-width-tablet});
+            margin-left: $leftnav-width-tablet;
+            height: $topnav-height-tablet;
+        }
+
+        > * {
+            flex: 1;
+
+            &.topnav-page-title,
+            &.topnav-pos-cart {
+                flex-basis: 25%;
+            }
+        }
+
+        .topnav-page-title {
+            padding-left: 25px;
+
+            .icon {
+                margin-right: 14px;
+                font-size: 20px;
+                color: #bec9d5;
+                display: none;
+            }
+        }
+
+        &.topnav-pos-expanded {
+            .topnav-page-title {
+                padding-left: 0;
+                flex: 0 1 auto;
+            }
+
+            .topnav-menu {
+                margin-left: auto;
+                justify-content: flex-end;
+            }
+        }
+
+        &.has-back-icon {
+            .topnav-page-title {
+                .icon {
+                    display: inline-block;
+                }
+            }
+        }
+
+        .topnav-pos-left {
+            display: flex;
+            height: 100%;
+            align-items: center;
+        }
+
+        .topnav-pos-logo {
+            width: 52px;
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin: auto;
+        }
+
+        .topnav-pos-cart {
+            height: 100%;
+            @include darken-btn($green);
+            color: #fff;
+            @extend %all-c;
+            flex: 0 1 auto;
+            padding-right: 17px;
+            padding-left: 17px;
+
+            .icon {
+                margin-left: 15px;
+                margin-right: 15px;
+                font-size: 22px;
+            }
+        }
+    }
+}
+
+.topnav-toggle-leftnav {
+    padding-left: 20px;
+    height: 100%;
+    padding-right: 20px;
+    border-right: 1px solid $topnav-border;
+    @extend %all-c;
+    display: none;
+
+    .icon {
+        font-size: 20px;
+        color: #b8c4d1;
+        height: 14px;
+    }
+
+    .topnav-pos-expanded & {
+        display: flex;
+        border-right: none;
+        flex: 0 1 auto;
+    }
+}
+
+.topnav-logo {
+    height: 100%;
+    width: $leftnav-width;
+    border-right: 1px solid $topnav-border;
+    border-top: 3px solid $green;
+    @extend %all-c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+        width: calc(#{$leftnav-width} - 50px);
+    }
+
+    .topnav-pos & {
+        display: none;
+    }
+
+    @include max-width($compact) {
+        width: $leftnav-width-compact;
+        min-width: $leftnav-width-compact;
+    }
+
+    @include max-width($mobile) {
+        border-right: none;
+        width: 90px;
+        min-width: 90px;
+    }
+}
+
+.topnav-menu {
+    margin-left: auto;
+    height: 100%;
+    display: flex;
+
+    @include max-width($mobile) {
+        > * {
+            flex: 0 1 auto;
+
+            &.store-item {
+                flex: 1 0 auto;
+            }
+        }
+    }
+
+    @include max-width(480px) {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+.topnav-menu-item {
+    &.mat-button {
+        height: 100%;
+        padding: $menu-item-pading;
+        color: $link-color;
+        font-size: $link-size;
+        border-left: 1px solid $topnav-border;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        @extend %topnav-item;
+
+        font-weight: $bold;
+
+        .topnav-pos-expanded & {
+            border-left: none;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .icon {
+            margin-right: $topnav-icon-gap;
+            font-size: 18px;
+            transition: color 200ms ease-out;
+        }
+
+        &.store-item {
+            .store-address {
+                display: none;
+                font-size: 13px;
+                opacity: .6;
+                font-weight: 400;
+            }
+
+            &.city-selected {
+                color: $text-color;
+
+                .icon {
+                    color: $green;
+                }
+
+                .store-address {
+                    display: inline-block;
+                }
+            }
+
+            @include min-width(1024px) {
+                width: 210px;
+            }
+        }
+
+        &:hover {
+            .mat-button-focus-overlay {
+                opacity: 0.5;
+            }
+
+            box-shadow: none;
+        }
+
+        @include max-width(480px) {
+            padding: 10px;
+        }
+
+        .mat-button-wrapper {
+            display: flex;
+            align-items: center;
+
+            .name {
+                color: $text-color;
+            }
+
+            .name,
+            .title {
+                line-height: initial;
+                text-align: left;
+            }
+        }
+    }
+}
+
+.topnav-page-title {
+    font-size: 24px;
+    padding-left: $title-left-padding;
+
+    @include max-width($mobile) {
+        display: none;
+    }
+
+    .topnav-pos-expanded & {
+        font-size: 24px;
+    }
+
+    .topnav-pos-expanded & {
+        padding-left: 0;
+    }
+}
+
+.user-menu-item {
+    @extend %v-c;
+    color: $text-color;
+
+    .avatar {
+        margin-right: 20px;
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        img {
+            width: 35px;
+            height: 35px;
+
+            border-radius: 50%;
+        }
+
+        @include max-width($tablet) {
+            margin-right: 12px;
+        }
+    }
+
+    .notification-count {
+        min-width: 20px;
+        height: 20px;
+        border-radius: 20px;
+        position: absolute;
+        right: 15px;
+        top: 5px;
+        font-weight: $semi;
+        font-size: 12px;
+        color: #FFF;
+        background-color: $notify-count-bg;
+        @extend %all-c;
+        padding: 0.25em 0.25em 0.15em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .name {
+        font-weight: $semi;
+        font-size: 16px;
+    }
+
+    .title {
+        font-size: 13px;
+        opacity: .6;
+        font-weight: 400;
+    }
+
+    @include max-width($mobile) {
+        display: none;
+    }
+
+    @include ipad-portrait {
+        display: none;
+    }
+}
+
+.notification-item.mat-button { // Need extra specificity to override .mat-button
+    width: $logout-width;
+
+    .mat-button-wrapper {
+        justify-content: center;
+    }
+}
+
+.logout-item {
+    width: $logout-width;
+
+    .mat-button-wrapper {
+        justify-content: center;
+    }
+
+    @include max-width($compact) {
+        width: $logout-width-compact;
+    }
+
+    @include max-width($tablet) {
+        width: 50px;
+        min-width: 50px;
+
+        .icon {
+            font-size: 15px;
+        }
+    }
+
+    @include max-width($mobile) {
+        display: none;
+    }
+}
+
+.logout-item {
+    &.mat-button {
+        width: $logout-width;
+
+        @include max-width($compact) {
+            width: $logout-width-compact;
+        }
+    }
+}
+
+.topnav-dd-caret {
+    border-color: $dd-caret-grey transparent transparent transparent;
+    border-style: solid;
+    border-width: 4px 3px 0;
+    height: 0;
+    width: 0;
+    margin-left: 12px;
+}
+
+$bar-height: 3px;
+$bar-bg: #929fb1;
+
+.mobile-bars {
+    display: none;
+    width: 16px;
+    cursor: pointer;
+    height: $bar-height * 5;
+    transform: translateY(1px);
+    margin-right: 8px;
+
+    @include max-width($tablet) {
+        display: block;
+    }
+
+    span {
+        display: block;
+        position: absolute;
+        height: $bar-height;
+        width: 50%;
+        background: $bar-bg;
+        transform: rotate(0deg);
+        transition: .25s ease-in-out;
+
+        &:nth-child(even) {
+            left: 50%;
+        }
+
+        &:nth-child(odd) {
+            left: 0px;
+        }
+
+        &:nth-child(1),
+        &:nth-child(2) {
+            top: 0px;
+        }
+
+        &:nth-child(3),
+        &:nth-child(4) {
+            top: $bar-height * 2;
+        }
+
+        &:nth-child(5),
+        &:nth-child(6) {
+            top: $bar-height * 4;
+        }
+    }
+
+    .slideout-open & {
+        span {
+            background-color: $green;
+        }
+    }
+}
+
+.topnav-menu-item {
+    height: 100%;
+    padding: $menu-item-pading;
+    color: $link-color;
+    font-size: $link-size;
+    border-left: 1px solid $topnav-border;
+    display: flex;
+    align-items: center;
+    @extend %topnav-item;
+
+    font-weight: $bold;
+
+    .topnav-pos-expanded & {
+        border-left: none;
+        padding-left: 11px;
+        padding-right: 11px;
+
+        &.store-item {
+
+            .topnav-dd-caret {
+                margin-left: 10px;
+            }
+
+            @include max-width(1025px) {
+                width: auto;
+
+                .topnav-dd-caret {
+                    margin-left: 7px;
+                }
+            }
+        }
+    }
+
+    .icon {
+        margin-right: $topnav-icon-gap;
+        font-size: 18px;
+        transition: color 200ms ease-out;
+    }
+
+    &.store-item {
+        .store-address {
+            display: none;
+            font-size: 13px;
+            opacity: .6;
+            font-weight: 400;
+        }
+
+        &.city-selected {
+            color: $text-color;
+
+            .icon {
+                color: $green;
+            }
+
+            .store-address {
+                display: inline-block;
+            }
+        }
+
+        @include min-width(1024px) {
+            width: 210px;
+        }
+    }
+
+    &.help-item {
+        .icon {
+            color: $icon-orange;
+        }
+
+        @include max-width($mobile) {
+            justify-content: center;
+        }
+    }
+
+    &:hover {
+        .mat-button-focus-overlay {
+            opacity: 0.5;
+        }
+
+        box-shadow: none;
+    }
+
+    @include max-width(480px) {
+        padding: 10px;
+    }
+
+    .mat-button-wrapper {
+        display: flex;
+        align-items: center;
+
+        .name {
+            color: $text-color;
+        }
+
+        .name,
+        .title {
+            line-height: initial;
+            text-align: left;
+        }
+    }
+
+    //@TEMP
+    @include active(6px);
+}
+
+.topnav-toggle-target {
+    display: flex;
+
+    .logout-item {
+        .icon {
+            margin-right: 0;
+        }
+
+        span {
+            display: none;
+        }
+    }
+
+    @include max-width($tablet) {
+        display: none;
+
+        &.show {
+            display: block;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: white;
+            z-index: 100;
+            border-bottom: 1px solid $topnav-border;
+
+            .mat-button {
+                width: 100%;
+            }
+        }
+
+        .logout-item {
+            .icon {
+                margin-right: 11px;
+            }
+            span {
+                display: inline;
+                margin-right: auto;
+            }
+        }
+    }
+}

@@ -1,0 +1,297 @@
+<div class="sidebar-separated-heading invoke-inside" *ngIf="cart">
+    <div class="topbar-container">
+        <div [class]="isGuestPatient ? 'topbar' : 'topbar cursor-pointer'">
+            <div [className]="!isGuestPatient && gramsAvailable != null ? 'with-topbar-pos-patient-gram-limit name' : 'name' " (click)="isExpandableMenuOpen = !isExpandableMenuOpen">
+                {{patient.patient.firstName}} {{patient.patient.lastName}}
+                <span *ngIf="isGuestPatient">&nbsp;({{patient.patient.loyaltyPoints ? patient.patient.loyaltyPoints : '0'}} Points)</span>
+                <div class="icon-dropdown-status" *ngIf="!isGuestPatient">
+                    <md-icon *ngIf="!isExpandableMenuOpen">arrow_drop_down</md-icon>
+                    <md-icon *ngIf="isExpandableMenuOpen">arrow_drop_up</md-icon>
+                </div>
+            </div>
+            <div class="time" *ngIf="isGuestPatient" (click)="isExpandableMenuOpen = !isExpandableMenuOpen"><i class="icon icon-clock"></i> {{minutesString}}:{{secondsString}}</div>
+            <span *ngIf="!isGuestPatient && gramsAvailable != null" [className]="gramsAvailable <= 0 ? 'red topbar-pos-patient-gram-limit pos-patient-gram-limit' : 'topbar-pos-patient-gram-limit pos-patient-gram-limit' ">
+                <ng-container>{{gramsAvailable*3.3333 | number : '1.0-1'}}g of Buds <b style="font-weight: 900">/</b> {{gramsAvailable | number : '1.0-2'}}g of THC</ng-container>
+            </span>
+            <div class="topbar-icon cart-menu">
+                <button md-icon-button [mdMenuTriggerFor]="menu">
+                    <md-icon>more_vert</md-icon>
+                </button>
+                <md-menu #menu="mdMenu">
+                    <button md-menu-item (click)="saveCart()" *ngIf="environment.shouldShowPatientQueue">
+                        <md-icon>save</md-icon>
+                        <span>Save and Close Cart</span>
+                    </button>
+                    <button md-menu-item (click)="clearAndCloseCart()">
+                        <md-icon>save</md-icon>
+                        <span>Clear and Close Cart</span>
+                    </button>
+                    <button md-menu-item (click)="customDiscountLink = true" *ngIf="user.Permissions.canManuallyDiscount">
+                        <md-icon>attach_money</md-icon>
+                        <span>Apply Custom Discount</span>
+                    </button>
+                    <button md-menu-item (click)="loyalty = true">
+                        <md-icon>loyalty</md-icon>
+                        <span>Customer Loyalty</span>
+                    </button>
+                    <button md-menu-item *ngIf="environment.shouldShowPatientQueue" (click)="viewPurchaseHistory()">
+                        <md-icon>shopping_cart</md-icon>
+                        <span>Previous Purchases</span>
+                    </button>
+                    <button md-menu-item *ngIf="environment.shouldShowPatientQueue" (click)="viewPatientNotes()">
+                        <md-icon>description</md-icon>
+                        <span>Patient Notes</span>
+                    </button>
+                    <button md-menu-item *ngIf="!isGuestPatient" (click)="assignToPatientGroup()">
+                        <md-icon>group_add</md-icon>
+                        <span>Assign to Patient Group</span>
+                    </button>
+                </md-menu>
+            </div>
+        </div>
+        <div class="topbar-expandable-dropdown" *ngIf="!isGuestPatient && isExpandableMenuOpen">
+            <div class="points-grams">
+                <span>({{patient.patient.loyaltyPoints ? patient.patient.loyaltyPoints : '0'}} Points)</span>
+                <span class="time-expandable"><i class="icon icon-clock"></i> {{minutesString}}:{{secondsString}}</span>
+            </div>
+            <div class="topbar-icon icon-close-cart" (click)="isExpandableMenuOpen = false">
+                <i class="icon icon-close"></i>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="icon-circle cancel-order" *ngIf="cart.packages.length" (click)="clearCart()" style="margin-right: 0px;">-->
+    <!--<i class="icon icon-cancel"></i>-->
+    <!--</div>-->
+</div>
+
+<div class="pos-cart-body" drag-scroll="true">
+    <div class="checkout-summary" *ngIf="loyalty">
+        <div class="input-row button-aligned">
+            <input type="text" placeholder="First Name" [(ngModel)]="patient.patient.firstName">
+        </div>
+        <div class="input-row button-aligned">
+            <input type="text" placeholder="Last Name" [(ngModel)]="patient.patient.lastName">
+        </div>
+        <div class="input-row button-aligned">
+            <input type="text" placeholder="Email" [(ngModel)]="patient.patient.emailAddress">
+        </div>
+        <div class="input-row button-aligned">
+            <input type="text" placeholder="Phone Number" [(ngModel)]="patient.patient.phoneNumber" (keyup)="formatPhoneNumber($event)">
+        </div>
+
+        <div class="center-btn">
+            <button class="btn secondary green aligned" (click)="saveCustomer();">Save</button>
+            <button class="btn secondary green aligned" (click)="toggleLoyalty();">Cancel</button>
+        </div>
+    </div>
+
+    <ng-container *ngIf="cart && cart.lineItems.length; else emptyCart;">
+        <div class="pos-overlay-product cart-item" *ngFor="let lineItem of cart.lineItems" style="display: block;">
+            <div style="display: flex; flex-direction: column; cursor: pointer">
+                <div class="pos-overlay-product-column">
+                    <h2 data-overlay-toggler="productDetails" class="invoke-inside">{{lineItem.Product.name}} {{ lineItem.ProductVariation.name }}</h2>
+
+                    <div class="count">
+                        <div *ngIf="environment.shouldShowCartMinusButton" class="toggle-count" (click)="decrementQuantity(lineItem);"><i class="icon icon-remove-pos"></i>
+                        </div>
+                        <div class="num" *ngIf="!lineItem.ProductVariation.isBulkFlower">{{ lineItem.quantity }}</div>
+                        <div class="num" *ngIf="lineItem.ProductVariation.isBulkFlower">{{ lineItem.quantity }} g</div>
+                        <div *ngIf="environment.shouldShowCartAddButton" class="toggle-count" (click)="incrementQuantity(lineItem);"><i class="icon icon-add-pos"></i></div>
+                    </div>
+
+                    <div class="price" [ngClass]="{return: lineItem.isReturn === true}" style="margin-top: auto; margin-bottom: auto;">${{ (lineItem.subtotal).toFixed(2) }}</div>
+                </div>
+
+                <div class="error" *ngIf="returnIncrementErrorId == lineItem.id">{{returnIncrementError}}</div>
+
+                <div class="pos-overlay-product-column" style="margin-top: 25px;" *ngIf="lineItem.fromBarcode || (lineItem.fromSavedCart && lineItem.allTransactionsHavePackages)">
+                    <div style="display: flex; flex-direction: column;">
+                        <span class="product-label" *ngFor="let transaction of lineItem.Transactions">Label: {{transaction.Package.Label}}</span>
+                    </div>
+                </div>
+                <ng-container *ngIf="!lineItem.fromBarcode && (!lineItem.fromSavedCart || !lineItem.allTransactionsHavePackages)">
+                    <div class="pos-overlay-product-column" *ngFor="let transaction of lineItem.Transactions" (click)="$event.stopPropagation()" style="margin-top: 12px">
+                        <ng-container *ngIf="!lineItem.isReturn">
+                            <app-select2
+                                id="pos-package-select-{{ lineItem.ProductVariation.id }}"
+                                style="width: 100%"
+                                [options]="transaction.packageSelect2Options"
+                                (select)="updateLineItemPackageId(transaction, $event)"
+                            ></app-select2>
+                        </ng-container>
+                        <div *ngIf="lineItem.isReturn">Package:{{transaction.Package.Label}}</div>
+                    </div>
+                </ng-container>
+
+
+                <!--Wholesale price info-->
+                <div class="discount" *ngIf="lineItem.allTransactionsHavePackages">
+                    <span style="font-weight: bold">Wholesale Price: </span><span>{{lineItem.wholesalePrice | currency:'USD':true}}</span>
+                </div>
+                <!--if there's a discount add discount information on this line item-->
+                <div class="discount" *ngIf="lineItem.Discount">
+                    <span style="font-weight: bold">Discount: </span><span>{{lineItem.Discount.name}}</span><span style="float: right" [ngClass]="{return: lineItem.isReturn === true}"> {{lineItem.discountAmount | currency:'USD':true}} <button class="btn primary remove" (click)="removeLineItemDiscount(lineItem);">Remove Discount</button></span>
+                </div>
+                <!--if there's a bulk price add information on this line item-->
+                <div class="discount" *ngIf="lineItem.unitPrice">
+                    <span style="font-weight: bold">Bulk Pricing: </span><span>{{lineItem.unitPrice | currency:'USD':true}}/g</span>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #emptyCart>
+        <div class="pos-overlay-empty">
+            <i class="icon icon-shopping_cart"></i>
+
+            <p>Add an item to the cart by scanning the<br> barcode or searching the system</p>
+        </div>
+    </ng-template>
+</div>
+
+<div class="pos-cart-footer">
+
+    <div class="pos-overlay-discount">
+        <div class="input-row button-aligned" *ngIf="!customDiscountLink && !loyaltyDiscountLink && !punchCardLink && !managerOverrideLink">
+            <!--<input type="text" placeholder="Enter Discount Code" #discountCodeInput>-->
+            <app-select2 *ngIf="discountCodeSelect2Options" [options]="discountCodeSelect2Options" [(ngModel)]="selectedDiscountId" (select)="manualDiscount()" style="width: 100%;"></app-select2>
+            <!--<button class="btn secondary green aligned" (click)="manualDiscount()" >Apply</button>-->
+        </div>
+        <!--<div class="custom-discount" *ngIf="customDiscountLink">-->
+            <!--&lt;!&ndash;<a class="center" (click)="toggleCustomDiscount();$event.stopPropagation();" *ngIf="customDiscountLink">Or Enter a Manual Discount</a>&ndash;&gt;-->
+
+            <!--<div class="input-units">-->
+                <!--<input type="number" #manualDiscountInput (keyup.enter)="customDiscount(manualDiscountInput.value)" />-->
+                <!--<div class="btn-togglers">-->
+                    <!--<div class="btn-toggler blue" [class.active]="!customDiscountTypePercent"  (click)="toggleCustomDiscountTypePercent(false);">$</div>-->
+                    <!--<div class="btn-toggler blue" [class.active]="customDiscountTypePercent" (click)="toggleCustomDiscountTypePercent(true);">%</div>-->
+                <!--</div>-->
+                <!--<div class="clear-code" (click)="toggleCustomDiscount();$event.stopPropagation();" *ngIf="customDiscountLink">x</div>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <div class="custom-discount" *ngIf="managerOverrideLink">
+
+            <div class="input-units">
+                <input type="number" #managerOverrideInput (keyup.enter)="managerOverrideDiscount(managerOverrideInput.value)" />
+                <div class="btn-togglers">
+                    <div class="btn-toggler blue" [class.active]="!managerOverrideDiscountTypePercent"  (click)="toggleManagerOverrideDiscountType(false);">$</div>
+                    <div class="btn-toggler blue" [class.active]="managerOverrideDiscountTypePercent" (click)="toggleManagerOverrideDiscountType(true);">%</div>
+                </div>
+                <div class="clear-code" (click)="toggleManagerOverrideDiscount();$event.stopPropagation();" *ngIf="managerOverrideLink">x</div>
+            </div>
+        </div>
+    </div>
+    <div class="input-row button-aligned" *ngIf="loyaltyDiscountLink">
+        <!--<input type="text" placeholder="Enter Discount Code" #discountCodeInput>-->
+        <app-select2 *ngIf="loyaltyDiscountSelect2Options" [options]="loyaltyDiscountSelect2Options" [(ngModel)]="selectedLoyaltyDiscountId" style="width: 100%;"></app-select2>
+        <button class="btn secondary green aligned" (click)="loyaltyDiscount()" >Apply</button>
+    </div>
+    <div class="input-row button-aligned" *ngIf="punchCardLink">
+        <app-select2 *ngIf="lineItemSelect2Options" [options]="lineItemSelect2Options" [(ngModel)]="selectedLineItemId" (select)="punchCardLineItemSelected()" style="width: 100%"></app-select2>
+        <div class="clear-code" (click)="togglePunchCardDiscount();$event.stopPropagation();">x</div>
+    </div>
+    <div class="input-row discount-links">
+        <a (click)="toggleCustomDiscount();$event.stopPropagation();" *ngIf="!customDiscountLink" style="cursor:pointer; font-size: 14px;">Custom Discount</a>
+        <ng-container *ngIf="environment.shouldShowLoyaltyRewardLink">
+            <a (click)="toggleLoyaltyDiscount();$event.stopPropagation();" *ngIf="!loyaltyDiscountLink" style="cursor:pointer; font-size: 14px;">Loyalty Reward</a>
+        </ng-container>
+        <a (click)="togglePunchCardDiscount();$event.stopPropagation();" *ngIf="!punchCardLink" style="cursor: pointer; font-size: 14px;">Punch Card Discount</a>
+        <a (click)="toggleManagerOverrideDiscount();$event.stopPropagation();" *ngIf="!managerOverrideLink" style="cursor: pointer; font-size: 14px;">Manager Override</a>
+    </div>
+
+    <ng-container *ngIf="cart && step == 'cart'">
+
+        <div class="checkout-summary">
+            <p>
+                Subtotal
+                <span>${{cart.subtotal.toFixed(2)}}</span>
+            </p>
+            <p *ngIf="store.taxesIncluded">
+                Taxes (Included)
+                <span *ngIf="cart.tax >= 0">${{cart.tax.toFixed(2)}}</span>
+                <span *ngIf="cart.tax < 0">$0.00</span>
+            </p>
+            <p>
+                Discounts
+                <span>
+                    {{cart.discountAmount | currency:'USD':true }}
+                </span>
+            </p>
+            <p *ngIf="!store.taxesIncluded">
+                    Taxes (Not Included)
+                    <span *ngIf="cart.tax >= 0">${{cart.tax.toFixed(2)}}</span>
+                    <span *ngIf="cart.tax < 0">$0.00</span>
+                </p>
+            <p>
+                Returns
+                <span>
+                    {{cart.returnAmount | currency:'USD':true }}
+                </span>
+            </p>
+            <p *ngIf="patient.patient.emailAddress">
+                Points Earned
+                <span>
+                    {{(cart.total - cart.discountAmount) | floor }}
+                </span>
+            </p>
+
+            <div *ngIf="packageQuantityError" class="error" style="color: red; font-size: smaller;">{{packageQuantityErrorMessage}}</div>
+            <div *ngIf="packageErrors" class="error" style="color: red; font-size: smaller;">There are products without packages selected.</div>
+            <div *ngIf="oversaleError" class="error" style="color: red; font-size: smaller;">Cart contains too much cannabis product. Checkout is not allowed.</div>
+            <div *ngIf="cartPriceTooLow" class="error" style="color: red; font-size: smaller;">Cannot sell below wholesale price</div>
+
+        </div>
+
+        <button *ngIf="!oversaleError && cart.hasReturns && (cart.total - cart.discountAmount - cart.returnAmount < 0)" class="btn overlay-checkout-btn" (click)="goToCheckout()" style="width: 100%;">
+            Issue Refund: {{ finalCartTotal | currency:'USD':true   }}
+        </button>
+
+        <button *ngIf="!cartPriceTooLow && !oversaleError && cart.lineItems.length && (!cart.hasReturns || (cart.total - cart.discountAmount - cart.returnAmount >= 0) ) && finalCartTotal >= 0" class="btn overlay-checkout-btn" (click)="goToCheckout()" style="width: 100%;">
+            Check Out: {{  finalCartTotal | currency:'USD':true   }}
+        </button>
+
+        <button *ngIf="(!cart.hasReturns && (cartPriceTooLow || finalCartTotal < 0)) || oversaleError || !cart.lineItems.length" class="btn overlay-checkout-btn" style="width: 100%; background-color: #c8d0d8; ">
+            Check Out: <span *ngIf="(finalCartTotal < 0 && !cart.hasReturns)">{{  finalCartTotal | currency:'USD':true   }}</span>
+        </button>
+
+    </ng-container>
+
+    <ng-container *ngIf="cart && step == 'checkout'">
+        <div class="checkout-summary" *ngIf="step == 'checkout'">
+            <h2>Check Out</h2>
+
+            <div class="checkout-info" style="width: 100%">
+
+                <md-button-toggle-group class="default blue" [(ngModel)]="paymentMethod">
+                    <md-button-toggle value="cash">Cash</md-button-toggle>
+                    <md-button-toggle value="gift-card">Gift Card</md-button-toggle>
+                </md-button-toggle-group>
+
+                <span *ngIf="notPaid" class="error" style="margin-left: 20px; color: red;">Amount Paid cannot be empty</span>
+                <span *ngIf="notEnough" class="error" style="margin-left: 55px; color: red;">Insufficient Amount</span>
+
+            <input #cashInput [class.error]="notPaid || notEnough" type="number" placeholder="$" [(ngModel)]="amountPaid" *ngIf="paymentMethod == 'cash'" preventBarcodeScanner>
+            <input [class.error]="notPaid || notEnough" type="text" placeholder="Redemption ID" [(ngModel)]="giftcardTransactionId" *ngIf="paymentMethod == 'gift-card'">
+
+                <div class="detail-row">
+                    <div *ngIf="(cart.total - cart.discountAmount - cart.returnAmount) > (amountPaid || 0)">
+                        <span class="input-label-due">Amount Due</span>
+                        <h5 class="product-info">${{(cart.total - cart.discountAmount - cart.returnAmount).toFixed(2)}}</h5>
+                    </div>
+                    <div *ngIf="(cart.total - cart.discountAmount - cart.returnAmount) <= (amountPaid || 0)">
+                        <span class="input-label">Change Due</span>
+                        <h5 class="product-info">{{changeDue()}}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <span *ngIf="packageQuantityError" class="error package-error" style="margin-left: 20px; color: red;">{{packageQuantityErrorMessage}}</span>
+
+        <button class="btn overlay-checkout-btn" (click)="onDone()" style="width: 100%;">
+            Done
+        </button>
+    </ng-container>
+</div>

@@ -1,0 +1,34 @@
+<main>
+
+    <span style="color: red" *ngIf="error">{{error}}</span>
+
+    <ng-container *ngIf="step == 'cart'">
+        <div style="display: flex; flex-direction: column">
+            <h3>Will this discount be applied to the whole cart or a single line item?</h3>
+            <app-button-toggler [options]="cartOptions" [(ngModel)]="lineItemOrCart"></app-button-toggler>
+            <ng-container *ngIf="lineItemOrCart == 'line-item'">
+                <app-select2 *ngIf="lineItemSelect2Options" [options]="lineItemSelect2Options" [(ngModel)]="selectedLineItemId" style="width: 100%; margin-top: 2rem;"></app-select2>
+            </ng-container>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="step == 'type'">
+        <div style="display: flex; flex-direction: column">
+            <h3>What type of discount is this?</h3>
+            <app-button-toggler [options]="typeOptions" [(ngModel)]="type"></app-button-toggler>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="step == 'amount'">
+        <ng-container *ngIf="type == 'dollar'">
+            <h3>Is the dollar amount the discount amount or target price after discount?</h3>
+            <app-button-toggler [options]="dollarDiscountOptions" [(ngModel)]="dollarDiscountSelection"></app-button-toggler>
+        </ng-container>
+        <input placeholder="Discount Amount" type="number" [(ngModel)]="amount" style="margin-top: 2rem;"/>
+        <input placeholder="Notes" type="textr" [(ngModel)]="notes" style="margin-top: 2rem;"/>
+    </ng-container>
+
+    <div style="color: red; margin-top: 1rem;" *ngIf="negError">{{negError}}</div>
+
+    <button class="btn secondary green aligned" (click)="next()" style="margin-top: 1rem;">{{step == 'amount' ? "Create Discount" : "Next"}}</button>
+</main>

@@ -1,0 +1,5 @@
+.low::after {
+    color: red;
+    content: "(is low)";
+    margin-left: 1rem;
+}

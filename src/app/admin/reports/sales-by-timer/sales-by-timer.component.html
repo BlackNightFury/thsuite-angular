@@ -1,0 +1,134 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Sales by Transaction Time</h2>
+        
+        <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search By Receipt ID...">
+
+        <button class="btn tertiary blue btn-export" (click)="onClickExport('sales-by-timer')" ><i class="icon icon-export"></i>Export</button>
+
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+        
+        <ng-container *ngIf="employeeSelect2Options">
+            <app-select2 [options]="employeeSelect2Options" [(ngModel)]="selectedEmployeeId"></app-select2>
+        </ng-container>
+
+        <app-button-toggler class="multiple" [options]="togglePaymentMethodOptions" [(ngModel)]="paymentMethod" ></app-button-toggler>
+
+    </div>
+</div>
+
+<main class="content">
+
+    <h2 class="main-title" style="margin-bottom: 0.5em;">Aggregate Sales</h2>
+    <table class="report-table receipts-table compact nohover sticky" style="margin-bottom: 1rem;" *ngIf="receipts">
+        <thead>
+        <tr>
+            <th class="text-right money-column">Total Receipts</th>
+            <th class="text-right money-column">Total Sales</th>
+            <th class="text-right money-column">Average Sale</th>
+            <th class="text-right money-column">Average Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="text-right">{{allReceiptsLength}}</td>
+            <td class="text-right">{{allReceiptsTotalSales | currency:'USD':true}}</td>
+            <td class="text-right">{{allReceiptsLength > 0 ?
+                ( ( allReceiptsTotalSales / allReceiptsLength) | currency: 'USD':true  ) : 0 | currency: 'USD':true}} </td>
+            <td class="text-right">{{formatTimeToDisplay(averageTimeOfSale)}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="controls-row">
+        <h2 class="main-title" style="margin-bottom: 0.5em; margin-top: 1em;">Breakdown</h2>
+
+        <div class="topbar-filters" style="padding: 0;">
+            <div class="controls-row">
+                <app-button-toggler class="multiple" [options]="toggleTransactionTypeOptions" [(ngModel)]="transactionType"></app-button-toggler>
+            </div>
+        </div>
+
+        <div *ngIf="receipts && receiptsReady">
+            <label *ngIf="transactionType == 'above-avg'" class="input-label">Receipts<br>Above Average: {{receipts.length}} </label>
+            <label *ngIf="transactionType == 'below-avg'" class="input-label">Receipts<br>Below Average: {{receipts.length}} </label>
+        </div>
+
+
+    </div>
+
+    <div *ngIf="!receipts">No breakdown available</div>
+    <table class="report-table receipts-table compact sticky" *ngIf="receipts">
+        <thead>
+        <tr>
+            <th class="col-300">Receipt ID</th>
+            <th class="col-300">Date/Time</th>
+            <th class="col-300">Employee</th>
+            <th class="col-qty">Payment Method</th>
+            <th class="text-right">Total Price</th>
+            <th class="text-right">Total Time of Sale</th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container *ngFor="let receipt of receiptsPage">
+            <tr (click)="toggleReceipt(receipt)">
+                <td>{{receipt.object.barcode}}</td>
+                <td>{{receipt.object.createdAt | storeTimeZone:this.store.timeZone:'short'}}</td>
+                <td>{{receipt.object.User ? (receipt.object.User.firstName + ' ' + receipt.object.User.lastName) : ''}}</td>
+                <td>{{(receipt.object.paymentMethod == 'gift-card' ? "gift card" : receipt.object.paymentMethod) | ucwords}}</td>
+                <td class="text-right">{{receipt.object.total | currency:'USD':true}}</td>
+                <td class="text-right">{{formatTimeToDisplay(receipt.object.transactionTime)}}</td>
+            </tr>
+
+            <tr class="nohover" *ngIf="receipt.isToggled && receipt.object.paymentMethod == 'gift-card'">
+                <td colspan="6"><span class="semibold">Gift Card ID: </span>{{receipt.object.giftcardTransactionId}}</td>
+            </tr>
+
+            <tr class="nohover" *ngIf="receipt.isToggled">
+                <td colspan="6" class="receipts-table-container">
+                    <table class="receipts-table sales-breakdown sticky nohover">
+                        <thead>
+                        <tr>
+                            <th class="col-200-fixed">Product</th>
+                            <th class="col-225-fixed">Label</th>
+                            <th class="text-right col-100-fixed">Quantity</th>
+                            <th class="text-right col-8rem">Refund?</th>
+                            <th class="text-right money-column">Subtotal</th>
+                            <th class="text-right money-column">Discount</th>
+                            <th class="text-right money-column">Tax</th>
+                            <th class="text-right money-column">Total</th>
+                            <th class="text-right money-column">Profit&nbsp;%</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ng-container *ngFor="let lineItem of receipt.object.LineItems">
+                            <tr>
+                                <td>{{lineItem.Product.name}} {{lineItem.ProductVariation.name}}</td>
+                                <td>{{lineItem.Transactions[0].Package.Label}}</td>
+                                <td class="text-right">{{lineItem.quantity}}</td>
+                                <td *ngIf="!lineItem.isReturn" class="text-right"></td>
+                                <td *ngIf="lineItem.isReturn" class="text-right">Yes</td>
+                                <td class="text-right">{{lineItem.subtotal | currency:'USD':true}}</td>
+                                <td class="text-right">{{lineItem.discount | currency:'USD':true}}</td>
+                                <td class="text-right">{{lineItem.tax | currency:'USD':true}}</td>
+                                <td class="text-right">{{lineItem.total | currency:'USD':true}}</td>
+                                <td class="text-right">{{ calculateLineItemProfitPercent(lineItem) }}</td>
+                            </tr>
+                        </ng-container>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+
+        </ng-container>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)]="page"></app-pager>
+</main>

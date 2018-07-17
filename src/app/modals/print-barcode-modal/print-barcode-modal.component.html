@@ -1,0 +1,29 @@
+
+<h1 mat-dialog-title *ngIf="data.printType === 'barcode' ">Print Barcode Labels</h1>
+<h1 mat-dialog-title *ngIf="data.printType === 'flower' ">Print Flower Barcode Labels</h1>
+
+<div style="margin-bottom: 10px;">
+    <span class="input-row">
+        <div style="font-size: 16px; margin-bottom: 20px;">How many barcodes do you want to print?</div>
+        <input class="input-label" style="font-size: 16px; font-weight: normal;" [(ngModel)]="this.numToPrint" (keyup.enter)="leaveModal(this.numToPrint)" placeholder="Enter A Number">
+    </span>
+
+
+    <span class="errors" style="text-align: left; color: red; font-size: 14px;" *ngIf="this.error">
+        {{this.error}}
+    </span>
+
+    <span class="errors" style="text-align: left; color: red; font-size: 14px;" *ngIf="!this.error">
+    </span>
+
+</div>
+
+<div>
+
+    <button class="btn primary gray" style="width: 120px; height: 45px; position:absolute; left: 25px; font-size: 16px;" (click)="leaveModal()">Cancel</button>
+    <button class="btn primary blue" style="width: 120px; height: 45px; position:absolute; right: 25px; font-size: 16px;" (click)="leaveModal(this.numToPrint)">Print</button>
+
+</div>
+
+
+

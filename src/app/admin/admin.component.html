@@ -1,0 +1,8 @@
+<!-- Left Nav -->
+<app-left-nav *ngIf="!displayPOSNav"></app-left-nav>
+<app-pos-settings-dashboard-left-nav (adminMenuClick)="adminMenuClicked()" class="leftnav" *ngIf="displayPOSNav"></app-pos-settings-dashboard-left-nav>
+
+<!-- Top Nav -->
+<app-top-nav></app-top-nav>
+
+<router-outlet></router-outlet>

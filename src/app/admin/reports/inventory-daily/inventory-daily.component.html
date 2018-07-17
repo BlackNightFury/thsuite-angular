@@ -1,0 +1,58 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Inventory Daily Report For {{reportDate}}</h2>
+
+        <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search Product Name...">
+
+        <button class="btn tertiary blue btn-export" (click)="onClickExport('inventory-daily')" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <div class="control-input">
+            <app-date-range-selector preselectedTimeFrame="today" [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+        </div>
+
+        <app-select2 *ngIf="productSelect2Options"
+                     [options]="productSelect2Options"
+                     [(ngModel)]="selectedProductId">
+        </app-select2>
+
+        <app-select2 *ngIf="employeeSelect2Options"
+                     [options]="employeeSelect2Options"
+                     [(ngModel)]="selectedEmployeeId">
+        </app-select2>
+    </div>
+</div>
+
+<main class="content">
+    <table class="report-table discounts-by-type-table sticky compact">
+        <thead>
+        <tr>
+            <th sortBy="Label" [(ngModel)]="sortByModel" style="width: 15rem;">Package Label</th>
+            <th sortBy="name" [(ngModel)]="sortByModel">Product Name</th>
+            <th sortBy="Quantity" [(ngModel)]="sortByModel" class="text-right col-qty">Starting Qty</th>
+            <th sortBy="Quantity" [(ngModel)]="sortByModel" class="text-right col-qty">Qty Purchased</th>
+            <th sortBy="Quantity" [(ngModel)]="sortByModel" class="text-right col-qty">Remaining Qty</th>
+        </tr>
+
+        </thead>
+        <tbody>
+        <tr *ngIf="!chartData">
+            <td colspan="9">No data found for this date.</td>
+        </tr>
+        <tr *ngFor="let data of chartDataPage">
+            <td>{{ data.Label }}</td>
+            <td>{{ data.name }}</td>
+            <td class="text-right col-qty">{{ data.Quantity | number }} {{ data.UnitOfMeasureAbbreviation }}</td>
+            <td class="text-right col-qty">{{ (data.transactionAmount-data.returnedAmount) | number }} {{ data.UnitOfMeasureAbbreviation }}</td>
+            <td class="text-right col-qty">{{ (data.Quantity-data.transactionAmount+data.returnedAmount+data.adjustmentAmount) | number }} {{ data.UnitOfMeasureAbbreviation }}</td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <app-pager [(ngModel)]="page" [numPages]="numPages"></app-pager>
+
+</main>

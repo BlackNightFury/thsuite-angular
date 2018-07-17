@@ -1,0 +1,52 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Sales by Product</h2>
+
+        <input type="text" class="controls-input-search" (keyup)="updateSearchQuery($event.target.value)" placeholder="Search Products...">
+
+        <button class="btn tertiary blue btn-export" (click)="onClickExport('sales-by-product')" ><i class="icon icon-export"></i>Export</button>
+    </div>
+
+    <!-- <div class="controls-row">
+        <button class="btn tertiary green" data-overlay-toggler="addCustomReport"><i class="icon icon-add"></i>Custom Report</button>
+    </div> -->
+
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+    </div>
+</div>
+
+
+<main class="content">
+
+    <table class="report-table first-wide sales-by-product-type has-total nohover">
+        <thead>
+        <tr>
+            <th sortBy="name" [(ngModel)]="sortByModel">Product Name</th>
+            <th sortBy="average" [(ngModel)]="sortByModel" class="align-right">Avg per Sale</th>
+            <th sortBy="count" [(ngModel)]="sortByModel" class="align-right"># of Sales</th>
+            <th sortBy="sum" [(ngModel)]="sortByModel" class="align-right">Total</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let row of salesData">
+            <td>{{ row.name }}</td>
+            <td class="align-right">{{ row.sum/row.count | currency:'USD':true }}</td>
+            <td class="align-right">{{ row.count | number }}</td>
+            <td class="align-right">{{ row.sum | currency:'USD':true }}</td>
+        </tr>
+
+        <!--<tr>-->
+            <!--<td>Total</td>-->
+            <!--<td>{{ salesData.total.count | number }}</td>-->
+            <!--<td>{{ salesData.total.sum | currency:'USD':true }}</td>-->
+            <!--<td>{{ salesData.total.sum/salesData.total.count | currency:'USD':true }}</td>-->
+        <!--</tr>-->
+
+        </tbody>
+    </table>
+</main>

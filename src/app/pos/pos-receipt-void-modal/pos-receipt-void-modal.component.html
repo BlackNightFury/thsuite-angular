@@ -1,0 +1,11 @@
+<main>
+
+    <h3>Add note/reasoning for why you are voiding this receipt</h3>
+    <textarea placeholder="Notes" [(ngModel)]="notes" rows="6"></textarea>
+
+    <div style="text-align: center">
+        <span *ngIf="this.error" class="errors" style="padding: 1rem; color: red">{{this.error}}</span>
+    </div>
+
+    <button class="btn secondary green aligned" (click)="voidReceipt()" style="margin-top: 2rem;">Void Receipt</button>
+</main>

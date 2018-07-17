@@ -1,0 +1,41 @@
+<main class="content active">
+    <table class="patient-groups-table">
+        <thead>
+        <tr>
+            <th>Role</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+            <td>Owner/Administrator</td>
+            <td>This is a master role with full access to all administrative and point of sale settings. This role
+                cannot be edited.
+            </td>
+            <td class="table-action" data-overlay-toggler="editPatientGroup">
+                <span class="flat-ripple"><i class="icon icon-edit" data-overlay-toggler="editEmployee"></i>EDIT</span>
+            </td>
+        </tr>
+        <tr>
+            <td>Manager</td>
+            <td>This role is intended for managers that supervise a store and have partial administrative access to
+                oversee budtenders and the performance of their store. This is a default role that cannot be removed.
+            </td>
+            <td class="table-action" data-overlay-toggler="editPatientGroup">
+                <span class="flat-ripple"><i class="icon icon-edit" data-overlay-toggler="editEmployee"></i>EDIT</span>
+            </td>
+        </tr>
+        <tr>
+            <td>Budtender</td>
+            <td>This role is intended for budtenders that conduct sales transactions and have very limited
+                administrative access. This is a default role that cannot be removed.
+            </td>
+            <td class="table-action"><span class="flat-ripple"><i class="icon icon-edit"
+                                                                  data-overlay-toggler="editEmployee"></i>EDIT</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>

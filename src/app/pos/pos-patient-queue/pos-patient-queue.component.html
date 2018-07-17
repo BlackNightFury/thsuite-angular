@@ -1,0 +1,68 @@
+
+<div class="cart-patient-queue">
+    <div class="patient-queue">
+        Patient Queue
+    </div>
+    <div class="guest-patient-button">
+        <button class="btn blue secondary" (click)="selectGuestPatient()">Guest Patient</button>
+    </div>
+</div>
+
+
+<div class="pos-patient" *ngFor="let patient of patientQueue" (click)="selectPatient(patient)">
+    <!--<div class="img">-->
+    <!--<img src="img/no_profile_pic.svg" alt="">-->
+    <!--</div>-->
+    <div class="text">
+        <h2>{{patient.patient.firstName}} {{patient.patient.lastName}}</h2>
+        <h4 *ngIf="patient.caregiver" class="subtitle" style="margin: 0.5em 0">Caregiver: {{patient.caregiver.firstName}} {{patient.caregiver.lastName}}</h4>
+        <h5 class="subtitle">Group: {{patient.patient.PatientGroup?.name}}</h5>
+    </div>
+
+    <div class="pos-patient-row-rhs">
+        <div class="queue-time">{{patient.startTime | amTimeAgo: true}} <i class="icon icon-clock"></i></div>
+        <button class="btn primary green pos-patient-previous-purchases" (click)="viewPurchaseHistory($event, patient.patient)" md-button><md-icon class="md-36">receipt</md-icon></button>
+    </div>
+</div>
+
+
+<div class="pos-overlay-empty" *ngIf="patientQueue && !patientQueue.length">
+    <p>Patient Queue is empty</p>
+</div>
+
+<!--<div class="checkout-summary">-->
+    <!--<div class="input-row button-aligned">-->
+        <!--<input class="input&#45;&#45;half" type="text" placeholder="First Name" [(ngModel)]="_newPatient.firstName" style="margin-right: 1rem;">-->
+        <!--<input class="input&#45;&#45;half" type="text" placeholder="Last Name" [(ngModel)]="_newPatient.lastName">-->
+    <!--</div>-->
+    <!--<div class="input-row button-aligned">-->
+        <!--<input type="text" placeholder="Enter Email" [(ngModel)]="_newPatient.emailAddress">-->
+    <!--</div>-->
+    <!--<div class="input-row button-aligned">-->
+        <!--<input type="text" placeholder="Enter Phone Number" [(ngModel)]="_newPatient.phoneNumber" (keyup)="formatPhoneNumber($event)">-->
+    <!--</div>-->
+
+    <!--<div class="center-btn">-->
+        <!--<button class="btn secondary green aligned" (click)="saveAndSelectNewPatient();">New Patient</button>-->
+        <!--<button class="btn secondary green aligned" (click)="saveAndSelectNewGuestPatient();">Guest Patient</button>-->
+        <!--&lt;!&ndash;<button class="btn secondary green aligned" (click)="clearNewPatient();">Cancel</button>&ndash;&gt;-->
+    <!--</div>-->
+    <!--<div class="center-btn">-->
+        <!--<span *ngIf="invalidEmail" style="color: red">The email address entered is not valid.</span> <br>-->
+        <!--<span *ngIf="invalidPhone" style="color: red">The phone number entered is not valid.</span>-->
+        <!--&lt;!&ndash;<button class="btn secondary green aligned" (click)="saveAndSelectNewGuestPatient();">Guest Patient</button>&ndash;&gt;-->
+    <!--</div>-->
+<!--</div>-->
+
+<!--<div class="checkout-summary">-->
+    <!--<div style="text-align: center;">-->
+        <!--<span *ngIf="notFound" style="color: red;">A patient with this email could not be found</span>-->
+    <!--</div>-->
+    <!--<div class="input-row button-aligned" style="margin-top: 10px;">-->
+        <!--<input type="text" placeholder="Lookup by Email" #emailLookup>-->
+    <!--</div>-->
+
+    <!--<div class="center-btn">-->
+        <!--<button class="btn secondary green aligned" (click)="findExistingPatient(emailLookup.value);">Find Patient</button>-->
+    <!--</div>-->
+<!--</div>-->

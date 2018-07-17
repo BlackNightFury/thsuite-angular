@@ -1,0 +1,42 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Sales by Employee</h2>
+
+        <button class="btn tertiary blue btn-export" (click)="onClickExport('employees')" ><i class="icon icon-export"></i>Export</button>
+    </div>
+
+    <!-- <div class="controls-row">
+        <button class="btn tertiary green" data-overlay-toggler="addCustomReport"><i class="icon icon-add"></i>Custom Report</button>
+    </div> -->
+
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+    </div>
+</div>
+
+
+<main class="content">
+
+    <table class="report-table first-wide has-total sticky nohover">
+        <thead>
+        <tr>
+            <th>Employee</th>
+            <th sortBy="average" [(ngModel)]="sortByModel" class="align-right">Avg Per Sale</th>
+            <th sortBy="count" [(ngModel)]="sortByModel" class="align-right">Sales Made</th>
+            <th sortBy="amount" [(ngModel)]="sortByModel" class="align-right">Total</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let data of salesData">
+            <td>{{data.first + ' ' + data.last}}</td>
+            <td class="align-right">{{((data.count > 0) ? (data.amount/data.count) : (0)) | currency:'USD':true}}</td>
+            <td class="align-right">{{data.count}}</td>
+            <td class="align-right">{{data.amount | currency:'USD':true}}</td>
+        </tr>
+        </tbody>
+    </table>
+</main>

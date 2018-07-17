@@ -1,0 +1,235 @@
+$pos-overlay-side: 23px;
+
+body {
+    &.leftnav-hidden {
+        .leftnav {
+            transform: translateX(-200px);
+        }
+
+        .topnav {
+            margin-left: 0;
+            width: 100%;
+
+            .topnav-toggle-leftnav {
+                display: flex;
+            }
+        }
+    }
+}
+
+.pos-overlay {
+    width: 540px;
+    top: $topnav-height;
+    position: fixed;
+    bottom: 0;
+    min-height: 0;
+    overflow-y: auto;
+    
+    @include max-width($compact) {
+        top: $topnav-height-compact;
+    }
+
+    @include max-width($tablet) {
+        top: $topnav-height-tablet;
+    }
+}
+
+.pos-patient {
+    display: flex;
+    align-items: center;
+    padding: 30px 23px;
+    border-bottom: 1px solid #e2e7eb;
+    background-color: white;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover,
+    &:focus {
+        background-color: $body-bg;
+        cursor: pointer;
+
+        h2 {
+            color: $green;
+        }
+    }
+
+    .img {
+        @include circle(42px);
+
+        img {
+            @include circle(42px);
+        }
+
+        margin-right: 12px;
+    }
+
+    .text {
+        h2 {
+            margin: 0 0 2px;
+            font-size: 22px;
+            font-weight: 300;
+            transition: color 0.2s ease-in-out;
+        }
+
+        h5 {
+            margin-bottom: 0;
+        }
+    }
+
+    .pos-patient-row-rhs {
+        margin-left: auto;
+        font-weight: 600;
+        font-size: 15px;
+    }
+}
+
+.queue-time {
+    .icon {
+        color: #c7ced5;
+        margin-left: 8px;
+    }
+}
+
+.pos-patient-previous-purchases {
+    text-align:center;
+    min-width: auto !important;
+    padding:6px !important;
+    float:right;
+    margin-top:20px !important;
+}
+
+.pos-overlay-empty {
+    padding: 60px 23px;
+    text-align: center;
+
+    .icon {
+        font-size: 80px;
+        color: #c5cdd4;
+        margin-bottom: 30px;
+    }
+
+    p {
+        font-size: 16px;
+        color: #7c8c9e;
+    }
+}
+
+.pos-overlay-discount {
+    padding: 0 20px;
+
+    .input-row.button-aligned {
+        margin-bottom: 0;
+    }
+
+    .input-units {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .clear-code {
+        margin-left: 10px;
+    }
+}
+
+.discount-links {
+    text-align: center;
+
+    a:not(:last-child):after {
+        content: '|';
+        margin: 0 0.25em 0 0.5em;
+        transform: translateY(1px);
+        display: inline-block;
+        color: #4C6379;
+    }
+}
+
+.checkout-summary {
+    padding: 5px 20px;
+    background-color: #fbfbfc;
+    border-top: 1px solid #e2e7eb;
+    margin-top: auto;
+
+    .button-aligned {
+        justify-content: space-between;
+    }
+
+    .input--half {
+        max-width: 45%;
+    }
+
+    p {
+        margin: 0;
+        color: #6c838c;
+        font-size: 15px;
+        font-weight: 400;
+        display: flex;
+        align-items: flex-end;
+
+        span {
+            margin-left: auto;
+            color: #335966;
+        }
+
+        &.subtotal-row {
+            font-weight: 500;
+            font-size: 20px;
+            margin-top: 12px;
+
+            span {
+                font-weight: 500;
+                color: #16a2d6
+            }
+        }
+    }
+
+    h2 {
+        text-align: center;
+        margin-top: 0;
+    }
+
+    .checkout-info {
+        width: 85%;
+        margin: 0 auto;
+
+        input {
+            margin: 10px 0;
+        }
+
+        .detail-row {
+            text-align: center;
+            margin-bottom: 0;
+        }
+    }
+}
+
+app-pos-cart {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.pos-cart-body {
+    overflow-y: auto;
+}
+
+.pos-cart-footer {
+    border-top: 1px solid #e2e7eb;
+    flex-shrink: 0;
+    margin-top: auto;
+
+    & > .input-row {
+        padding: 0 20px;
+        margin-bottom: 0;
+
+        .clear-code {
+            align-self: center;
+            margin-left: 10px;
+        }
+    }
+
+    & > .input-row,
+    .custom-discount,
+    .pos-overlay-discount {
+        margin: 5px 0;
+    }
+}
+

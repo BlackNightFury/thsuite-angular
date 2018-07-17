@@ -1,0 +1,41 @@
+<div class="topbar-controls patient-management">
+
+    <div class="controls-row">
+        <h2 class="page-subtitle">Pricing Tiers</h2>
+
+        <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search by name">
+
+        <button *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditPricingTiers" md-button class="btn tertiary green" (click)="createTier()" style="padding-left: 15px; padding-right: 15px"><i class="icon icon-add"></i>Pricing Tier</button>
+    </div>
+
+</div>
+
+<main class="content">
+    <table class="inventory-products-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Mode</th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let tier of objects | async" (click)="onRowClick($event, tier)">
+            <td>{{tier.name}}</td>
+            <td>{{tier.description}}</td>
+            <td>{{modeDisplayNames[tier.mode]}}</td>
+            <td class="table-action">
+                <i *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditPricingTiers" class="icon icon-edit" (click)="editTier(tier)"></i>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listTiers()"></div>
+
+<router-outlet></router-outlet>

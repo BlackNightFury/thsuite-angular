@@ -1,0 +1,34 @@
+<div class="topbar-controls patient-management">
+  <div class="controls-row">
+    <h2 class="page-subtitle">Test Transaction</h2>
+  </div>
+</div>
+
+<main class="content">
+    <div class="content-section">
+        <div><input type="text" [(ngModel)]="id" (ngModelChange)="changedId($event)" placeholder="Enter Transaction ID" /></div>
+        <div class="spacer status">Status: <strong>{{ (legacyServiceResult && serviceResult) ? (serviceResultsMatches ? 'OK' : 'MISMATCH') : 'UNKNOWN' }}</strong></div>
+        <div class="spacer">
+            <div class="half">
+                Legacy Service: <br /><br />
+                <textarea readonly>{{ legacyServiceResult }}</textarea>
+            </div>
+            <div class="half">
+                New Service: <br /><br />
+                <textarea readonly>{{ serviceResult }}</textarea>
+            </div>
+            <div style="clear:both;"><!-- --></div>
+        </div>
+        <div class="spacer"><hr /></div>
+
+        <div class="spacer">
+            <br />Optional Scopes: <br />
+            <div class="spacer">
+                <ng-container *ngFor="let scope of scopeKeys">
+                    <md-checkbox [(ngModel)]="scopes[scope]" (ngModelChange)="changedScope()">{{ scope }}</md-checkbox>
+                </ng-container>
+            </div>
+            <textarea readonly>{{ optionalServiceResult }}</textarea>
+        </div>
+    </div>
+</main>

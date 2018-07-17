@@ -1,0 +1,107 @@
+<app-export-options-modal
+    [isExportOptionsModalShowing]="isSalesIndexExportModalShowing"
+    [isExportOptionsModalAboutToClose]="isSalesIndexExportModalAboutToClose"
+    (onModalClosed)="onSalesIndexExportModalClosed($event)"
+    (onExport)="onSalesIndexExportModalExport($event)"
+     *ngIf="isSalesIndexExportModalShowing"></app-export-options-modal>
+
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Overall Sales</h2>
+        <button class="btn tertiary blue flex-right btn-export" (click)="onClickShowExportModal()" ><i class="icon icon-export"></i>Export</button>
+    </div>
+
+    <!-- <div class="controls-row">
+        <button class="btn tertiary green" data-overlay-toggler="addCustomReport"><i class="icon icon-add"></i>Custom Report</button>
+    </div> -->
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+    </div>
+</div>
+
+<div class="overall-sales-summary" *ngIf="salesData">
+    <div class="overall-sales-summary-box">
+        <div class="overall-sales-summary-box-title">Total Net Sales</div>
+        <div class="overall-sales-summary-box-value">{{ salesData.net.cannabisSum + salesData.net.nonCannabisSum | currency:'USD':true}}</div>
+    </div>
+    <div class="overall-sales-summary-box">
+        <div class="overall-sales-summary-box-title">Total Transactions</div>
+        <div class="overall-sales-summary-box-value">{{ salesData.receiptCount.count }}</div>
+    </div>
+</div>
+
+<main class="content">
+    <table class="report-table overall-sales-table nohover">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Cannabis</th>
+            <th>Non-Cannabis</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <ng-container *ngIf="salesData">
+            <tr>
+                <td>Gross Sales</td>
+                <td>{{ salesData.gross.cannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.gross.nonCannabisSum | currency:'USD':true}}</td>
+                <td>{{ ( salesData.gross.cannabisSum + salesData.gross.nonCannabisSum ) | currency:'USD':true}}</td>
+            </tr>
+            <tr>
+                <td>Discounts</td>
+                <td>{{ salesData.discounts.cannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.discounts.nonCannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.discounts.cannabisSum + salesData.discounts.nonCannabisSum | currency:'USD':true}}</td>
+            </tr>
+            <tr>
+                <td>Returns</td>
+                <td>{{ salesData.returns.cannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.returns.nonCannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.returns.cannabisSum + salesData.returns.nonCannabisSum | currency:'USD':true}}</td>
+            </tr>
+            <tr>
+                <td>Taxes</td>
+                <td>{{ salesData.taxes.cannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.taxes.nonCannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.taxes.cannabisSum + salesData.taxes.nonCannabisSum | currency:'USD':true}}</td>
+            </tr>
+            <tr>
+                <td>Net Sales</td>
+                <td>{{ salesData.net.cannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.net.nonCannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.net.cannabisSum + salesData.net.nonCannabisSum | currency:'USD':true}}</td>
+            </tr>
+            <tr>
+                <td>Net COGS <span class="incoming-alert"><span *ngIf="salesData.cogs.missingWholesalePrice" title="Some packages have been excluded from calculation because wholesale price hasn't been added.">{{(salesData.cogs.missingWholesalePrice ? '!!!!!' : '')}}</span></span>
+                <td>{{ salesData.cogs.cannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.cogs.nonCannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.cogs.cannabisSum + salesData.cogs.nonCannabisSum | currency:'USD':true}}</td>
+            </tr>
+            <tr>
+                <td>Gross Margin</td>
+                <td>{{ salesData.gm.cannabis }}%</td>
+                <td>{{ salesData.gm.nonCannabis }}%</td>
+                <td>{{ salesData.gm.total }}%</td>
+            </tr>
+            <tr>
+                <td>Cash Transactions</td>
+                <td>{{ salesData.cashTrx.cannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.cashTrx.nonCannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.cashTrx.cannabisSum + salesData.cashTrx.nonCannabisSum | currency:'USD':true}}</td>
+            </tr>
+            <tr>
+                <td>Gift Card Transactions</td>
+                <td>{{ salesData.giftCardTrx.cannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.giftCardTrx.nonCannabisSum | currency:'USD':true}}</td>
+                <td>{{ salesData.giftCardTrx.cannabisSum + salesData.giftCardTrx.nonCannabisSum | currency:'USD':true}}</td>
+            </tr>
+        </ng-container>
+
+        </tbody>
+    </table>
+</main>

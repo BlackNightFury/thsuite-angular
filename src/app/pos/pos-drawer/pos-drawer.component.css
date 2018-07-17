@@ -1,0 +1,94 @@
+.pos-drawer .manage-drawer-content {
+    margin: 1rem;
+}
+
+.pos-drawer .button-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 2rem;
+    margin: 2rem 0rem;
+}
+
+.pos-drawer .button-row > button {
+    padding: 1rem;
+    height: 8rem;
+    font-size: 1.2em;
+}
+
+.pos-drawer .orange {
+    background-color: orange;
+}
+
+.pos-drawer .red {
+    background-color: red;
+}
+
+.pos-drawer .drawer-stop-start {
+    color: white;
+    font-weight: normal;
+}
+
+.pos-drawer .drawer-stop-start::before {
+    content: 'Start Drawer';
+}
+
+.pos-drawer .drawer-stop-start.has-started {
+    background-color: red;
+}
+.pos-drawer .drawer-stop-start.has-started::before {
+    content: 'End Drawer';
+    color: white;
+    font-weight: normal;
+}
+
+.pos-drawer .drawer-stop-start.has-ended {
+    background-color: #28bd8b;
+}
+.pos-drawer .drawer-stop-start.has-ended::before {
+    content: 'Start Drawer';
+    color: white;
+    font-weight: normal;
+}
+
+
+.pos-drawer .drawer-details {
+    font-size: 1.5rem;
+    border: 1px solid black;
+}
+
+.pos-drawer .drawer-details > div {
+    border-bottom: 1px solid black;
+	display: flex;
+    margin: 0rem 1rem;
+    padding: 1rem 0rem;
+}
+
+.pos-drawer .drawer-details > div > span {
+    flex: 1;
+}
+
+.pos-drawer .drawer-details > div > button+span {
+    flex: none;
+}
+/*
+.pos-drawer .drawer-details > div > button {
+    margin-right: 5rem;
+}
+*/
+.pos-drawer .drawer-details > div > span:last-child {
+    text-align: right;
+}
+
+.pos-drawer .drawer-details .amounts {
+    display: flex;
+    text-align: center;
+}
+
+.pos-drawer .drawer-details .amounts > div {
+    flex: 1;
+}
+
+.pos-drawer .money-column {
+    text-align: right;
+    width: 10rem !important;
+}

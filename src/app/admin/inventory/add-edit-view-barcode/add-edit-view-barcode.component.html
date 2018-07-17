@@ -1,0 +1,346 @@
+<div #root class="overlay right active not-hidden-block" [@leave]="animationStatus" (@leave.done)="cancel()">
+
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><img src="/assets/svg/product_details.svg"/></div>
+        <div>
+            <h5 class="subtitle">Barcode Details</h5>
+            <!--<h1 class="section-title">{{object?.name}}</h1>-->
+        </div>
+    </div>
+
+    <div class="section-heading" *ngIf="mode == 'add'">
+        <div class="svg-icon"><img src="/assets/svg/add_new_product.svg"/></div>
+        <h1 class="section-title">Add New Barcode</h1>
+    </div>
+
+    <div class="section-heading" *ngIf="mode == 'edit'">
+        <div class="svg-icon"><img src="/assets/svg/add_new_product.svg"/></div>
+        <h1 class="section-title">Edit Barcode</h1>
+    </div>
+
+    <ng-container *ngIf="object">
+
+        <ng-container *ngIf="mode == 'view'">
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Barcode</span>
+                    <h5 class="product-info">{{object.barcode}}</h5>
+                </div>
+            </div>
+
+            <!--<div class="detail-row">-->
+                <!--<div>-->
+                    <!--<span class="input-label">Product Type</span>-->
+                    <!--<h5 class="product-info">{{object.Items[0].ProductType.name}}</h5>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Product</span>
+                    <h5 class="product-info">{{object.ProductVariation.Product.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Product Variation</span>
+                    <h5 class="product-info">{{object.ProductVariation.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Barcode Created Date</span>
+                    <h5 class="product-info">{{barcodeCreatedDate}}</h5>
+                </div>
+            </div>
+
+            <div class="input-row">
+
+                <label class="input-label">Composition</label>
+
+                <table class="nohover">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th class="align-right">{{object.ProductVariation.Product.inventoryType == 'weight' ? "Weight" : "Quantity"}}</th>
+                        <th class="align-right">Composition</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <ng-container *ngFor="let item of object.ProductVariation.Items; let index = index">
+                        <tr style="cursor: default">
+                            <td>{{item.name}}</td>
+                            <td>
+                                <div style="display: flex; float: right;">
+                                    <span class="align-right" style="width: 40px; padding-left: 0;" *ngIf="!object.ProductVariation.isBulkFlower">{{item.ProductVariationItem.quantity + ' ' + item.UnitOfMeasureAbbreviation}}</span>
+                                    <span class="align-right" style="width: 40px; padding-left: 0;" *ngIf="object.ProductVariation.isBulkFlower">Bulk</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; float: right;">
+                                    <span class="align-right" style="width: 60px; padding-left: 0;">{{(((item.ProductVariationItem.quantity / (object.ProductVariation.Items | pluck:'ProductVariationItem.quantity' | sum)) * 100) | round:2) + '%'}}</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr style="cursor: default; border-top: 0;">
+                            <td colspan="3" style="padding-top: 0; font-size: 0.75em;" *ngIf="object.Packages[index]">
+                                Package: {{object.Packages[index].Label}}
+                            </td>
+                        </tr>
+                    </ng-container>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Price</span>
+                    <h5 class="product-info">{{productVariationPrice()}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="object.allocatedInventory != null">
+                <div>
+                    <span class="input-label">Original Allocation Quantity</span>
+                    <h5 class="product-info">{{object.allocatedInventory}} barcodes</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="object.remainingInventory != null">
+                <div>
+                    <span class="input-label">Remaining Allocation Quantity</span>
+                    <h5 class="product-info">{{object.remainingInventory}} barcodes</h5>
+                </div>
+            </div>
+
+            <div class="overlay-action-buttons" *ngIf="object.allocatedInventory == null && user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditBarcodes">
+                <button class="btn secondary grey" (click)="remove()"><i class="icon icon-remove"></i>Remove</button>
+                <button class="btn secondary blue" (click)="allocate()">Allocate Inventory</button>
+            </div>
+            <div class="overlay-action-buttons" *ngIf="parentDashboard == 'packages' && !showingBarcodeNextVariationForm && !showingBarcodeNextPackageForm">
+                <button class="btn secondary blue" (click)="showBarcodeNextVariationForm()">Barcode Next Variation</button>
+                <button class="btn secondary blue" (click)="showBarcodeNextPackageForm()">Barcode New Package</button>
+            </div>
+            <div class="overlay-action-buttons" *ngIf="object.allocatedInventory != null">
+                <button class="btn secondary blue" (click)="printBarcodeLabels('flower')">Print Barcodes (Flower)</button>
+                <button class="btn secondary blue" (click)="printBarcodeLabels()">Print Barcodes (Labels)</button>
+            </div>
+            <div class="overlay-action-buttons">
+                <button *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditBarcodes" class="btn secondary blue" (click)="edit()"><i class="icon icon-edit"></i>Edit</button>
+            </div>
+
+            <div *ngIf="showingBarcodeNextVariationForm" class="nextBarcodeFormContainer">
+                <h4 class="align-center" style="margin-top:50px;">Choose Variation to Add Another Barcode</h4> 
+
+                <div class="input-row">
+                    <app-select2
+                                    [options]="nextProductVariationSelect2Options" class="full-width"
+                                    [(ngModel)]="nextVariationIdToBarcode"
+                                    [ngClass]="{error: errorFlags.nextVariationToBarcode}">
+                    </app-select2>
+                </div>
+
+                <div class="overlay-action-buttons">
+                    <button class="btn secondary grey" (click)="hideBarcodeNextForms()">Cancel</button>
+                    <button class="btn secondary blue" (click)="barcodeNextVariation()">Barcode Variation</button>
+                </div>
+            </div>
+
+            <div *ngIf="showingBarcodeNextPackageForm" class="nextBarcodeFormContainer">
+                <h4 class="align-center" style="margin-top:50px;">Choose Package to Add Another Barcode</h4> 
+
+                    <div class="input-row">
+                        <app-select2
+                                        [options]="packageSelect2Options" class="full-width"
+                                        [(ngModel)]="nextPackageIdToBarcode"
+                                        [ngClass]="{error: errorFlags.nextPckageToBarcode}">
+                        </app-select2>
+                    </div>
+    
+                    <div class="overlay-action-buttons">
+                        <button class="btn secondary grey" (click)="hideBarcodeNextForms()">Cancel</button>
+                        <button class="btn secondary blue" (click)="barcodeNextPackage()">Barcode New Package</button>
+                    </div>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <div class="input-row">
+                <label class="input-label">Barcode</label>
+                <div style="display: flex; flex-direction: row;">
+                    <input [ngClass]="{error: errorFlags.barcode}" placeholder="Enter Barcode" [(ngModel)]="object.barcode"/>
+                    <button class="btn secondary blue" (click)="generateBarcode()" style="padding-top: 0; padding-bottom: 0; margin-left: 10px;">Generate Barcode</button>
+                </div>
+            </div>
+
+            <ng-container *ngIf="mode == 'edit'">
+                <div class="detail-row">
+                    <div>
+                        <span class="input-label">Product</span>
+                        <h5 class="product-info">{{object.ProductVariation.Product.name}}</h5>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div>
+                        <span class="input-label">Product Variation</span>
+                        <h5 class="product-info">{{object.ProductVariation.name}}</h5>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div>
+                        <span class="input-label">Barcode Created Date</span>
+                        <h5 class="product-info">{{barcodeCreatedDate}}</h5>
+                    </div>
+                </div>
+
+                <div class="input-row">
+
+                    <label class="input-label">Composition</label>
+
+                    <table class="nohover">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="align-right">{{object.ProductVariation.Product.inventoryType == 'weight' ? "Weight" : "Quantity"}}</th>
+                            <th class="align-right">Composition</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <ng-container *ngFor="let item of object.ProductVariation.Items; let index = index">
+                            <tr style="cursor: default">
+                                <td>{{item.name}}</td>
+                                <td>
+                                    <div style="display: flex; float: right;">
+                                        <span class="align-right" style="width: 40px; padding-left: 0;" *ngIf="!object.ProductVariation.isBulkFlower">{{item.ProductVariationItem.quantity + ' ' + item.UnitOfMeasureAbbreviation}}</span>
+                                        <span class="align-right" style="width: 40px; padding-left: 0;" *ngIf="object.ProductVariation.isBulkFlower">Bulk</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display: flex; float: right;">
+                                        <span class="align-right" style="width: 60px; padding-left: 0;">{{(((item.ProductVariationItem.quantity / (object.ProductVariation.Items | pluck:'ProductVariationItem.quantity' | sum)) * 100) | round:2) + '%'}}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr style="cursor: default; border-top: 0;">
+                                <td colspan="3" style="padding-top: 0; font-size: 0.75em;" *ngIf="object.Packages[index]">
+                                    Package: {{object.Packages[index].Label}}
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <button *ngIf="object.allocatedInventory != null" class="btn secondary blue" (click)="viewAllocation()">View Allocated Inventory</button>
+            </ng-container>
+
+            <ng-container *ngIf="mode == 'add'">
+
+                <div class="input-row">
+                    <label class="input-label">Product Type</label>
+
+                    <app-select2 *ngIf="productTypeSelect2Options"
+                                 [options]="productTypeSelect2Options" class="full-width"
+                                 [disabled]="providedPackageId"
+                                 [(ngModel)]="selectedProductTypeId"
+                                 [ngClass]="{error: errorFlags.productType}">
+                    </app-select2>
+
+                </div>
+
+                <div class="input-row">
+                    <label class="input-label">Product</label>
+
+                    <app-select2 *ngIf="productSelect2Options"
+                                 [options]="productSelect2Options" class="full-width"
+                                 [disabled]="productDisabled || providedPackageId"
+                                 [(ngModel)]="selectedProductId"
+                                 [ngClass]="{error: errorFlags.product}">
+                    </app-select2>
+
+                </div>
+
+                <div class="input-row">
+                    <label class="input-label">Product Variation</label>
+
+                    <app-select2 *ngIf="productVariationSelect2Options"
+                                 [options]="productVariationSelect2Options" class="full-width"
+                                 [disabled]="productVariationDisabled || providedPackageId"
+                                 [(ngModel)]="selectedProductVariationId"
+                                 [ngClass]="{error: errorFlags.productVariation}">
+                    </app-select2>
+
+                </div>
+
+                <div class="input-row" *ngIf="productVariation && productVariationItems">
+
+                    <label class="input-label">Composition</label>
+
+                    <table class="nohover">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="align-right">{{productVariation.Product.inventoryType == 'weight' ? "Weight" : "Quantity"}}</th>
+                            <th class="align-right">Composition</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <ng-container *ngFor="let object of productVariationItems">
+                            <tr style="cursor: default">
+                                <td>{{object.item.name}}</td>
+                                <td>
+                                    <div style="display: flex; float: right;">
+                                        <span class="align-right" style="width: 40px; padding-left: 0;" *ngIf="!productVariation.isBulkFlower">{{object.item.ProductVariationItem.quantity + ' ' + object.item.UnitOfMeasureAbbreviation}}</span>
+                                        <span class="align-right" style="width: 40px; padding-left: 0;" *ngIf="productVariation.isBulkFlower">Bulk</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display: flex; float: right;">
+                                        <span class="align-right" style="width: 60px; padding-left: 0;">{{(((object.item.ProductVariationItem.quantity / (productVariationItems | pluck:'item.ProductVariationItem.quantity' | sum)) * 100) | round:2) + '%'}}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr style="cursor: default">
+                                <td colspan="3">
+                                    <app-select2
+                                        [options]="object.options" class="full-width"
+                                        [(ngModel)]="object.selectedPackage"
+                                        [disabled]="providedPackageId"
+                                        [ngClass]="{error: errorFlags.composition[object.item.id]}">
+                                    </app-select2>
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                        </tbody>
+                    </table>
+                </div>
+            </ng-container>
+
+            <div class="overlay-action-buttons">
+                <button class="btn secondary grey" (click)="startLeaving()"><i class="icon icon-cancel"></i>Cancel
+                </button>
+                <button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>Save</button>
+            </div>
+        </ng-container>
+    </ng-container>
+</div>
+
+<router-outlet></router-outlet>

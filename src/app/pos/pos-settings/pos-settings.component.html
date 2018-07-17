@@ -1,0 +1,84 @@
+<div class="container container-pos-settings pos-settings" id="mainPanel">
+
+    <div class="topbar-controls patient-management">
+        <div class="control-input">
+            <h2 class="page-subtitle">Settings</h2>
+        </div>
+    </div>
+
+    <!--<section class="general">
+        <h3>general</h3>
+    </section>-->
+
+    <section class="device">
+        <h3>Device Setup</h3>
+        <section>
+            <div class="device-registration">
+                <span>Receipt Printer</span>
+                <ng-container *ngIf="hasRegisteredReceiptPrinter">
+                    <div class="device-row">
+                        <span>{{registeredReceiptPrinter.name}}: &nbsp;</span>
+                        <span style="color: green;">Active</span>
+                        <div class="clear-code" style="margin-left: 10px;" (click)="unregisterDevice('receiptPrinter')">X</div>
+                    </div>
+                    <div class="device-row">
+                        <button class="btn secondary green" (click)="testPrint('receipt')">Test Print</button>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="!hasRegisteredReceiptPrinter">
+                    <button class="btn secondary green" style="width: 20%" (click)="registerDevice('receiptPrinter')">Register Printer</button>
+                </ng-container>
+            </div>
+            <div class="device-registration">
+                <span>Label Printer</span>
+                <ng-container *ngIf="hasRegisteredLabelPrinter">
+                    <div class="device-row">
+                        <span>{{registeredLabelPrinter.name}}: &nbsp;</span>
+                        <span style="color: green;">Active</span>
+                        <div class="clear-code" style="margin-left: 10px;" (click)="unregisterDevice('labelPrinter')">X</div>
+                    </div>
+                    <div class="device-row" *ngIf="!environment.printPatientLabels">
+                        <button class="btn secondary green" (click)="testPrint('label')">Test Print</button>
+                    </div>
+                    <div class="device-row" *ngIf="environment.printPatientLabels">
+                        <button class="btn secondary green" (click)="testPrint('patient')">Test Print Patient Label (2x2 Label Size)</button>
+                    </div>
+                    <div class="device-row">
+                        <button class="btn secondary green" (click)="testPrint('bulk')">Test Print Bulk Flower Label (2x4 Label Size)</button>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="!hasRegisteredLabelPrinter">
+                    <button class="btn secondary green" style="width: 20%" (click)="registerDevice('labelPrinter')">Register Printer</button>
+                </ng-container>
+            </div>
+            <div class="device-registration">
+                <span>Scale</span>
+                <ng-container *ngIf="hasRegisteredScale">
+                    <span>{{registeredScale.name}}</span>
+                    <span style="color: green;">Active</span>
+                    <div class="clear-code" style="margin-left: 10px;" (click)="unregisterDevice('scale')">X</div>
+                </ng-container>
+                <ng-container *ngIf="!hasRegisteredScale">
+                    <button class="btn secondary green" style="width: 20%" (click)="registerDevice('scale')">Register Scale</button>
+                </ng-container>
+            </div>
+        </section>
+    </section>
+
+    <section class="account">
+        <h3>Account</h3>
+        <section>
+            <div class="sign-out">
+                <button class="btn secondary green" style="width: 20%" (click)="signOut()">Sign Out</button>
+            </div>
+        </section>
+        <!--<li>Unlink Device</li>-->
+    </section>
+
+    <!--<section class="app">-->
+        <!--<h3>App</h3>-->
+        <!--<ul>-->
+            <!--<li>Contact Customer Care</li>-->
+        <!--</ul>-->
+    <!--</section>-->
+</div>

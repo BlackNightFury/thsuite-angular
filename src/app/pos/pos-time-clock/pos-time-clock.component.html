@@ -1,0 +1,83 @@
+<div class="container">
+    <div class="topbar-controls patient-management" style="flex-direction: column; align-items: flex-start;">
+        <div class="controls-row">
+            <div class="control-input">
+                <h2 class="page-subtitle">Employee: {{user.firstName}} {{user.lastName}} -- Current Clock In Status: <span [class.clocked-in]="!!currentTimeClock" [class.clocked-out]="!currentTimeClock">{{currentTimeClock ? 'Clocked In for ' + hoursString + ':' + minutesString + ':' + secondsString : 'Clocked Out'}}</span></h2>
+            </div>
+            <ng-container *ngIf="shouldAllowClock(user)">
+                <button class="btn secondary green aligned" *ngIf="!currentTimeClock" (click)="clockIn()">Clock In</button>
+                <button class="btn secondary aligned" style="background: red" *ngIf="!!currentTimeClock" (click)="clockOut()">Clock Out</button>
+            </ng-container>
+        </div>
+        <div>
+            <span *ngIf="!currentTimeClock" style="color: red;">You are not currently clocked in. You must clock in to perform any actions within the POS system</span>
+        </div>
+    </div>
+
+    <section class="daily-history">
+        <h3>User Clock In Status</h3>
+        <table class="report-table daily-history-table" style="margin-top: 1rem;">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Clock In Status</th>
+                    <th><span *ngIf="isDeviceRegistered">Action</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let userTimeClock of userTimeClocks">
+                    <td>{{userTimeClock.user.firstName}} {{userTimeClock.user.lastName}}</td>
+                    <td>{{userTimeClock.timeClock ? (userTimeClock.timeClock.clockOut ? 'Clocked Out' : 'Clocked In') : 'Clocked Out'}}</td>
+                    <td *ngIf="environment.shouldShowPinEntryUponClock">
+                        <ng-container *ngIf="shouldAllowClock(userTimeClock.user)">
+                            <button class="btn secondary green aligned" style="width: 105px;" *ngIf="!userTimeClock.timeClock || userTimeClock.timeClock.clockOut" (click)="clockInUser(userTimeClock)">Clock In</button>
+                            <button class="btn secondary aligned" style="background: red" *ngIf="userTimeClock.timeClock && !userTimeClock.timeClock.clockOut" (click)="clockOutUser(userTimeClock)">Clock Out</button>
+                        </ng-container>
+                        <ng-container *ngIf="shouldRequestPIN(userTimeClock.user)">
+                            <span class="invalid-feedback" style="color: red" *ngIf="!this.userPinCorrect">&times;</span>
+                            <input placeholder="PIN" type="text" size="4" maxlength="4" minlength="4" required [(ngModel)]="userPin" #pin class="pin form-control" [ngClass]="{'is-invalid': !this.userPinCorrect}" (keyup.esc)="clearPinRequest()" (ngModelChange)="userPinChanged($event)" />
+                            <button class="btn aligned" style="background: red; min-width: 45px" (click)="clearPinRequest()">
+                                <i class="icon icon-close"></i>
+                            </button>
+                            {{pin.focus()}}
+                        </ng-container>
+                    </td>
+                    <td *ngIf="!environment.shouldShowPinEntryUponClock">
+                        <ng-container *ngIf="isDeviceRegistered">
+                            <button class="btn secondary green aligned" style="width: 105px;" *ngIf="!userTimeClock.timeClock || userTimeClock.timeClock.clockOut" (click)="clockInUser(userTimeClock)">Clock In</button>
+                            <button class="btn secondary aligned" style="background: red" *ngIf="userTimeClock.timeClock && !userTimeClock.timeClock.clockOut" (click)="clockOutUser(userTimeClock)">Clock Out</button>
+                        </ng-container>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="daily-history">
+        <h3>Time Clock Records for {{user.firstName}} {{user.lastName}}</h3>
+        <div class="topbar-controls">
+            <div>
+                <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+            </div>
+        </div>
+        <table class="report-table daily-history-table" style="margin-top: 1rem;">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Clock In</th>
+                <th>Clock Out</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let timeClock of historicalTimeClocks | async">
+                    <td>{{timeClock.clockIn | date:'shortDate'}}</td>
+                    <td>{{timeClock.clockIn | date:'short'}}</td>
+                    <td>{{timeClock.clockOut ? (timeClock.clockOut | date:'short') : ''}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+
+
+<router-outlet></router-outlet>

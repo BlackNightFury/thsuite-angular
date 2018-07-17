@@ -1,0 +1,74 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Wholesale Purchase Adjustment</h2>
+        <button class="btn tertiary blue btn-export" (click)="onClickExport()" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+    </div>
+</div>
+<main class="content">
+    <table class="report-table packages-table sticky">
+        <thead>
+        <tr>
+            <th sortBy="Label" [(ngModel)]="sortByModel">Package Label</th>
+            <th sortBy="createdAt" [(ngModel)]="sortByModel">Date</th>
+            <th sortBy="Item.name" [(ngModel)]="sortByModel">Item Name</th>
+            <th sortBy="wholesalePrice" [(ngModel)]="sortByModel" class="align-right">Original Wholesale Price</th>
+            <th sortBy="totalPriceAdjustment" [(ngModel)]="sortByModel" class="align-right">Total Price Adjustment</th>
+            <th sortBy="adjustedWholesalePrice" [(ngModel)]="sortByModel" class="align-right">Adjusted Wholesale Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container *ngFor="let package of objects | async">
+            <tr (click)="$event.target.parentNode.nextElementSibling.classList.toggle('toggled'); $event.target.parentNode.classList.toggle('subtable-toggle--collapsed'); $event.target.parentNode.classList.toggle('subtable-toggle--expanded')" class="subtable-toggle--collapsed">
+                <td>{{package.Label}}</td>
+                <td>{{package.createdAt | storeTimeZone:this.store.timeZone:'short'}}</td>
+                <td>{{package.Item ? package.Item.name : ''}}</td>
+                <td style="text-align: right;">{{package.wholesalePrice | currency:'USD':true}}</td>
+                <td style="text-align: right;">{{package.totalPriceAdjustment | currency:'USD':true}}</td>
+                <td style="text-align: right;">{{package.adjustedWholesalePrice | currency:'USD':true}}</td>
+            </tr>
+            <tr class="detail">
+                <td colspan="6" class="subtable">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Transfer Manifest Number</th>
+                                <th>Supplier</th>
+                                <th>Adjustment Amount</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{package.manifestNumber}}</td>
+                                <td>{{package.Supplier ? package.Supplier.name : ''}}</td>
+                                <td>
+                                    <ul>
+                                        <li *ngFor="let adjustment of package.PriceAdjustments">
+                                            <span>{{adjustment.amount | currency:'USD':true}}</span>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li *ngFor="let adjustment of package.PriceAdjustments">
+                                            <span>{{adjustment.reason}}</span>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </ng-container>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+
+</main>

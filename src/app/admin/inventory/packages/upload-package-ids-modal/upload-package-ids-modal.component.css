@@ -1,0 +1,17 @@
+
+.upload-packages-container {
+    padding:20px;
+}
+
+.upload-packages-container .button-label {
+    margin-bottom:10px;
+    display:inline-block;
+}
+
+.upload-packages-buttons-container {
+    margin-bottom:20px;
+}
+
+.modal--upload-package-ids .error {
+    color:red;
+}

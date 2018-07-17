@@ -1,0 +1,67 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Inventory Report</h2>
+    </div>
+</div>
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-select2 *ngIf="viewTypeSelect2Options"
+                     [options]="viewTypeSelect2Options"
+                     [(ngModel)]="selectedViewType">
+        </app-select2>
+
+        <app-select2 *ngIf="inventoryEntitySelect2Options"
+                     [options]="inventoryEntitySelect2Options"
+                     [(ngModel)]="selectedInventoryEntity">
+        </app-select2>
+
+        <app-select2 *ngIf="productSelect2Options && flags.productId"
+                     [options]="productSelect2Options"
+                     [(ngModel)]="selectedProduct">
+        </app-select2>
+
+        <app-select2 *ngIf="productTypeSelect2Options && flags.productTypeId"
+                     [options]="productTypeSelect2Options"
+                     [(ngModel)]="selectedProductType">
+        </app-select2>
+
+        <app-select2 *ngIf="packageSelect2Options && flags.packageId"
+                     [options]="packageSelect2Options"
+                     [(ngModel)]="selectedPackage">
+        </app-select2>
+
+        <app-select2 *ngIf="supplierSelect2Options && flags.supplierId"
+                     [options]="supplierSelect2Options"
+                     [(ngModel)]="selectedSupplier">
+        </app-select2>
+
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+
+    </div>
+</div>
+<main class="content">
+    <div *ngIf="chartData && (flags.productId || flags.productTypeId || flags.packageId || flags.supplierId)" id="line_chart" style="height:100%;" [chartData]="chartData" [chartOptions]= "chartOptions" chartType="LineChart" GoogleChart></div>
+    <div *ngIf="!(flags.productId || flags.productTypeId || flags.packageId || flags.supplierId)">An Inventory Entity must be selected</div>
+    <div *ngIf="!chartData">No data available for this selection.</div>
+
+    <h4>Inventory Breakdown</h4>
+    <div *ngIf="!chartData || !(flags.productId || flags.productTypeId || flags.packageId || flags.supplierId)">No breakdown available</div>
+    <table class="report-table nohover sticky" *ngIf="chartData && (flags.productId || flags.productTypeId || flags.packageId || flags.supplierId)">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th sortBy="dataValue" [(ngModel)]="sortByModel" class="align-right">{{(selectedViewType == 'stock') ? 'Quantity' : 'Value'}}</th>
+            <th sortBy="change" [(ngModel)]="sortByModel" class="align-right">Change From Previous Day</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let data of tableData">
+            <td>{{data.date}}</td>
+            <td class="align-right">{{(selectedViewType == 'stock') ? (data.dataValue.toFixed(2) | commify) : (data.dataValue.toFixed(2) | currency:'USD':true | commify )}}</td>
+            <td class="align-right">{{(!data.change ? '' : ( (selectedViewType == 'stock') ? (data.change.toFixed(2) | commify) : (data.change.toFixed(2) | currency:'USD':true | commify )))}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+</main>

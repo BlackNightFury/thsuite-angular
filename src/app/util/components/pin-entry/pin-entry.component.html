@@ -1,0 +1,26 @@
+<div class="pin-entry-outer-container">
+    <div class="pin-entry-display-container">
+        <div class="col-25"></div>
+        <div class="col-50 align-center">
+            <ng-container *ngFor="let i of [0,1,2,3]">
+                <div class="filledDot" *ngIf="pinCode[i] !== null && pinCode[i] !== undefined"></div>
+                <div class="emptyDot" *ngIf="pinCode[i] === null || pinCode[i] === undefined"></div>
+            </ng-container>
+        </div>
+        <div class="col-25 align-right"><div (click)="onDeleteClick()" class="deleteButton"><md-icon class="md-36">backspace</md-icon></div></div>
+    </div>
+    <div class="pin-entry-keypad-container">
+        <div class="keypad-row" *ngFor="let keyRow of keyRows">
+            <div class="keypad-col" *ngFor="let key of keyRow" [class.centralised]="key == 0">
+                <div class="key-container" (click)="onKeyClick(key)">
+                    <div class="key-inner">
+                        {{key}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="pin-entry-message-container">
+        <span *ngIf="errorMessage">{{errorMessage}}</span>
+    </div>
+</div>

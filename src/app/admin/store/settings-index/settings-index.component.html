@@ -1,0 +1,182 @@
+<div class="topbar-controls">
+
+    <div class="controls-row">
+        <h2 class="page-subtitle">Settings</h2>
+
+        <div class="control-input right">
+            <span *ngIf="hasEmailErrors || hasNumberErrors" class="input-label error">Resolve errors before saving.</span>
+        </div>
+
+        <button md-button class="btn tertiary green" (click)="save()"><i class="icon icon-save"></i>Save</button>
+    </div>
+
+</div>
+
+<main class="store-settings content" *ngIf="settings" >
+
+    <!--
+    <section>
+        <h3>Cash Management</h3>
+
+        <md-radio-group class="default blue" [(ngModel)]="settings.cashManagement">
+            <section>
+                <md-radio-button value="one-drawer">One Drawer</md-radio-button>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel egestas ipsum. Proin in malesuada felis. Donec eleifend venenatis mi, non bibendum urna sodales non.</p>
+            </section>
+            <section>
+                <md-radio-button value="shared-drawer-cashier-tracking">Shared Drawer + Cashier Tracking</md-radio-button>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel egestas ipsum. Proin in malesuada felis. Donec eleifend venenatis mi, non bibendum urna sodales non.</p>
+            </section>
+            <section>
+                <md-radio-button value="shared-drawer">Shared Drawer - Cashier Tracking</md-radio-button>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel egestas ipsum. Proin in malesuada felis. Donec eleifend venenatis mi, non bibendum urna sodales non.</p>
+            </section>
+        </md-radio-group>
+    </section>
+
+    <section>
+        <h3>Register Options</h3>
+
+        <div class="checkbox-wrap">
+            <md-checkbox [(ngModel)]="settings.customerQueue">Customer Queue</md-checkbox>
+            <p>Choose this option to enable customer queueing.  Customers can be checked in via the Customers screen in the Back Office and registers will be able to select the next person in the queue.</p>
+        </div>
+
+        <div class="checkbox-wrap">
+            <md-checkbox [(ngModel)]="settings.requireCustomerInformation">Require Customer Information</md-checkbox>
+            <p>Choose this option if cashiers must enter the customer information into the register before they can complete the customer's order.</p>
+        </div>
+
+        <div class="checkbox-wrap">
+            <md-checkbox [(ngModel)]="settings.verifyCustomerAge">Verify Customer Age</md-checkbox>
+            <p>Choose this option if cashiers must verify that the customer's age is above the required minimum and enter this information into the register before they can complete the customer's order.</p>
+        </div>
+
+        <div class="checkbox-wrap">
+            <md-checkbox [(ngModel)]="settings.belowCostWarning">Below Cost Warning</md-checkbox>
+            <p>Choose this option if you would like to warn budtenders that they are about to sell below cost on any product.</p>
+        </div>
+
+        <div class="checkbox-wrap">
+            <md-checkbox [(ngModel)]="settings.autoPrintReceipts">Auto Print Receipts</md-checkbox>
+            <p>Choose this option if you would like receipts to be printed automatically for every sale made at the register.</p>
+        </div>
+
+        <div class="checkbox-wrap">
+            <md-checkbox [(ngModel)]="settings.combinePricingTiers">Combine Pricing Tiers</md-checkbox>
+            <p>Choose this option if you would like all products with tiered pricing, regardless of their tier, to cumulatively count towards the pricing tier used.</p>
+        </div>
+
+        <div class="checkbox-wrap">
+            <md-checkbox [(ngModel)]="settings.signOutAfterSale">Sign Out After Sale</md-checkbox>
+            <p>Automatically sign out budtenders after every sale.</p>
+        </div>
+
+        <div class="checkbox-wrap">
+            <label class="select">Sign Out After Activity</label>
+            <p>Automatically after a period of inactivity.  This will not happen in the middle of a sale.</p>
+            <md-select [(ngModel)]="settings.signOutAfterInactivity">
+                <md-option [value]="opt.value" *ngFor="let opt of inactivityOptions">{{opt.label}}</md-option>
+            </md-select>
+        </div>
+    </section>
+    <section>
+        <h3>Medical Options</h3>
+        <div class="checkbox-wrap">
+            <md-checkbox [(ngModel)]="settings.enableMedicalTransactions">Enable Medical Transactions</md-checkbox>
+            <p>Choose this option if you have a medical license and would like to start processing medical sales for patients.</p>
+        </div>
+    </section>
+    -->
+    <div class="padded content-section">
+        <h2>Email Settings</h2>
+
+            <br>
+
+            <md-checkbox [(ngModel)]="settings.alertOnLowInventory">Enable Low Inventory Alerts</md-checkbox>
+
+            <h4>Choose this option if you want to receive email alerts when the number or weight of an item goes below a set threshold.</h4>
+
+            <div class="flex" *ngIf="settings.alertOnLowInventory">
+                <label>Low Inventory (By Gram) Threshold: </label><br>
+                <input type="text" [(ngModel)]="this.lowInventoryGramThreshold" (keyup)="validateNumber(this.lowInventoryGramThreshold)" />
+            </div>
+
+            <div class="flex" *ngIf="settings.alertOnLowInventory">
+                <label>Low Inventory (By Each) Threshold: </label><br>
+                <input type="text" [(ngModel)]="this.lowInventoryEachThreshold" (keyup)="validateNumber(this.lowInventoryEachThreshold)" />
+            </div>
+
+            <br>
+
+            <h4>Low inventory email list. Separate email addresses with a comma.  Whitespace will be ignored.</h4>
+            <textarea [(ngModel)]="settings.lowInventoryEmailList" rows="2" (keyup)="validateEmail($event.target)"></textarea>
+
+            <h4>Daily Sales Report email list. Separate email addresses with a comma.  Whitespace will be ignored.</h4>
+            <textarea [(ngModel)]="settings.dailySalesEmailList" rows="2" (keyup)="validateEmail($event.target)"></textarea>
+    </div>
+
+    <div class="padded content-section">
+        <h2>Drawer Settings</h2>
+            <br>
+
+            <md-checkbox [(ngModel)]="settings.enableDrawerLimit">Enable Drawer Limit</md-checkbox>
+
+            <h4>Choose this option if you want to set a drawer limit to the cash register. When the cash in the drawer reaches the drawer cash limit,
+                a notification will appear in the register to inform the budtender that the cash limit was reached and it is time to remove cash from the drawer.
+                <i> Note: Manager PIN Required to Approve a Cash Removal. </i>
+            </h4>
+
+            <div class="flex" *ngIf="settings.enableDrawerLimit">
+                <label>Drawer Cash Limit: </label><br>
+                <input type="text" [(ngModel)]="this.drawerAmountForAlert" (keyup)="validateNumber(this.drawerAmountForAlert)" />
+            </div>
+    </div>
+
+    <div style="text-align: center">
+        <button md-button *ngIf="!errors || !errors.length" class="btn secondary green" style="text-align: center; width: 25%; margin-bottom: 50px;"
+                (click)="save()"><i class="icon icon-save"></i>Save</button>
+        <button md-button *ngIf="errors && errors.length" class="btn secondary green" style="text-align: center; width: 25%; margin-bottom: 10px"
+                (click)="save()"><i class="icon icon-save"></i>Save</button>
+    </div>
+
+    <div style="text-align: center" *ngIf="errors && errors.length">
+        <div class="errors" style="color: red" *ngFor="let error of errors">
+            {{error}}
+        </div>
+    </div>
+
+    <!--div class="padded content-section">
+        <h2>Drawer Settings</h2>
+
+            <br>
+
+            <md-checkbox [(ngModel)]="settings.enableDrawerLimit">Enable Drawer Limit</md-checkbox>
+
+            <h4>Choose this option if you want to set a drawer limit to the cash register. When the cash in the drawer reaches the drawer cash limit,
+                a notification will appear in the register to inform the budtender that the cash limit was reached and it is time to remove cash from the drawer.
+                <i> Note: Manager PIN Required to Approve a Cash Removal. </i>
+            </h4>
+
+            <div class="flex" *ngIf="settings.enableDrawerLimit">
+                <label *ngIf="!settings.drawerAmountForAlert || this.allowDrawerLimitChange">Drawer Cash Limit: </label>
+                <label *ngIf="settings.drawerAmountForAlert && !this.allowDrawerLimitChange">
+                    Drawer Cash Limit: ${{settings.drawerAmountForAlert}} </label>
+
+                <input type="text" [(ngModel)]="this.drawerAmountForAlert" *ngIf="!settings.drawerAmountForAlert || this.allowDrawerLimitChange"/>
+
+                <button *ngIf="!settings.drawerAmountForAlert || this.allowDrawerLimitChange" class="btn secondary blue"
+                        (click)="updateDrawerLimit('save')"><i class="icon icon-edit"></i>Save Drawer Limit</button>
+                <button *ngIf="settings.drawerAmountForAlert && !this.allowDrawerLimitChange" class="btn secondary grey"
+                        (click)="updateDrawerLimit('edit')"><i class="icon icon-remove"></i>Edit Drawer Limit</button>
+
+                <div class="errors" style="text-align: left; color: red" *ngIf="this.drawerLimitError">
+                    {{this.drawerLimitError}}
+                </div>
+
+            </div>
+    </div-->
+
+</main>
+
+<router-outlet></router-outlet>

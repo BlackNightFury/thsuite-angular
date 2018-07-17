@@ -1,0 +1,99 @@
+<div class="container container-pos-settings pos-drawer" id="mainPanel">
+
+    <div class="topbar-controls patient-management">
+        <div class="control-input" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="page-subtitle">Manage Drawer</h2>
+            <a class="btn tertiary green" md-button routerLink="/pos/settings/drawer-closing-report">Drawer Closing Report</a>
+        </div>
+    </div>
+
+    <section class="manage-drawer-content" *ngIf="drawer">
+
+        <div class="button-row">
+            <button md-button class="btn primary green drawer-stop-start" (click)="toggleDrawer()" [ngClass]="{'has-started': drawer.startingAmount !== null, 'has-ended': drawer.endingAmount}"></button>
+            <button md-button class="btn primary orange" (click)="switchUsers()">Switch Users</button>
+            <button md-button class="btn primary blue" (click)="openCashRegister()">Open Cash Register</button>
+        </div>
+
+        <section>
+            <h2>Drawer Details</h2>
+            <div class="drawer-details">
+                <div>
+                    <span>Opened By</span>
+                    <span>{{drawer.User ? drawer.User.firstName + " " + drawer.User.lastName : ''}}</span>
+                </div>
+                <div>
+                    <span>Drawer Open Time</span>
+                    <span>{{drawer.startingAmount > 0 ? (drawer.createdAt | date:'short') : 'N/A'}}</span>
+                </div>
+                <div>
+                    <span>Drawer Starting Amount</span>
+                    <span>{{drawer.startingAmount > 0 ? (drawer.startingAmount | currency:'USD':true) : 'N/A'}}</span>
+                </div>
+                <div>
+                    <span style="width: 80%">Number of Transactions</span>
+                    <button style="min-width: 140px; width: 10%;"md-button class="btn primary green" (click)="seeReceipts()">See Receipts</button>
+                    <span style="min-width: 110px; width: 10%; padding-left: 25px;">{{drawer.transactionCount}}</span>
+                </div>
+                <div>
+                    <span style="width: 80%">Cash Removed</span>
+                    <button style="min-width: 140px; width: 10%;" md-button class="btn primary green" (click)="removeCash()">Remove Cash</button>
+                    <span style="min-width: 110px; width: 10%; padding-left: 25px;">{{drawer.cashRemoved | currency:'USD':true }}</span>
+                </div>
+                <div class="amounts">
+                    <div>
+                        <div>Current Balance</div>
+                        <div>{{ (drawer.currentBalance? drawer.currentBalance : 0) | currency:'USD':true}}</div>
+                    </div>
+                    <div>
+                        <div>Daily Revenue</div>
+                        <div>{{drawer.dailyRevenue | currency:'USD':true}}</div>
+                    </div>
+                    <div>
+                        <div>Cash Trans</div>
+                        <div>{{drawer.cashTransactions | currency:'USD':true}}</div>
+                    </div>
+                    <div>
+                        <div>Gift Card Trans</div>
+                        <div>{{drawer.debitTransactions | currency:'USD':true}}</div>
+                    </div>
+                    <div>
+                        <div>Total Cash Removed</div>
+                        <div>{{drawer.cashRemoved | currency:'USD':true }}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="daily-history">
+            <h2>Drawer History</h2>
+            <table class="report-table daily-history-table">
+                <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Event</th>
+                    <th class="col-qty">New Cash Balance</th>
+                    <th class="col-qty">Change in Cash</th>
+                </tr>
+                </thead>
+                <tbody>
+                <ng-container *ngFor="let item of history">
+                    <tr (click)="viewReceipt(item.receipt)">
+                        <td>{{item.createdAt | date:'short'}}</td>
+                        <td>{{item.event}}</td>
+                        <td class="col-qty">{{item.cash | currency:'USD':true}}</td>
+                        <td class="col-qty">{{item.change | currency:'USD':true}}</td>
+                    </tr>
+                </ng-container>
+                </tbody>
+            </table>
+        </section>
+    </section>
+</div>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listReceipts()"></div>
+
+<router-outlet></router-outlet>
+
+<app-manager-pin-entry-modal *ngIf="isManagerPinEntryModalShowing"></app-manager-pin-entry-modal>
+

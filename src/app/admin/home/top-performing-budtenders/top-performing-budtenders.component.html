@@ -1,0 +1,64 @@
+<div class="section-title">
+    <div class="section-heading">
+        <div class="svg-icon">
+            <img src="assets/svg/top_budtenders.svg"/>
+        </div>
+        <h1 class="section-title">Top Performing Budtenders</h1>
+    </div>
+</div>
+
+<div class="report-control single">
+    <div class="select-box" *ngIf="stores">
+        <app-select2 [data]="stores | async" disabled="true"></app-select2>
+    </div>
+    <div class="select-box">
+        <app-select2 [data]="exampleDatePeriods | async"></app-select2>
+    </div>
+</div>
+
+<div class="report-bars">
+    <div class="report-bar">
+        <div class="bar-circle">1</div>
+        <div class="bar-title">Danielle Greene<br><span>Hollyweed</span></div>
+        <div class="bar-indicator">
+            <div class="fill" style="width: 68%"></div>
+        </div>
+        <div class="bar-price">$500</div>
+    </div>
+
+    <div class="report-bar">
+        <div class="bar-circle">2</div>
+        <div class="bar-title">Auntie Dolores<br><span>Herban Legends</span></div>
+        <div class="bar-indicator">
+            <div class="fill" style="width: 62%"></div>
+        </div>
+        <div class="bar-price">$417</div>
+    </div>
+
+    <div class="report-bar">
+        <div class="bar-circle">3</div>
+        <div class="bar-title">Cannavore Confections<br><span>Herban Legends</span></div>
+        <div class="bar-indicator">
+            <div class="fill" style="width: 44%"></div>
+        </div>
+        <div class="bar-price">$362</div>
+    </div>
+
+    <div class="report-bar">
+        <div class="bar-circle">4</div>
+        <div class="bar-title">Leafs by Snoop<br><span>Buds and Roses</span></div>
+        <div class="bar-indicator">
+            <div class="fill" style="width: 32%"></div>
+        </div>
+        <div class="bar-price">$221</div>
+    </div>
+
+    <div class="report-bar">
+        <div class="bar-circle">5</div>
+        <div class="bar-title">Hashman Infused<br><span>Hollyweed</span></div>
+        <div class="bar-indicator">
+            <div class="fill" style="width: 24%"></div>
+        </div>
+        <div class="bar-price">$179</div>
+    </div>
+</div>

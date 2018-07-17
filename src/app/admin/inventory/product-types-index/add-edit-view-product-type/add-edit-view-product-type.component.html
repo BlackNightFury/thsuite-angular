@@ -1,0 +1,101 @@
+<div #root class="overlay right active not-hidden-block">
+    <i class="icon icon-close overlay-close" (click)="cancel()"></i>
+    <div class="section-heading" *ngIf="mode == 'edit'">
+        <div class="svg-icon"><img src="/assets/svg/edit_product.svg"/></div>
+        <h1 class="section-title">Edit Product Type</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'add'">
+        <div class="svg-icon"><img src="/assets/svg/add_new_product.svg"/></div>
+        <h1 class="section-title">Add New Product Type</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><img src="/assets/svg/product_details.svg"/></div>
+        <div>
+            <h5 class="subtitle">Product Type Details</h5>
+            <h1 class="section-title">{{object?.name}}</h1>
+        </div>
+    </div>
+
+    <ng-container *ngIf="object">
+
+        <ng-container *ngIf="mode == 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Product Category</span>
+                    <h5 class="product-info">{{object.category | ucfirst}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Product Type Name</span>
+                    <h5 class="product-info">{{object.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Unit of Measurement</span>
+                    <h5 class="product-info">{{object.unitOfMeasure | ucfirst}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Product Type Notes</span>
+                    <h5 class="product-info">{{object.notes}}</h5>
+                </div>
+            </div>
+
+            <div class="overlay-action-buttons" *ngIf="user.Permissions.inventoryManagement == 'edit' && object.category != 'cannabis'">
+                <button class="btn secondary grey" (click)="remove()"><i class="icon icon-remove"></i>Remove</button>
+                <button class="btn secondary blue" (click)="edit()"><i class="icon icon-edit"></i>Edit</button>
+            </div>
+
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <div class="input-row">
+                <label class="input-label">Product Type Name</label>
+                <input *ngIf="!errorFlags.name" type="text" [(ngModel)]="object.name">
+                <input *ngIf="errorFlags.name" style="border: 1px solid red" type="text" [(ngModel)]="object.name">
+            </div>
+
+            <!-- <div class="input-row">
+                <label class="input-label">Unit of Measurement</label>
+                <md-button-toggle-group *ngIf="!errorFlags.unit" class="default blue" [(ngModel)]="object.unitOfMeasure">
+                    <md-button-toggle value="gram">Gram</md-button-toggle>
+                    <md-button-toggle value="each">Each</md-button-toggle>
+                </md-button-toggle-group>
+                <md-button-toggle-group *ngIf="errorFlags.unit" style="border: 1px solid red" class="default blue" [(ngModel)]="object.unitOfMeasure">
+                    <md-button-toggle value="gram">Gram</md-button-toggle>
+                    <md-button-toggle value="each">Each</md-button-toggle>
+                </md-button-toggle-group>
+            </div> -->
+
+
+            <div class="input-row">
+                <label class="input-label">Product Type Notes</label>
+                <textarea cols="30" rows="7" [(ngModel)]="object.notes"></textarea>
+            </div>
+
+            <div class="overlay-action-buttons">
+                <button class="btn secondary grey" (click)="cancel()"><i class="icon icon-cancel"></i>Cancel</button>
+                <button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>Save</button>
+            </div>
+
+        </ng-container>
+
+    </ng-container>
+
+</div>

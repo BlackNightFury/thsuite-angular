@@ -1,0 +1,31 @@
+<div class="leftnav" id="leftnavMenu">
+
+    <a md-button routerLink="/admin/home" routerLinkActive="active" class="leftnav-item" (click)="hideLeftNav()">
+        <i class="icon icon-home"></i>
+        <div>Home</div>
+    </a>
+    <a md-button routerLink="/admin/patients" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.patientManagement != 'none'" (click)="hideLeftNav()">
+        <i class="icon icon-patients"></i>
+        <div>Patients</div>
+    </a>
+    <a md-button routerLink="/admin/inventory" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.inventoryManagement != 'none'" (click)="hideLeftNav()">
+        <i class="icon icon-inventory"></i>
+        <div>Inventory</div>
+    </a>
+    <a md-button routerLink="/admin/store" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.storeManagement != 'none'" (click)="hideLeftNav()">
+        <i class="icon icon-sales"></i>
+        <div>Store</div>
+    </a>
+    <a md-button routerLink="/pos/all" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.storeManagement == 'none'" (click)="hideLeftNav()">
+        <i class="icon icon-sales"></i>
+        <div>Register</div>
+    </a>
+    <a md-button routerLink="/admin/reports" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.reportsManagement != 'none'" (click)="hideLeftNav()">
+        <i class="icon icon-reports"></i>
+        <div>Reports</div>
+    </a>
+    <a md-button routerLink="/admin/employees" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.employeeManagement != 'none'" (click)="hideLeftNav()">
+        <i class="icon icon-employees"></i>
+        <div>Employees</div>
+    </a>
+</div>

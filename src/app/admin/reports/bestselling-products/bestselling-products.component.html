@@ -1,0 +1,36 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Top Products</h2>
+        <button class="btn tertiary blue flex-right btn-export" (click)="onClickExport('bestselling-products')" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+    </div>
+</div>
+
+<main class="content">
+
+    <table class="report-table first-wide sales-by-product-type has-total nohover sticky">
+        <thead>
+        <tr>
+            <th sortBy="name" [(ngModel)]="sortByModel">Product Name</th>
+            <th sortBy="average" [(ngModel)]="sortByModel" class="align-right">Avg Per Sale</th>
+            <th sortBy="count" [(ngModel)]="sortByModel" class="align-right"># Of Sales</th>
+            <th sortBy="sum" [(ngModel)]="sortByModel" class="align-right">Total</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let row of salesData">
+            <td>{{ row.name }}</td>
+            <td class="align-right">{{ row.sum/row.count | currency:'USD':true }}</td>
+            <td class="align-right">{{ row.count | number }}</td>
+            <td class="align-right">{{ row.sum | currency:'USD':true }}</td>
+        </tr>
+
+        </tbody>
+    </table>
+</main>

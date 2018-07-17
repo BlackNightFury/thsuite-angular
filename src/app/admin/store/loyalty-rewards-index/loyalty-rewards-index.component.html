@@ -1,0 +1,52 @@
+<div class="topbar-controls">
+
+    <div class="controls-row">
+        <h2 class="page-subtitle">Loyalty Rewards</h2>
+        <button md-button class="btn tertiary green" (click)="createNewLoyaltyReward()" *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditLoyaltyRewards">
+            <i class="icon icon-add"></i>
+            Loyalty Reward
+        </button>
+        <!--<button md-button class="btn tertiary blue btn-export"><i class="icon icon-export"></i>Export</button>-->
+    </div>
+
+</div>
+
+<main class="content">
+    <table class="inventory-products-table green-hl-tr sticky">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th class="align-right">Points Minimum</th>
+                <th>Reward Discount</th>
+                <th>Applies To</th>
+                <th>Status</th>
+                <th *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditLoyaltyRewards"></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let object of objects | async" (click)="onRowClick($event, object)">
+                <td>{{object.name}}</td>
+                <td class="align-right">{{object.points}}</td>
+                <td>
+                    {{object.discountAmountType == 'dollar' ? '$' : ''}}{{object.discountAmount}}{{object.discountAmountType == 'percent' ? '%' : ''}}
+                    off
+                </td>
+                <td>{{object.appliesTo == 'product' ? "Free Product" : "Entire Order"}}</td>
+                <td>
+                    <label class="tgl-btn-wrapper">
+                        <input class="tgl tgl-skewed" type="checkbox" (change)="toggleActive(object, $event.target.checked)" [checked]="object.isActive">
+                        <span class="tgl-btn" data-tg-off="Inactive" data-tg-on="Active"></span>
+                    </label>
+                </td>
+                <td class="table-action" *ngIf="user.Permissions.storeManagement == 'edit' && user.Permissions.canEditLoyaltyRewards">
+                    <i class="icon icon-edit" (click)="editLoyaltyReward(object)"></i>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listLoyaltyRewards()"></div>
+
+<router-outlet></router-outlet>

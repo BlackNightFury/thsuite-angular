@@ -1,0 +1,15 @@
+.textarea-label{
+    line-height: 1;
+    padding-top: 0;
+    top: 0;
+    font-size: 12px;
+    color: #4c6379;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 9px;
+    font-family: "proxima-nova", sans-serif;
+}
+
+.textarea-content{
+    color: #4C6379
+}

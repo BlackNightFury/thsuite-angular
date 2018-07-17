@@ -1,0 +1,43 @@
+.pos-drawer-closing-report .control-input button {
+    margin-left: auto;
+}
+
+.pos-drawer-closing-report .flexer {
+    display: flex;
+}
+
+.pos-drawer-closing-report .flexer > span {
+    border: 1px solid lightblue;
+    flex: 1;
+    margin: 1rem;
+    max-width: 12rem;
+    padding: 1rem;
+}
+
+.pos-drawer-closing-report .flexer > span.selected {
+    color: lightblue;
+    border-color: white;
+    font-weight: bold;
+}
+
+.pos-drawer-closing-report .drawers {
+    margin-top: 5rem;
+}
+
+.pos-drawer-closing-report .btn {
+    color: #4C6379;
+    pointer: cursor;
+}
+
+.pos-drawer-closing-report .btn:hover {
+    border-color: white;
+}
+
+.pos-drawer-closing-report .hide {
+    display: none;
+}
+
+
+.closing-report-table > thead > tr:nth-child(2) > th{
+    width: 33%;
+}

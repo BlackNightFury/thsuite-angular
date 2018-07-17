@@ -1,0 +1,22 @@
+%all-c {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+%v-c {
+    display: flex;
+    align-items: center;
+}
+
+%pseudo {
+    display: block;
+    content: '';
+    position: absolute;
+}
+
+%default-list {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}

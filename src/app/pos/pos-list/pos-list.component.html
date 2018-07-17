@@ -1,0 +1,140 @@
+<!-- Left Nav -->
+<a md-button class="leftnav-toggle leftnav-item" (click)="toggleNav()">
+    <i *ngIf="!isNavHidden" class="icon icon-close"></i>
+    <i *ngIf="isNavHidden" class="icon icon-hamburger"></i>
+</a>
+<app-pos-list-left-nav
+    *ngIf="!isNavHidden && (user.Permissions.canManuallyAddCannabisItems || user.Permissions.canManuallyAddNonCannabisItems)"
+    class="leftnav"></app-pos-list-left-nav>
+
+<div class="container container-pos" id="mainPanel">
+
+    <div class="red-alert">
+        <div style="margin-bottom: 10px;" *ngIf="aboveDrawerLimit">
+            <b> Drawer Cash Limit Reached! Please Remove Cash. </b>
+        </div>
+        <div *ngIf="lowInventoryPackage">
+            <b>Low Inventory! Check Inventory Settings for: {{ lowInventoryPackage.Item.Product.name }}</b>
+        </div>
+    </div>
+
+
+    <!-- adds .leftnav-hidden to body -->
+    <div *ngIf="user.Permissions.canScanItems">
+        <div class="input-has-icon search barcode">
+            <input type="text" placeholder="Scan Barcode To Find Item" id="scanBarcode">
+            <i class="icon icon-search"></i>
+        </div>
+    </div>
+
+    <div *ngIf="user.Permissions.canManuallyAddCannabisItems || user.Permissions.canManuallyAddNonCannabisItems"> <!--Only show if has canManu-->
+        <div class="pos-list-search-filter">
+            <div class="input-has-icon search">
+                <input type="text" placeholder="Search Products" #searchBox (keyup)="search(searchBox.value)">
+                <i class="icon icon-search"></i>
+            </div>
+
+            <app-select2 *ngIf="productTypeSelect2Options"
+                         class="quarter-width"
+                         [options]="productTypeSelect2Options"
+                         [(ngModel)]="selectedProductTypeId">
+            </app-select2>
+        </div>
+
+        <div class="pos-list-view-toggle">
+            <md-button-toggle-group value="grid" [(ngModel)]="viewOptions">
+                <md-button-toggle value="grid">
+                    <i class="icon icon-calendar"></i>
+                    <span>Grid</span>
+                </md-button-toggle>
+                <md-button-toggle value="list">
+                    <i class="icon icon-inventory"></i>
+                    <span>List</span>
+                </md-button-toggle>
+            </md-button-toggle-group>
+        </div>
+
+        <div class="pos-product-row" *ngIf="!listView">
+
+            <app-product-card *ngFor="let productVariation of productVariations" [productVariation]="productVariation"
+                              class="pos-product-item">
+
+            </app-product-card>
+        </div>
+
+        <div *ngIf="listView">
+            <table class="inventory-products-table">
+                <thead>
+                    <th></th>
+                    <th>Product Name</th>
+                    <th>Product Type</th>
+                    <th class="align-right">Price</th>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let productVariation of productVariations">
+                        <td><a (click)="onAddToCart(productVariation)" class="pos-product-add"><i class="icon icon-add-pos"></i></a></td>
+                        <td>{{productVariation.Product.name}}</td>
+                        <td>{{productVariation.Items[0].ProductType.name}}</td>
+                        <td class="align-right">{{productVariation.price | currency:'USD':true}} / {{productVariation.quantity}}{{(productVariation.Product.inventoryType) == 'weight' ? 'g' : 'ea'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <app-pager [numPages]="numPages" [(ngModel)]="pageModel"></app-pager>
+    </div>
+</div>
+
+<app-pos-right-nav class="overlay right pos-overlay overlay-vertical-auto active not-hidden-block">
+
+</app-pos-right-nav>
+<div class="overlay-closearea second" (click)="cancelViewProduct()" *ngIf="detailModalShowing && detailProduct"></div>
+<div class="overlay right active second not-hidden-block" *ngIf="detailModalShowing && detailProduct">
+    <i class="icon icon-close overlay-close" (click)="cancelViewProduct()"></i>
+    <div class="section-heading">
+        <div class="svg-icon"><img src="/assets/svg/product_details.svg"/></div>
+        <div>
+            <h5 class="subtitle">Product Details</h5>
+            <h1 class="section-title">{{detailProduct.name}}</h1>
+        </div>
+    </div>
+
+    <ng-container *ngIf="detailProduct">
+
+        <ng-container>
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Unit Price</span>
+                    <h5 class="product-info">{{detailProduct.price | currency:'USD':true}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Quantity</span>
+                    <h5 class="product-info">{{detailProduct.quantity + ' ' + (detailProduct.Product.inventoryType == 'weight' ? 'g' : (detailProduct.quantity > 1 ? 'units' : 'unit'))}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Supplier</span>
+                    <h5 class="product-info">{{detailProduct.Items[0].Supplier.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Category</span>
+                    <h5 class="product-info">{{detailProduct.Items[0].ProductType.name}}</h5>
+                </div>
+            </div>
+
+        </ng-container>
+
+    </ng-container>
+</div>
+
+<div class="overlay-shadow" *ngIf="detailModalShowing" (click)="cancelViewProduct()"></div>

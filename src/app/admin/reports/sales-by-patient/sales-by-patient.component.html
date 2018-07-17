@@ -1,0 +1,70 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Sales by Patient</h2>
+    </div>
+
+    <!-- <div class="controls-row">
+        <button class="btn tertiary green" data-overlay-toggler="addCustomReport"><i class="icon icon-add"></i>Custom Report</button>
+        <button class="btn tertiary blue btn-export"><i class="icon icon-export"></i>Export</button>
+    </div>-->
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-date-range-selector [selectedDateRangeSubject]="dateRangeSource"></app-date-range-selector>
+    </div>
+</div>
+
+
+<main class="content">
+
+    <table class="report-table has-total">
+        <thead>
+        <tr>
+            <th>Patient Name</th>
+            <th>Number Of Sales</th>
+            <th>Total</th>
+            <th>Average Per Sale</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+            <td>Heather Edwards</td>
+            <td>2</td>
+            <td>$975.50</td>
+            <td>$1580.00</td>
+        </tr>
+        <tr>
+            <td>Aadron Patel</td>
+            <td>4</td>
+            <td>$15.00</td>
+            <td>$77.51</td>
+        </tr>
+        <tr>
+            <td>Dorothy Dunn</td>
+            <td>3</td>
+            <td>$0.00</td>
+            <td>$150.00</td>
+        </tr>
+        <tr>
+            <td>Joshua Reid</td>
+            <td>1</td>
+            <td>$200.00</td>
+            <td>$900.00</td>
+        </tr>
+        <tr>
+            <td>Kathleen Estrada</td>
+            <td>1</td>
+            <td>$975.50</td>
+            <td>$1580.00</td>
+        </tr>
+        <tr>
+            <td>Total</td>
+            <td>119</td>
+            <td>$798.55</td>
+            <td>$24.95</td>
+        </tr>
+        </tbody>
+    </table>
+</main>

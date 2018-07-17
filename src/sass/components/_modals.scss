@@ -1,0 +1,278 @@
+@import '../variables';
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(49, 53, 65, .87);
+    @extend %all-c;
+}
+
+.modal-overlay,
+.modal {
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+    transform: translateY(-300px);
+    transition: all 200ms ease;
+
+    &.active {
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 1150;
+        transform: translateY(0);
+    }
+}
+
+.modal {
+    width: 380px;
+}
+
+.modal-content {
+    position: relative;
+
+    .icon-close {
+        color: #fff;
+        font-size: 20px;
+        right: -30px;
+        top: -30px;
+        position: absolute;
+    }
+
+    .overlay-checkout-btn {
+        width: 100%;
+    }
+
+    .checkout-summary {
+        padding-left: 43px;
+        padding-right: 43px;
+
+        .checkout-info {
+            width: 100%;
+        }
+    }
+}
+
+
+.modal-detail-void-row {
+    margin: 1rem;
+}
+
+.modal-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-row-column {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1em;
+    margin-right: 1em;
+
+    & + span {
+        margin-top: 1em;
+    }
+}
+
+.modal-birthday-input {
+    width: 4em;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.modal-input-small {
+    width: 4em;
+    text-align: center;
+    margin: 1em;
+}
+
+
+//////// Override jQueryUI .ui-dialog boxes
+///////////////////////////////////////////
+
+.ui-dialog {
+    .ui-dialog-titlebar {
+        background: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        padding: 0.5em 0.75em 0 1em;
+        position:relative;
+
+        .ui-dialog-title {
+            min-height:40px;
+            padding-top:10px;
+        }
+
+        .ui-button {
+            outline:none;
+            box-shadow:none;
+        }
+
+        .ui-button-icon-only {
+            overflow: hidden;
+            margin-left: auto;
+            margin-right: 0.5em;
+            background: none;
+            border: none;
+            text-indent:0;            
+            position:absolute;
+            top: 10px;
+            right: 0;
+            cursor:pointer;
+            width: 3em;
+            padding:0;
+
+            .ui-button-icon.ui-icon,
+            &:hover .ui-button-icon.ui-icon,
+            &:focus .ui-button-icon.ui-icon,
+            &:active .ui-button-icon.ui-icon {
+                background-image: none;
+            }
+
+            &:active {
+                color: $green;
+            }
+
+            .ui-button-icon.ui-icon {
+                font-family: "icons";
+                position: static;
+                top: inherit;
+                left: inherit;
+                margin-top: 0;
+                margin-left: 0;
+                text-indent: 0;
+                width: auto;
+                height: auto;
+                
+                padding: 1em;
+                width: 3em;
+
+                &.ui-icon-closethick:before {
+                    content: "\F10A";
+                    color: $circle-grey;
+                }
+            }
+        }
+    }
+    .ui-dialog-content {
+        text-align: center;
+        padding: 0 1em;
+        display: block;
+        overflow-y: auto;
+    }
+    .ui-widget-content {
+        border-top: none;
+        border-bottom: none;
+    }
+    .ui-dialog-buttonpane {
+        border: none;
+
+        .ui-dialog-buttonset {
+            display: flex;
+            align-items: flex-end;   
+            padding: 1em;
+        }
+
+        button {
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            box-shadow: none;
+            border: none;
+            cursor: pointer;
+            line-height: 1;
+            position: relative;
+            overflow: hidden;
+            z-index: 0;
+            color: white;
+            text-transform: uppercase;
+            border-radius: 0;
+            padding: 12px 30px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 0;
+            background: $green;
+
+            &.dialog-button-cancel,
+            &.dialog-button-clear {
+                @include darken-btn($circle-grey);
+                background: $circle-grey;
+            }
+
+            & + button {
+                margin-left: 1em;
+            }
+
+            &:last-child {
+                margin-left: auto;
+            }
+        }
+
+
+    }
+}
+
+app-pos-transaction-completed-modal {
+
+    header {
+        margin-bottom: 2rem;
+
+        div:first-child {
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        div+div {
+            padding-top: .25rem;
+        }
+    }
+
+    .change-due {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+
+        span:last-child {
+            color: green;
+        }
+    }
+
+    .sales-total {
+        margin-bottom: 3rem;
+    }
+
+    .action-row {
+        display: flex;
+
+        button {
+            flex: 1;
+            margin: 0rem 1rem;
+            padding: 1.5rem 0rem;
+        }
+    }
+}
+
+.dialog-button-cancel-trasaction-completed {
+    background-color: transparent !important;
+    color: #92A2B1 !important;
+
+    &:hover {
+        text-decoration: underline !important;
+    }
+}
+
+app-pos-explain-drawer-navigation-modal {
+    section {
+        margin-top: 2rem;
+    }
+}
+
+.ui-button.ui-dialog-titlebar-close:hover {
+    .ui-button-icon.ui-icon.ui-icon-closethick:before {
+        color: $green;
+    }
+}

@@ -1,0 +1,3 @@
+<app-pos-patient-queue *ngIf="!selectedPatient" (patientSelected)="selectPatient($event)" (newPatient)="newPatient($event)" [patientQueue]="patientList"></app-pos-patient-queue>
+
+<app-pos-cart *ngIf="selectedPatient" [patient]="selectedPatient" (savePatient)="clearSelectedPatient()" (finishPatient)="removeSelectedPatient()"></app-pos-cart>

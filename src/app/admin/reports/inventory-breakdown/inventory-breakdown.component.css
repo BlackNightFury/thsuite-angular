@@ -1,0 +1,12 @@
+.report-type {
+    align-items: center;
+    display: flex;
+}
+
+.report-type label {
+    margin-right: 2rem;
+}
+
+.report-type .mat-select {
+    padding: 0;
+}

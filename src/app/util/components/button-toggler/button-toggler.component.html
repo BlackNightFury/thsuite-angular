@@ -1,0 +1,11 @@
+<div class="btn-togglers" [ngClass]="'toggler-size-' + options.length" [class.big-right]="noOverlap" [style.height]="height != -1 ? height + 'px' : 'inherit'">
+    <div
+        *ngFor="let option of options; let isFirst = first"
+        [class.active]="option.value == selectedValue || (!isOptional && (!selectedValue && selectedValue !== false) && isFirst)"
+        [class.disabled]="disabled"
+        [style.font-size]="fontSize != -1 ? fontSize + 'px' : 'inherit'"
+        class="btn-toggler blue"
+        (click)="setSelectedValue(option.value)">
+        {{option.label}}
+    </div>
+</div>

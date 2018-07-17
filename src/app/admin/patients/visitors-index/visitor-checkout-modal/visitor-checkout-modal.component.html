@@ -1,0 +1,52 @@
+<main class="modal-visitor-checkout">
+    <ng-container *ngIf="visitor">
+        <ng-container *ngIf="mode == 'confirm'">
+            <div class="visitor-row">
+                <div>
+                    <div class="visitor-field-label">First Name:</div><div class="visitor-field-value">{{visitor.firstName}}</div>
+                </div>
+                <div>
+                    <div class="visitor-field-label">Last Name:</div><div class="visitor-field-value">{{visitor.lastName}}</div>
+                </div>
+                <div>
+                    <div class="visitor-field-label">Reason for Visit:</div><div class="visitor-field-value">{{visitor.visitReason}}</div>
+                </div>
+                <div>
+                    <div class="visitor-field-label">Date Check In:</div><div class="visitor-field-value">{{visitor.clockIn | date:'shortDate'}}</div>
+                </div>
+                <div>
+                    <div class="visitor-field-label">Time Check In:</div><div class="visitor-field-value">{{visitor.clockIn | date:'shortTime'}}</div>
+                </div>
+                <div class="view-button-container">
+                    <a class="view-button" (click)="viewId()">View ID and Signature</a>
+                </div>
+            </div>
+            <div class="action-buttons-container">
+                <button class="btn primary grey large" (click)="close()">
+                    Cancel
+                </button>
+                <button class="btn primary green large" (click)="onConfirm()">
+                    Check Out
+                </button>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="mode == 'complete'">
+            <div class="visitor-row" style="text-align:center">
+                <div>
+                    Reason for Visit: <span style="font-weight:normal">{{visitor.visitReason}}</span>
+                </div>
+                <div>
+                    Check In Date/Time: <span style="font-weight:normal">{{visitor.clockIn | date:'short'}}</span>
+                </div>
+                <div>
+                    Check Out Date/Time: <span style="font-weight:normal">{{visitor.clockOut | date:'short'}}</span>
+                </div>
+                <div>
+                    <button class="btn primary grey large" (click)="close()">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+</main>

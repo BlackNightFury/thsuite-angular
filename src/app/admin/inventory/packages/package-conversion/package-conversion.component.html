@@ -1,0 +1,365 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">New Package</h2>
+        <button md-button class="btn secondary blue" (click)="uploadNewIds()"><i class="icon icon-add"></i>Upload New ID(s)</button>
+    </div>
+</div>
+
+<main class="content">
+    <div class="nav" *ngIf="primaryPackage">
+        <a (click)="toDashboard()" style="cursor: pointer">Package Home</a> > <a (click)="toDetails()" style="cursor: pointer">{{primaryPackage.Label}}</a> > New Package
+    </div>
+
+    <div>
+        <!--<div class="progress_container">
+            <div class="progress_item" [class.completed]="step > 1" [class.active]="step == 1">1. Current Package</div><div class="progress-dividor"><div class="progress-dividor-back"></div><div class="progress-dividor-front"></div></div><div class="progress_item" [class.active]="step == 2">2. New Package</div>
+        </div>-->
+
+        <div class="package-conversion-container white-stepper-icons limited-width-stepper">
+            <md-horizontal-stepper #stepper linear>
+                <md-step label="Current Package" stepControl="linearWorkaround">
+                    <h5 class="create-package-instruction">Enter the quantity you would like to convert from the Current Package into the New Package you are creating.</h5>
+                    <ul *ngIf="inErrors && inErrors.length > 0" class="errors">
+                        <li *ngFor="let inError of inErrors">{{inError}}</li>
+                    </ul>
+                    <ng-container *ngFor="let inPackageExtract of packageConversion.inPackageExtracts; let i = index; let last = last; let first = first;">
+                        <div class="content-section-flex">
+                            <div class="heading-row">
+                                <div class="heading-row-index"><div class="index-in-circle" [ngClass]="(inPackageExtract._package && inPackageExtract._package.id == primaryPackageId) ? 'adjusted-up' : 'adjusted-down'">{{i+1}}</div></div>
+                                <span *ngIf="inPackageExtract._package && inPackageExtract._package.id == primaryPackageId" class="package-label">{{inPackageExtract._package.Label}}</span>
+                                <ng-container *ngIf="!inPackageExtract._package || inPackageExtract._package.id != primaryPackageId" >
+                                    <div class="heading-row-select">
+                                        <app-select2 *ngIf="inPackageLabelSelect2Options"
+                                            [options]="inPackageLabelSelect2Options" class="full-width" [class.error]="errorFlags[inPackageExtract.id+'_package']"
+                                            [ngModel]="inPackageExtract.packageId" (ngModelChange)="inPackageChange(inPackageExtract, $event)">
+                                        </app-select2>
+                                    </div>
+                                    <div class="heading-row-end-10"></div>
+                                </ng-container>
+                            </div>
+                            <div class="details-row" *ngIf="inPackageExtract._package">
+                                <div class="details-row-index"></div>
+                                <div class="details-row-label-40">
+                                    Product Name
+                                </div>
+                                <div class="details-row-value-40">
+                                    <span *ngIf="inPackageExtract.product">{{inPackageExtract.product.name}}</span>
+                                </div>
+                                <div class="details-row-unit"></div>
+                            </div>
+                            <div class="details-row" *ngIf="inPackageExtract._package">
+                                <div class="details-row-index"></div>
+                                <div class="details-row-label-60">
+                                    Qty Remaining
+                                </div>
+                                <div class="details-row-value-20">
+                                    <div *ngIf="inPackageExtract._package">{{inPackageExtract._package.Quantity | number : '1.0-5'}}</div>
+                                    <div *ngIf="!inPackageExtract._package">--</div>
+                                </div>
+                                <div class="details-row-unit">
+                                    <div>{{inPackageExtract._package ? inPackageExtract._package.UnitOfMeasureName : ''}}</div>
+                                </div>
+                            </div>
+                            <div class="details-row" *ngIf="inPackageExtract._package">
+                                <div class="details-row-index"></div>
+                                <div class="details-row-label-60">
+                                    Qty to Transfer
+                                </div>
+                                <div class="details-row-value-20">
+                                    <input mdInput *ngIf="inPackageExtract._package" [ngModel]="inPackageExtract.Quantity" (ngModelChange)="setInPackageQuantity($event, inPackageExtract)" [class.error]="errorFlags[inPackageExtract.id+'_quantity']" (keypress)="filterDecimalKeyPress($event, (inPackageExtract._package.UnitOfMeasureName == 'Grams'))"/>
+                                    <span *ngIf="!inPackageExtract._package" style="margin-right:12px;">--</span>
+                                </div>
+                                <div class="details-row-unit">
+                                    <span>{{inPackageExtract._package ? inPackageExtract._package.UnitOfMeasureName : ''}}</span>
+                                </div>
+                            </div>
+                            <div class="remove-column" *ngIf="!first">
+                                <md-icon (click)="removeInPackageExtract(inPackageExtract)">remove_circle</md-icon>
+                            </div>
+                        </div>                        
+                        <hr *ngIf="!last"/>
+                    </ng-container>
+                    <div class="add-another-package-container" *ngIf="packageConversion.inPackageExtracts.length > 0">
+                        <a (click)="addInPackage()"><i class="icon icon-add"></i>&nbsp;Add Another Package</a>
+                    </div>
+                </md-step>
+                <md-step label="New Package" stepControl="linearWorkaround">
+                    <div class="package-conversion-row" *ngIf="step == 2">
+                        <div class="package-conversion-column package-conversion-column-full" *ngIf="packageConversion.inPackageExtracts && packageConversion.inPackageExtracts.length > 0">
+                            <div class="package-creation-summary-container">
+                                <h3 class="package-creation-summary-heading">Current Package<span *ngIf="packageConversion.inPackageExtracts.length > 1">s</span></h3>
+                                <ng-container>
+                                    <div class="content-section-flex">
+                                        <div class="details-row">
+                                            <div class="details-row-index"><div class="index-in-circle adjusted-up">1</div></div>
+                                            <div class="details-row-label-40">Package ID:</div> 
+                                            <div class="details-row-value-50"><span>{{primaryPackage.Label}}</span></div>
+                                        </div>
+                                        <div class="details-row">
+                                            <div class="details-row-index"></div>
+                                            <div class="details-row-label-40">
+                                                Product Name
+                                            </div>
+                                            <div class="details-row-value-50">
+                                                <span *ngIf="packageConversion.inPackageExtracts[0].product">{{packageConversion.inPackageExtracts[0].product.name}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="details-row">
+                                            <div class="details-row-index"></div>
+                                            <div class="details-row-label-40">
+                                                Qty to Transfer
+                                            </div>
+                                            <div class="details-row-value-50">
+                                                {{packageConversion.inPackageExtracts[0].Quantity}}&nbsp;&nbsp;
+                                                {{primaryPackage.UnitOfMeasureName}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="showingFullInPackages">
+                                    <ng-container *ngFor="let inPackageExtract of packageConversion.inPackageExtracts; let first = first; let last = last; let i = index">
+                                        <ng-container *ngIf="!first">
+                                            <hr />
+                                            <div class="content-section-flex">
+                                                <div class="details-row">
+                                                    <div class="details-row-index"><div class="index-in-circle adjusted-up">{{i+1}}</div></div>
+                                                    <div class="details-row-label-40">Package ID:</div> 
+                                                    <div class="details-row-value-50"><span>{{inPackageExtract._package.Label}}</span></div>
+                                                </div>
+                                                <div class="details-row" *ngIf="inPackageExtract._package">
+                                                    <div class="details-row-index"></div>
+                                                    <div class="details-row-label-40">
+                                                        Product Name
+                                                    </div>
+                                                    <div class="details-row-value-50">
+                                                        <span *ngIf="inPackageExtract.product">{{inPackageExtract.product.name}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="details-row">
+                                                    <div class="details-row-index"></div>
+                                                    <div class="details-row-label-40">
+                                                        Qty to Transfer
+                                                    </div>
+                                                    <div class="details-row-value-50">
+                                                        {{inPackageExtract.Quantity}}&nbsp;&nbsp;
+                                                        {{primaryPackage.UnitOfMeasureName}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                            <button class="md-button full-package-list-toggle mat-button-toggle" *ngIf="packageConversion.inPackageExtracts.length > 1" (click)="toggleFullInPackagesDisplay()"><span *ngIf="!showingFullInPackages">Show {{packageConversion.inPackageExtracts.length - 1}} More</span><span *ngIf="showingFullInPackages">Show Less</span></button>
+                        </div>
+                    </div>
+                    <h5 class="create-package-instruction">Enter the required information for the New Package.</h5>
+                    <ul *ngIf="outErrors && outErrors.length > 0" class="errors">
+                        <li *ngFor="let outError of outErrors">{{outError}}</li>
+                    </ul>
+                    <div class="content-section-flex">
+                        <div class="details-row">
+                            <div class="details-row-label-30">
+                                Package ID:
+                            </div>
+                            <div class="details-row-value-70">
+                                <app-select2 *ngIf="outPackageLabelSelect2Options" [class.error]="errorFlags['outpackage']"
+                                        [options]="outPackageLabelSelect2Options" class="full-width"
+                                        [(ngModel)]="packageConversion.outPackageLabel">
+                                </app-select2>
+                                <button md-button class="btn secondary blue inline-upload-ids" (click)="uploadNewIds()"><i class="icon icon-add"></i>Upload New ID(s)</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-section-flex">
+                        <div class="details-row">
+                            <div class="details-row-label-30">
+                                Item:
+                            </div>
+                            <div class="details-row-value-70">
+                                <app-select2 *ngIf="outPackageItemSelect2Options" [class.error]="errorFlags['outitem']"
+                                        [options]="outPackageItemSelect2Options" class="full-width"
+                                        [(ngModel)]="packageConversion.outItemId">
+                                </app-select2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-section-flex">
+                        <div class="details-row">
+                            <div class="details-row-label-30">
+                                New Quantity:
+                            </div>
+                            <div class="details-row-value-70">
+                                <div *ngIf="primaryPackage">{{getTotalInQuantity()}}&nbsp;&nbsp;{{primaryPackage.UnitOfMeasureName}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-section-flex">
+                        <div class="details-row">
+                            <div class="details-row-label-30">
+                                Date Created:
+                            </div>
+                            <div class="details-row-value-70">
+                                <div class="input-has-icon datepick" >
+                                    <input type="text" ng2-datetime-picker date-only="true" [(ngModel)]="packageConversion.outDate" [max-date]="maxOutDate" [default-value]="maxOutDate" date-format="M/DD/YYYY" [class.error]="errorFlags['outdate']">
+                                    <i class="icon icon-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-section-flex">
+                        <div class="details-row">
+                            <div class="details-row-label-30">
+                                Supplier:
+                            </div>
+                            <div class="details-row-value-70">
+                                <app-select2 *ngIf="outPackageSupplierSelect2Options"
+                                            [class.error]="errorFlags['outsupplier']"
+                                            [options]="outPackageSupplierSelect2Options"
+                                            [(ngModel)]="packageConversion.outSupplierId"
+                                            class="full-width">
+                                </app-select2>
+                            </div>
+                        </div>
+                    </div>
+                </md-step>
+                <md-step label="Confirm" stepControl="linearWorkaround">
+                    <ul *ngIf="serverError && serverError.length" class="errors">
+                        <li>{{serverError}}</li>
+                    </ul>
+                    <ng-container *ngIf="outItem && outSupplier">
+                        <h5 style="margin-top: 1.5em;" class="create-package-instruction">
+                            <p>You are about to convert the quantity from the Current Package(s) into a New Package.</p>
+                            <p>Please review that the information is correct to continue to New Package details.</p>
+                        </h5>
+                    
+                        <div class="package-conversion-row">
+                            <div class="package-conversion-column package-conversion-column-full">
+                                <div class="package-creation-summary-container">
+                                    <h3 class="package-creation-summary-heading">Current Package</h3>
+                                    <ng-container *ngFor="let inPackageExtract of packageConversion.inPackageExtracts; let first = first; let last = last; let i = index">
+                                        <div class="content-section-flex">
+                                            <div class="details-row">
+                                                <div class="details-row-index"><div class="index-in-circle adjusted-up">{{i+1}}</div></div>
+                                                <div class="details-row-label-40">Package ID:</div> 
+                                                <div class="details-row-value-50"><span>{{inPackageExtract._package.Label}}</span></div>
+                                            </div>
+                                            <div class="details-row" *ngIf="inPackageExtract._package">
+                                                <div class="details-row-index"></div>
+                                                <div class="details-row-label-40">
+                                                    Product Name
+                                                </div>
+                                                <div class="details-row-value-50">
+                                                    <span *ngIf="inPackageExtract.product">{{inPackageExtract.product.name}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="details-row">
+                                                <div class="details-row-index"></div>
+                                                <div class="details-row-label-40">
+                                                    Qty to Transfer
+                                                </div>
+                                                <div class="details-row-value-50">
+                                                    {{inPackageExtract.Quantity}}&nbsp;&nbsp;
+                                                    {{primaryPackage.UnitOfMeasureName}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr *ngIf="!last"/>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <div class="package-conversion-column package-conversion-column-full" style="border-top:0;">
+                                <div class="package-creation-summary-container">
+                                    <h3 class="package-creation-summary-heading">New Package</h3>
+                                    <div class="content-section-flex">
+                                        <div class="details-row">
+                                            <div class="details-row-label-30">Package ID:</div> 
+                                            <div class="details-row-value-70">
+                                                <div class="full-right">
+                                                    {{outLabel.Label}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="content-section-flex">
+                                        <div class="details-row">
+                                            <div class="details-row-label-30">
+                                                Item: 
+                                            </div>
+                                            <div class="details-row-value-70">
+                                                <div class="full-right">{{outItem.name}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="content-section-flex">
+                                        <div class="details-row">
+                                            <div class="details-row-label-30">
+                                                New Quantity
+                                            </div>
+                                            <div class="details-row-value-70">
+                                                <div class="full-right">
+                                                    {{getTotalInQuantity()}}&nbsp;&nbsp;
+                                                    {{primaryPackage.UnitOfMeasureName}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="content-section-flex">
+                                        <div class="details-row">
+                                            <div class="details-row-label-30">
+                                                Date Created: 
+                                            </div>
+                                            <div class="details-row-value-70">
+                                                <div class="full-right">{{packageConversion.outDate}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="content-section-flex">
+                                        <div class="details-row">
+                                            <div class="details-row-label-30">
+                                                Supplier:
+                                            </div>
+                                            <div class="details-row-value-70">
+                                                <div class="full-right">{{outSupplier.name}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </md-step>
+                <md-step label="Done" stepControl="linearWorkaround">
+                    <ng-container *ngIf="outItem && outSupplier">
+                        <div class="package-creation-done-container">
+                            <div style="margin-top: 1.5em;">
+                                <h2>Package Successfully Created</h2>
+                            </div>
+                            <div class="success-tick-large">
+                                <md-icon>check</md-icon>
+                            </div>
+                            <div style="margin-top: 1.5em;">
+                                <button md-button class="btn secondary blue" (click)="viewNewPackage()">View New Package</button>
+                            </div>
+                        </div>
+                    </ng-container>
+                </md-step>
+            </md-horizontal-stepper>
+            <div class="action-buttons" *ngIf="step == 1">
+                <button md-button class="btn secondary grey" (click)="onCancel()"><i class="icon icon-cancel"></i>Cancel</button>
+                <button md-button class="btn secondary blue" (click)="nextStep()" style="padding-right:50px;"><span style="margin-right:10px;">Next</span><md-icon class="step_arrow">arrow_forward</md-icon></button>
+            </div>
+    
+            <div class="action-buttons" *ngIf="step == 2">
+                <button md-button class="btn secondary grey" (click)="previousStep()" style="padding-left:25px;"><md-icon class="step_arrow">arrow_back</md-icon><span style="margin-left:35px;">Previous</span></button>
+                <button md-button class="btn secondary blue" (click)="nextStep()" style="padding-right:50px;"><span style="margin-right:10px;">Next</span><md-icon class="step_arrow">arrow_forward</md-icon></button>
+            </div>
+    
+            <div class="action-buttons" *ngIf="step == 3">
+                <button md-button class="btn secondary grey" (click)="previousStep()" style="padding-left:25px;"><md-icon class="step_arrow">arrow_back</md-icon><span style="margin-left:35px;">Previous</span></button>
+                <button md-button class="btn secondary blue" (click)="onConfirm()"><i class="icon icon-save"></i>Everything's correct</button>
+            </div>
+        </div>
+    </div>
+</main>
+

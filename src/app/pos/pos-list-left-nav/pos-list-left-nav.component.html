@@ -1,0 +1,36 @@
+<a md-button routerLink="/pos/all" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.canManuallyAddCannabisItems">
+    <i class="icon icon-all"></i>
+    <div>All</div>
+</a>
+<a md-button routerLink="/pos/flower" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.canManuallyAddCannabisItems">
+    <i class="icon icon-flower"></i>
+    <div>Flower</div>
+</a>
+<a md-button routerLink="/pos/shake" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.canManuallyAddCannabisItems">
+    <i class="icon icon-preroll"></i>
+    <div>Shake</div>
+</a>
+<a md-button routerLink="/pos/concentrate" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.canManuallyAddCannabisItems">
+    <i class="icon icon-concetrated"></i>
+    <div>Concentrate</div>
+</a>
+<a md-button routerLink="/pos/edible" routerLinkActive="active" class="leftnav-item reports-item" *ngIf="user.Permissions.canManuallyAddCannabisItems">
+    <i class="icon icon-edibles"></i>
+    <div>Edibles</div>
+</a>
+<a md-button routerLink="/pos/infused" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.canManuallyAddCannabisItems">
+    <i class="icon icon-beverages"></i>
+    <div>Infused</div>
+</a>
+<a md-button routerLink="/pos/plants" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.canManuallyAddCannabisItems">
+    <i class="icon icon-accessories"></i>
+    <div>Plants</div>
+</a>
+<a md-button routerLink="/pos/other" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.canManuallyAddCannabisItems">
+    <i class="icon icon-apparel"></i>
+    <div>Other Cannabis</div>
+</a>
+<a md-button routerLink="/pos/non-cannabis" routerLinkActive="active" class="leftnav-item" *ngIf="user.Permissions.canManuallyAddNonCannabisItems">
+    <i class="icon icon-apparel"></i>
+    <div>Non-Cannabis</div>
+</a>

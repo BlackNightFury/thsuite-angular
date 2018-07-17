@@ -1,0 +1,30 @@
+<div class="drawer-end-modal" *ngIf="drawer && mode == 'denominations'">
+    <h4>Enter ending cash quantities for all denominations</h4>
+    <div *ngIf="drawer.notesForCloser">
+        <span>Notes For Closer:</span>
+        <span>{{drawer.notesForCloser}}</span>
+    </div>
+    <div class="coins">
+        <div *ngFor="let coin of coinList">
+            <input id="{{coin}}" placeholder="{{coin.charAt(0).toUpperCase() + coin.slice(1)}}" type="text" (keyup)="updateTotals($event.target)" (blur)="updateTotals($event.target)"/>
+            <span class="total">{{meta[coin].total | currency:'USD':true:'1.0-2'}}</span>
+        </div>
+    </div>
+    <div class="cash">
+        <div *ngFor="let note of noteList">
+            <input id="{{note}}" placeholder="{{note.charAt(0).toUpperCase() + note.slice(1)}}" type="text" (keyup)="updateTotals($event.target)" (blur)="updateTotals($event.target)" />
+            <span class="total">{{meta[note].total | currency:'USD':true:'1.0-2'}}</span>
+        </div>
+    </div>
+    <div class="ending-amount">
+        <span>Ending Drawer Amount:</span>
+        <span>{{endingAmount | currency:'USD':true}}</span>
+    </div>
+</div>
+<div class="drawer-end-modal" *ngIf="drawer && mode == 'totalOnly'">
+    <h4>Enter the total amount of cash in the drawer</h4>
+    <div class="ending-amount" style="display: flex;">
+        <span style="flex-basis: 80%">Ending Drawer Amount:</span>
+        <input placeholder="Ending Amount" type="number" [(ngModel)]="endingAmount" *ngIf="mode == 'totalOnly'" />
+    </div>
+</div>

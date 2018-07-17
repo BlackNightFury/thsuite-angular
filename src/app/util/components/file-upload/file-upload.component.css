@@ -1,0 +1,193 @@
+.file-ul {
+    --active-color: #3C9;
+    --common-radius: 3px;
+    background-color: #f8f8f8;
+    border-radius: var(--common-radius);
+    border: #d0d0d0 dashed 1px;
+    font-family: sans-serif;
+    position: relative;
+    color: #9b9b9b;
+}
+
+.file-ul-file-is-over {
+    border: var(--active-color) solid;
+}
+
+.file-ul-hr-inline-group:after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+.file-ul-file-upload {    
+    padding: 16px;
+}
+
+.file-ul-file-upload ul {
+    list-style-type:none;
+    width:50%;
+    margin-left:25%;
+    padding:0;
+} 
+
+.file-ul-drag-box-msg {    
+    display: block;
+    font-weight: 600;
+    margin-left: 12px;
+    padding-top: 14px;
+}
+
+label.file-ul-button input[type=file] {
+    display: none;
+    position: fixed;
+    top: -99999px;
+}
+
+.file-ul-clear {
+    background-color: #FF0000;
+}
+
+.file-ul-upload {
+    background-color: var(--active-color);
+    display:block;
+    float:none;
+    width:50%;
+    margin-left:25%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.file-ul-button {
+    -moz-box-shadow: 2px 2px 4px 0 rgba(148, 148, 148, 0.6);
+    -webkit-box-shadow: 2px 2px 4px 0 rgba(148, 148, 148, 0.6);
+    box-shadow: 2px 2px 4px 0 rgba(148, 148, 148, 0.6);
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    font-size: 1.25em;
+    font-weight: 500;
+    padding: 10px;
+    text-transform: uppercase;
+}
+
+.file-ul-button:active span {
+    display: block;
+    position: relative;
+    top: 1px;
+}
+
+.file-ul-container {
+    background-color: #fdfdfd;
+    padding: 0 10px;
+}
+
+.file-ul-image {    
+    background: center center no-repeat;
+    background-size: contain;
+    display: inline-block;
+    float: left;
+    height: 86px;
+    margin: 6px;
+    position: relative;
+    width: 86px;
+}
+
+.file-ul-x-mark {
+    background-color: #000;
+    border-radius: 2px;
+    color: #FFF;
+    cursor: pointer;
+    float: right;
+    height: 20px;
+    margin: 2px;
+    opacity: .7;
+    text-align: center;
+    width: 20px;
+}
+
+.file-ul-close {
+    height: 20px;
+    opacity: .7;
+    padding-right: 3px;
+    position: relative;
+    width: 20px;
+}
+
+.file-ul-x-mark:hover .file-ul-close {
+    opacity: 1;
+}
+
+.file-ul-close:before, .file-ul-close:after {
+    background-color: #FFF;
+    border-radius: 2px;
+    content: '';
+    height: 15px;
+    position: absolute;
+    top: 0;
+    width: 2px;
+}
+
+.file-ul-close:before {
+    transform: rotate(45deg);
+}
+
+.file-ul-close:after {
+    transform: rotate(-45deg);
+}
+
+.file-ul-loading-overlay {
+    background-color: #000;
+    bottom: 0;
+    left: 0;
+    opacity: .7;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.file-ul-spinning-circle {
+    height: 30px;
+    width: 30px;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0);
+    border-top: 3px solid #FFF;
+    border-right: 3px solid #FFF;
+    -webkit-animation: spinner 2s infinite cubic-bezier(0.085, 0.625, 0.855, 0.360);
+    animation: spinner 2s infinite cubic-bezier(0.085, 0.625, 0.855, 0.360);
+}
+
+.file-ul-file-too-large {
+    color: red;
+    padding: 0 15px;
+}
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}

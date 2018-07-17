@@ -1,0 +1,194 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Inventory Breakdown For {{reportDate | date:'shortDate'}}</h2>
+
+        <ng-container *ngIf="selectedReportType !== 'package'">
+            <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search Product Name...">
+        </ng-container>
+
+        <ng-container *ngIf="selectedReportType === 'package'">
+            <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search Package Label...">
+        </ng-container>
+
+        <button class="btn tertiary blue btn-export flex-right" (click)="onClickExport('inventory-breakdown')" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+
+        <div class="control-input">
+            <div class="input-has-icon datepick">
+                <input [owlDateTime]="dtReportDate" [owlDateTimeTrigger]="dtReportDate" [(ngModel)]="reportDate" placeholder="mm/dd/yyyy">
+                <i class="icon icon-calendar"></i>
+                <owl-date-time #dtReportDate [pickerType]="'calendar'"></owl-date-time>
+            </div>
+        </div>
+
+        <app-select2 *ngIf="productTypeSelect2Options"
+                     [options]="productTypeSelect2Options"
+                     [(ngModel)]="selectedProductTypeId">
+        </app-select2>
+
+        <app-select2 *ngIf="supplierSelect2Options"
+                     [options]="supplierSelect2Options"
+                     [(ngModel)]="selectedSupplierId"
+                     [renderOptionsAsHTML]="true">
+        </app-select2>
+        
+        <app-select2 *ngIf="productSelect2Options"
+                     [options]="productSelect2Options"
+                     [(ngModel)]="selectedProductId">
+        </app-select2>
+
+        <!-- TODO: Convert this component into <app-select2> -->
+        <app-select2 [options]="reportTypeOptions" [(ngModel)]="selectedReportType" (ngModelChange)="onReportTypeChanged()"></app-select2>
+        <!--<div class="report-type">-->
+            <!--<label>Report Type</label>-->
+            <!--<md-select [(ngModel)]="selectedReportType" (ngModelChange)="onReportTypeChanged()" >-->
+                <!--<md-option [value]="opt.value" *ngFor="let opt of reportTypeOptions">{{opt.label}}</md-option>-->
+            <!--</md-select>-->
+        <!--</div>-->
+        
+        <app-button-toggler class="multiple" [options]="toggleCannabisOptions" [(ngModel)]="cannabisOptions"></app-button-toggler>
+    </div>
+</div>
+
+<main class="content">
+
+    <h2 class="main-title">Aggregate Totals</h2>
+    <table class="report-table discounts-by-type-table sticky compact nohover" style="margin-bottom: 1rem;" *ngIf="chartData">
+        <thead>
+            <ng-container *ngIf="selectedReportType !== 'package'">
+                <tr>
+                    <th>Number of {{ selectedReportType === 'item' ? 'Items' : 'Products' }}</th>
+                    <th>Quantity (g)</th>
+                    <th>Quantity (ea)</th>
+                    <th style="width: inherit !important;">Categories</th>
+                    <th>Types</th>
+                    <th>Average Cost per unit</th>
+                    <th>Average Price per unit</th>
+                    <th>Average Potential Profit per unit</th>
+                    <th>Total cost</th>
+                    <th>Total potential profit</th>
+                </tr>
+            </ng-container>
+            <ng-container *ngIf="selectedReportType === 'package'">
+                <tr>
+                    <th>Number of Packages</th>
+                    <th>Quantity (g)</th>
+                    <th>Quantity (ea)</th>
+                    <th style="width: inherit !important;">Categories</th>
+                    <th>Average Cost per unit</th>
+                    <th>Average Price per unit</th>
+                    <th>Average Potential Profit per unit</th>
+                    <th>Total cost</th>
+                    <th>Total potential profit</th>
+                </tr>
+            </ng-container>
+        </thead>
+        <tbody>
+            <ng-container *ngIf="chartDataPage.length && selectedReportType !== 'package'">
+                <tr>
+                    <td>{{chartData.length}}</td>
+                    <!-- Name -->
+                    <td>{{chartData | pluck:'quantityG' | sum | number: '1.0-1' }} <span class="show-on-compact">g.</span></td>
+                    <td>{{chartData | pluck:'quantityEA' | sum | number: '1.0-0' }} <span class="show-on-compact">ea.</span></td>
+                    <td>{{chartData | pluck:'category' | unique | length }} <span class="show-on-compact">categories</span></td>
+                    <td>{{chartData | pluck:'type' | unique | length }}</td>
+                    <td>{{(chartData | pluck:'totalCost' | sum) / (((chartData | pluck:'quantityEA' | sum) + (chartData | pluck:'quantityG' | sum))) | currency:'USD':true}}</td>
+                    <td>{{((chartData | pluck:'valuePerUnit' | arrayMultiply:(chartData | pluck:'Quantity')) | sum) / (((chartData | pluck:'quantityEA' | sum) + (chartData | pluck:'quantityG' | sum))) | currency:'USD':true}}</td>
+                    <td>{{((chartData | pluck:'totalProfit' | sum) / (((chartData | pluck:'quantityEA' | sum) + (chartData | pluck:'quantityG' | sum)))) | currency:'USD':true }}</td>
+                    <td>{{chartData | pluck:'totalCost' | sum | currency:'USD':true }}</td>
+                    <td>{{chartData | pluck:'totalProfit' | sum | currency:'USD':true }}</td>
+                </tr>
+            </ng-container>
+            <ng-container *ngIf="chartDataPage.length && selectedReportType === 'package'">
+                <tr>
+                    <td>{{chartData.length}}</td><!-- Name -->
+                    <td>{{chartData | pluck:'quantityG' | sum  | number: '1.0-1' }} <span class="show-on-compact">g.</span></td>
+                    <td>{{chartData | pluck:'quantityEA' | sum  | number: '1.0-0' }} <span class="show-on-compact">ea.</span></td>
+                    <td>{{chartData | pluck:'category' | unique | length }} <span class="show-on-compact">categories</span></td>
+                    <td>{{(chartData | pluck:'totalCost' | sum) / (((chartData | pluck:'quantityEA' | sum) + (chartData | pluck:'quantityG' | sum))) | currency:'USD':true}}</td>
+                    <td>{{((chartData | pluck:'valuePerUnit' | arrayMultiply:(chartData | pluck:'Quantity')) | sum) / (((chartData | pluck:'quantityEA' | sum) + (chartData | pluck:'quantityG' | sum))) | currency:'USD':true}}</td>
+                    <td>{{((chartData | pluck:'totalProfit' | sum) / (((chartData | pluck:'quantityEA' | sum) + (chartData | pluck:'quantityG' | sum)))) | currency:'USD':true }}</td>
+                    <td>{{chartData | pluck:'totalCost' | sum | currency:'USD':true }}</td>
+                    <td>{{chartData | pluck:'totalProfit' | sum | currency:'USD':true }}</td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+
+    <h2 class="main-title">Inventory Breakdown</h2>
+    <!--<div *ngIf="chartData" id="line_chart" style="height:100%;" [chartData]="chartData" [chartOptions]= "chartOptions" chartType="LineChart" GoogleChart></div>-->
+    <table class="report-table discounts-by-type-table sticky compact nohover">
+        <thead>
+        <ng-container *ngIf="selectedReportType !== 'package'">
+            <tr>
+                <th sortBy="name" [(ngModel)]="sortByModel">Product Name</th>
+                <!--<th *ngIf="selectedReportType === 'package' "sortBy="Label" [(ngModel)]="sortByModel" style="width: 15rem;">Package Label</th>-->
+                <th sortBy="Quantity" [(ngModel)]="sortByModel" class="align-right">Quantity on Hand</th>
+                <th sortBy="category" [(ngModel)]="sortByModel" style="width: 15%;">Category</th>
+                <th sortBy="type" [(ngModel)]="sortByModel">Product Type</th>
+                <th sortBy="costPerUnit" [(ngModel)]="sortByModel" class="align-right">Cost per unit</th>
+                <th sortBy="valuePerUnit" [(ngModel)]="sortByModel" class="align-right">Price per unit</th>
+                <th sortBy="value" [(ngModel)]="sortByModel" class="align-right">Total cost</th>
+                <th sortBy="potentialProfit" [(ngModel)]="sortByModel" class="align-right">Potential Profit per unit</th>
+                <th sortBy="TotalPrice" [(ngModel)]="sortByModel" class="align-right">Total potential profit</th>
+            </tr>
+        </ng-container>
+        <ng-container *ngIf="selectedReportType === 'package'">
+            <tr>
+                <th *ngIf="selectedReportType === 'package' "sortBy="Label" [(ngModel)]="sortByModel" style="width: 15rem;">Package Label</th>
+                <th sortBy="Quantity" [(ngModel)]="sortByModel" class="align-right">Quantity on Hand</th>
+                <th sortBy="category" [(ngModel)]="sortByModel" style="width: 15%;">Category</th>
+                <th sortBy="name" [(ngModel)]="sortByModel">Product Name</th>
+                <!--<th sortBy="type" [(ngModel)]="sortByModel">Product Type</th>-->
+                <th sortBy="costPerUnit" [(ngModel)]="sortByModel" class="align-right">Cost per unit</th>
+                <th sortBy="valuePerUnit" [(ngModel)]="sortByModel" class="align-right">Price per unit</th>
+                <th sortBy="value" [(ngModel)]="sortByModel" class="align-right">Total cost</th>
+                <th sortBy="potentialProfit" [(ngModel)]="sortByModel" class="align-right">Potential Profit per unit</th>
+                <th sortBy="TotalPrice" [(ngModel)]="sortByModel" class="align-right">Total potential profit</th>
+            </tr>
+        </ng-container>
+
+        </thead>
+        <tbody>
+        <tr *ngIf="!chartData">
+            <td colspan="9">No data found for this date.</td>
+        </tr>
+        <ng-container *ngIf="selectedReportType !== 'package'">
+            <tr *ngFor="let data of chartDataPage">
+                <td>{{ data.name }}</td>
+                <!--<td *ngIf="selectedReportType === 'package'">{{ data.Label }}</td>-->
+                <td class="align-right">{{ data.Quantity | number }} {{ data.UnitOfMeasureAbbreviation }}</td>
+                <td>{{data.category | ucfirst}}</td>
+                <td >{{ data.type }}</td>
+                <td class="align-right">{{ (data.costPerUnit) | currency:'USD':true  }}</td>
+                <td class="align-right">{{ (data.valuePerUnit || 0) | currency:'USD':true   }}</td>
+                <td class="align-right">{{ (data.totalCost) | currency:'USD':true   }}</td>
+                <td class="align-right">{{ (data.profit)  | currency:'USD':true  }}</td>
+                <td class="align-right">{{ (data.totalProfit) | currency:'USD':true }}</td>
+            </tr>
+        </ng-container>
+        <ng-container *ngIf="selectedReportType === 'package'">
+            <tr *ngFor="let data of chartDataPage">
+                <td *ngIf="selectedReportType === 'package'">{{ data.Label }}</td>
+                <td class="align-right">{{ data.Quantity | number }} {{ data.UnitOfMeasureAbbreviation }}</td>
+                <td>{{data.category | ucfirst}}</td>
+                <td>{{ data.name }}</td>
+                <!--<td >{{ data.type }}</td>-->
+                <td class="align-right">{{ (data.costPerUnit) | currency:'USD':true  }}</td>
+                <td class="align-right">{{ (data.valuePerUnit || 0) | currency:'USD':true   }}</td>
+                <td class="align-right">{{ (data.totalCost) | currency:'USD':true   }}</td>
+                <td class="align-right">{{ (data.profit)  | currency:'USD':true  }}</td>
+                <td class="align-right">{{ (data.totalProfit) | currency:'USD':true }}</td>
+            </tr>
+        </ng-container>
+
+        </tbody>
+    </table>
+
+    <app-pager [(ngModel)]="page" [numPages]="numPages"></app-pager>
+
+</main>

@@ -1,0 +1,48 @@
+<div class="container" id="mainPanel">
+
+    <div (click)="backToDash()" class="btn--back">
+        <!-- TODO: Use a directive to inline this SVG from /assets/svg/left-arrow.svg -->
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 31.494 31.494" style="enable-background:new 0 0 31.494 31.494;" xml:space="preserve" width="512px" height="512px"><path d="M10.273,5.009c0.444-0.444,1.143-0.444,1.587,0c0.429,0.429,0.429,1.143,0,1.571l-8.047,8.047h26.554  c0.619,0,1.127,0.492,1.127,1.111c0,0.619-0.508,1.127-1.127,1.127H3.813l8.047,8.032c0.429,0.444,0.429,1.159,0,1.587  c-0.444,0.444-1.143,0.444-1.587,0l-9.952-9.952c-0.429-0.429-0.429-1.143,0-1.571L10.273,5.009z" /></svg>
+        Back to {{ comesFromPOS ? 'POS' : 'Dashboard'}}
+    </div>
+
+    <main class="single-padded">
+            <h2 class="bold-title">Questions? We're here to help</h2>
+            <p class="descr">Please describe your issue or question in detail and our team will get back<br> to you as soon
+                as possible</p>
+        <ng-container *ngIf="!submitted">
+            <section class="padded">
+                <div class="input-row">
+                    <label class="input-label">Category</label>
+                    <div class="select-box full-width">
+                        <app-select2 [options]="categorySelect2Options"
+                                     [(ngModel)]="category">
+                        </app-select2>
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <label class="input-label">Your Email</label>
+                    <input type="email" [(ngModel)]="email">
+                </div>
+
+                <div class="input-row">
+                    <label class="input-label">Question</label>
+                    <textarea name="" cols="30" rows="7" [(ngModel)]="message"></textarea>
+                </div>
+
+                <div class="section-action right">
+                    <button class="btn secondary blue" (click)="submit()"><i class="icon icon-save"></i> Submit</button>
+                </div>
+            </section>
+        </ng-container>
+        <ng-container *ngIf="submitted">
+            <section class="padded">
+                <div class="input-row">
+                    <span>Thanks for reaching out! We will get back to you shortly to help resolve any issues you may be having.</span>
+                </div>
+            </section>
+        </ng-container>
+
+    </main>
+</div>

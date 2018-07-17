@@ -1,0 +1,32 @@
+<ng-container *ngIf="!alreadyRegistered && user && user.Permissions && user.Permissions.canRegisterDevice">
+    <div class="topbar-controls has-filters" style="flex-direction: column; margin-top: 93px; margin-left: 120px;">
+        <h2 style="margin: auto">Register Device</h2>
+        <div style="display: flex; flex-direction: column; margin:auto;">
+            <span style="margin:auto;">This device has not been registered as an allowed POS device yet. </span>
+            <span style="margin:auto">If it is not registered, you will be unable to process transactions on this device.</span>
+            <span style="margin:auto;"> If you would like to register this as a POS device, give it a name and click "Register" below.</span>
+            <span style="margin:auto;">Otherwise, click "Continue without Registering"</span>
+        </div>
+        <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+            <li *ngFor="let error of errors">{{error}}</li>
+        </ul>
+        <div class="section-action center" style="display: flex;">
+            <input placeholder="Device Name" style="margin-right: 10px;" [(ngModel)]="deviceName"/>
+        </div>
+        <div class="section-action center" style="display: flex; flex-direction: column;">
+            <button class="btn secondary green" (click)="register()" style="line-height: normal; width: 300px; margin:auto;">Register</button>
+            <a (click)="continueToHome()" style="cursor: pointer; margin-top: 1rem; font-size: small;">Continue without registering</a>
+        </div>
+    </div>
+</ng-container>
+<ng-container *ngIf="alreadyRegistered">
+    <div class="topbar-controls has-filters" style="flex-direction: column; margin-top: 93px; margin-left: 120px;">
+        <span>This device is already registered as an allowed POS device.</span>
+    </div>
+</ng-container>
+<ng-container *ngIf="!alreadyRegistered && user && user.Permissions && !user.Permissions.canRegisterDevice">
+    <div class="topbar-controls has-filters" style="flex-direction: column; margin-top: 93px; margin-left: 120px;">
+        <h2 style="margin: auto;">Device Not Registered</h2>
+        <span style="margin: auto;">This device has not been registered as an allowed POS device by the system admin. Please have an admin with device registration permissions log in to register this device.</span>
+    </div>
+</ng-container>

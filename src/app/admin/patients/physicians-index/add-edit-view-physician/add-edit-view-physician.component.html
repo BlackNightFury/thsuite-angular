@@ -1,0 +1,147 @@
+<div #root class="overlay right active not-hidden-block" xmlns="http://www.w3.org/1999/html">
+    <i class="icon icon-close overlay-close" (click)="cancel()"></i>
+
+    <div class="section-heading" *ngIf="mode == 'edit'">
+        <div class="svg-icon"><img src="/assets/svg/discount_details.svg"/></div>
+        <h1 class="section-title">Edit Physician Details</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'add'">
+        <div class="svg-icon"><img src="/assets/svg/discount_details.svg"/></div>
+        <h1 class="section-title">Add New Physician</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><img src="/assets/svg/discount_details.svg"/></div>
+        <div>
+            <h5 class="subtitle">Physician Details</h5>
+            <h1 class="section-title">{{object?.firstName}} {{object?.lastName}}</h1>
+        </div>
+    </div>
+
+    <ng-container *ngIf="object">
+
+        <ng-container *ngIf="mode == 'view'">
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Email</span>
+                    <h5 class="product-info">{{object.emailAddress}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Phone</span>
+                    <h5 class="product-info">{{object.phoneNumber | toPhoneNumber}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Clinic Name</span>
+                    <h5 class="product-info">{{object.clinicName}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Address</span>
+                    <h5 class="product-info">{{object.address}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">City</span>
+                    <h5 class="product-info">{{object.city}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">State</span>
+                    <h5 class="product-info">{{object.state}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Zip</span>
+                    <h5 class="product-info">{{object.zip}}</h5>
+                </div>
+            </div>
+
+            <div class="overlay-action-buttons" *ngIf="user.Permissions.patientManagement == 'edit' && user.Permissions.canEditPatients">
+                <button class="btn secondary grey" (click)="remove()"><i class="icon icon-remove"></i>Remove</button>
+                <button class="btn secondary blue" (click)="edit()"><i class="icon icon-edit"></i>Edit</button>
+            </div>
+
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input [class.error]="errorFlags.firstName" mdInput placeholder="First Name" [(ngModel)]="object.firstName"/>
+                </md-input-container>
+            </div>
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input [class.error]="errorFlags.lastName" mdInput placeholder="Last Name" [(ngModel)]="object.lastName"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input mdInput placeholder="Email" [(ngModel)]="object.emailAddress"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row md-input">
+                <md-input-container class="default single">
+                    <input mdInput placeholder="Phone Number" [ngModel]="object.phoneNumber | toPhoneNumber" (ngModelChange)="setPhoneNumber($event)" maxlength=14 (keypress)="filterNumericKeyPress($event)"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row md-input">
+                <md-input-container class="default single">
+                    <input [class.error]="errorFlags.clinicName" mdInput placeholder="Clinic Name" [(ngModel)]="object.clinicName" />
+                </md-input-container>
+            </div>
+
+            <div class="input-row md-input">
+                <md-input-container class="default single">
+                    <input [class.error]="errorFlags.address" mdInput placeholder="Address" [(ngModel)]="object.address"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row md-input">
+                <md-input-container class="default single">
+                    <input [class.error]="errorFlags.city" mdInput placeholder="City" [(ngModel)]="object.city"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row md-input">
+                <md-input-container class="default single">
+                    <input [class.error]="errorFlags.state" mdInput placeholder="State" [(ngModel)]="object.state"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row md-input">
+                <md-input-container class="default single">
+                    <input [class.error]="errorFlags.zip" mdInput placeholder="Zip" [(ngModel)]="object.zip"/>
+                </md-input-container>
+            </div>
+
+            <div class="overlay-action-buttons">
+                <button md-button class="btn secondary grey" (click)="cancel()"><i class="icon icon-cancel"></i>Cancel</button>
+                <button md-button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>Save</button>
+            </div>
+
+        </ng-container>
+
+    </ng-container>
+</div>

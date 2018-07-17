@@ -1,0 +1,62 @@
+.header{
+    display: flex;
+    flex-direction: row;
+}
+
+a{
+    text-decoration: none;
+    transition: color 200ms ease;
+    font-size: 15px;
+    color: #169fd3;
+    cursor: pointer;
+}
+
+.content-section-flex {
+    display: flex;
+    box-sizing: border-box;
+    flex-flow: row nowrap;
+    justify-content: center;
+}
+
+.content-section-column-1 {
+    flex-basis: 50%;
+    padding-right: 2em;
+}
+
+.content-section-column-2 {
+    flex-basis: 50%;
+}
+
+.details-row {
+    display: flex;
+    box-sizing: border-box;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+    text-align: left;
+    padding: 0.5em 0;
+}
+
+.details-row-label {
+    flex-basis: 40%;
+}
+
+.details-row-value {
+    flex-basis: 60%;
+}
+
+.patient-id-image {
+    max-width:500px;
+    max-height:400px;
+    margin-bottom:30px;
+}
+
+.missing-id-image-container {
+    border: 1px solid #cdcdcd;
+    width:400px;
+    height:300px;
+    padding:40px;
+    text-align:center;
+    margin:auto;
+    margin-bottom:30px;
+}

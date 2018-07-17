@@ -1,0 +1,17 @@
+.no-margin{
+    margin: 0.5rem 0;
+}
+
+.less-padding{
+    padding-left: 1.25rem;
+}
+
+.input-note{
+    font-size: 12px;
+    line-height: 1.2;
+    font-family: "proxima-nova", sans-serif;
+}
+
+.variation-name::placeholder {
+    color:#999 !important
+}

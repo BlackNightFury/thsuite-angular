@@ -1,0 +1,131 @@
+<div #root class="overlay right active not-hidden-block">
+    <i class="icon icon-close overlay-close" (click)="cancel()"></i>
+
+    <div class="section-heading" *ngIf="mode == 'edit'">
+        <div class="svg-icon"><img src="/assets/svg/discount_details.svg"/></div>
+        <h1 class="section-title">Edit Time Clock</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'add'">
+        <div class="svg-icon"><img src="/assets/svg/discount_details.svg"/></div>
+        <h1 class="section-title">Add New Time Clock</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><img src="/assets/svg/discount_details.svg"/></div>
+        <h1 class="section-title">Time Clock Details</h1>
+    </div>
+
+    <ng-container *ngIf="object">
+
+        <ng-container *ngIf="mode == 'view'">
+
+            <ng-container *ngIf="removalNeedsPin">
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <span>Time Clocks can only be delete with manager approval.</span><br>
+                    <span>Please enter manager PIN.</span><br>
+                    <span style="color: red" *ngIf="!pinCorrect">PIN is incorrect</span>
+                </div>
+                <div class="input-row">
+                    <label class="input-label">Manager PIN</label>
+                    <input class="manager-pin" type="text" [(ngModel)]="managerPin"/>
+                </div>
+                <div class="overlay-action-buttons">
+                    <button class="btn secondary grey" (click)="cancelRemoval()"><i class="icon icon-cancel"></i>Cancel Removal</button>
+                    <button class="btn secondary blue" (click)="completeRemoval()"><i class="icon icon-remove"></i>Complete Removal</button>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="!removalNeedsPin">
+                <div class="detail-row">
+                    <div>
+                        <span class="input-label">User's Name</span>
+                        <h5 class="product-info">{{object.User.firstName + ' ' + object.User.lastName}}</h5>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div>
+                        <span class="input-label">Clock In</span>
+                        <h5 class="product-info">{{object.clockIn | storeTimeZone:store.timeZone:'short'}}</h5>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div>
+                        <span class="input-label">Clock Out</span>
+                        <h5 class="product-info">{{object.clockOut ? (object.clockOut | storeTimeZone:store.timeZone:'short') : 'Still clocked in'}}</h5>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div>
+                        <span class="input-label">Time Worked</span>
+                        <h5 class="product-info">{{timeWorked}}</h5>
+                    </div>
+                </div>
+
+                <div class="overlay-action-buttons" *ngIf="user.Permissions.storeManagement == 'edit'">
+                    <button class="btn secondary grey" (click)="remove()"><i class="icon icon-remove"></i>Remove</button>
+                    <button class="btn secondary blue" (click)="edit()"><i class="icon icon-edit"></i>Edit</button>
+                </div>
+            </ng-container>
+
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <ng-container *ngIf="mode == 'edit'">
+                <div class="input-row">
+                    <label class="input-label">User's Name</label>
+                    <input type="text" [value]="object.User.firstName + ' ' + object.User.lastName" readonly style="background-color: #d7dcda;"/>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="mode == 'add'">
+                <div class="input-row">
+                    <label class="input-label">User</label>
+
+                    <app-select2 *ngIf="userSelect2Options"
+                                 [options]="userSelect2Options" class="full-width"
+                                 [(ngModel)]="object.userId"
+                                 [ngClass]="{error: errorFlags.user}">
+                    </app-select2>
+                </div>
+            </ng-container>
+
+            <div class="input-row">
+                <div class="input-has-icon datepick">
+                    <input [class.error]="errorFlags.timeClockIn" placeholder="Clock In" [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" [(ngModel)]="object.clockInAtStoreTimezone">
+                    <i class="icon icon-calendar"></i>                
+                </div>
+                <owl-date-time #dt1 [hour12Timer]="true"></owl-date-time>
+            </div>
+
+            <div class="input-row">
+                <div class="input-has-icon datepick">
+                    <input [class.error]="errorFlags.timeClockOut" placeholder="Clock Out" [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" [(ngModel)]="object.clockOutAtStoreTimezone">
+                    <i class="icon icon-calendar"></i>                
+                </div>
+                <owl-date-time #dt2 [hour12Timer]="true"></owl-date-time>
+            </div>
+            
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Time Worked</span>
+                    <h5 class="product-info">{{timeWorked}}</h5>
+                </div>
+            </div>
+
+            <div class="overlay-action-buttons">
+                <button md-button class="btn secondary grey" (click)="cancel()"><i class="icon icon-cancel"></i>Cancel</button>
+                <button md-button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>Save</button>
+            </div>
+
+        </ng-container>
+
+    </ng-container>
+
+</div>

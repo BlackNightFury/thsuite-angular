@@ -1,0 +1,32 @@
+<main class="single-padded">
+    <section class="topbar-controls has-filters" *ngIf="user.Permissions.storeManagement !== 'edit' || !user.Permissions.canRegisterDevice">
+        <h2 style="margin: auto;">Device Not Registered</h2>
+        <span style="margin: auto;">This device has not been registered as an allowed POS device by the system admin. Please have an admin with device registration permissions log in to register this device.</span>
+        <div class="section-action center" *ngIf="user.type == 'pos'">
+            <button class="btn secondary blue" (click)="backToLogin()" style="line-height: normal;">Back To Login</button>
+        </div>
+        <div class="section-action center" style="display: flex; flex-direction: column;" *ngIf="user.type == 'admin'">
+            <button class="btn secondary blue" (click)="backToHome()" style="line-height: normal;">Back To Admin Home</button>
+            <a (click)="backToLogin()" style="cursor: pointer; margin-top: 1rem; font-size: small;">Or log out</a>
+        </div>
+    </section>
+    <section class="topbar-controls has-filters" style="min-width: 800px;" *ngIf="user.Permissions.storeManagement === 'edit' && user.Permissions.canRegisterDevice">
+        <h2 style="margin: auto">Register Device</h2>
+        <div style="display: flex; flex-direction: column; margin:auto;">
+            <span style="margin:auto;">This device has not been registered as an allowed POS device yet. </span>
+            <span style="margin:auto">If it is not registered, you will be unable to process transactions on this device.</span>
+            <span style="margin:auto;"> If you would like to register this as a POS device, give it a name and click "Register" below.</span>
+            <span style="margin:auto;">Otherwise, click "Continue without Registering"</span>
+        </div>
+        <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+            <li *ngFor="let error of errors">{{error}}</li>
+        </ul>
+        <div class="section-action center" style="display: flex;">
+            <input placeholder="Device Name" style="margin-right: 10px;" [(ngModel)]="deviceName"/>
+        </div>
+        <div class="section-action center" style="display: flex; flex-direction: column;">
+            <button class="btn secondary green" (click)="register()" style="line-height: normal; width: 300px; margin:auto;">Register</button>
+            <a (click)="continueToHome()" style="cursor: pointer; margin-top: 1rem; font-size: small;">Or go back to Admin Home</a>
+        </div>
+    </section>
+</main>

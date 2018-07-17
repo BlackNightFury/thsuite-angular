@@ -1,0 +1,68 @@
+<div class="topbar-controls">
+
+    <!-- <div class="control-input">
+        <h2 class="page-subtitle">Discounts</h2>
+    </div> -->
+
+    <div class="controls-row">
+        <h2 class="page-subtitle">Patients</h2>
+        
+        <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search Patients..."/>
+
+        <button md-button class="btn tertiary green" (click)="createNewPatient()"><i class="icon icon-add"></i>Patient</button>
+        <button md-button class="btn tertiary blue btn-export" (click)="exportPatients()"><i class="icon icon-export"></i>Export</button>
+    </div>
+
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-select2 *ngIf="patientGroupSelect2Options"
+                     [options]="patientGroupSelect2Options"
+                     [(ngModel)]="selectedPatientGroupId">
+        </app-select2>
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-products-table green-hl-tr sticky">
+        <thead>
+        <tr>
+            <th sortBy="firstName" [(ngModel)]="sortByModel">First Name</th>
+            <th sortBy="lastName" [(ngModel)]="sortByModel">Last Name</th>
+            <th sortBy="medicalStateId" [(ngModel)]="sortByModel">Medical / State ID</th>
+            <th sortBy="patientType" [(ngModel)]="sortByModel">Type</th>
+            <th>Group</th>
+            <th>Phone</th>
+
+            <th *ngIf="user.Permissions.patientManagement == 'edit' && user.Permissions.canEditPatients"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let patient of objects | async" (click)="onRowClick($event, patient)">
+
+            <td>{{patient.firstName}}</td>
+            <td>{{patient.lastName}}</td>
+            <td>{{patient.medicalStateId | toMedID}}</td>
+            <td>{{patient.patientType | ucwords}}</td>
+            <td>{{patient.PatientGroup ? patient.PatientGroup.name : "None" | ucwords }}</td>
+            <td>{{patient.phoneNumber | telephone}}</td>
+
+
+            <td class="table-action" *ngIf="user.Permissions.patientManagement == 'edit' && user.Permissions.canEditPatients">
+                <i class="icon icon-edit" (click)="editPatient(patient)"></i>
+                <!--<i class="icon icon-my-account" (click)="viewDiscount(discount)"></i>-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listPatients()"></div>
+
+<router-outlet></router-outlet>
+
+<app-previous-purchases-modal *ngIf="isPreviousPurchasesModalShowing"></app-previous-purchases-modal>

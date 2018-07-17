@@ -1,0 +1,30 @@
+.content-section{
+    background-color: #fff;
+    box-shadow: 0px 1px 1px 0px #c1c6d2;
+    padding: 15px 20px;
+    margin: 1rem 0;
+}
+
+.note-container{
+    overflow-y: scroll;
+    max-height: 500px;
+    margin-bottom: 1rem;
+}
+
+.note-content{
+    min-height: 100px;
+}
+
+.note-header{
+    display: flex;
+    flex-direction: row;
+}
+
+.date-header{
+    margin-left: 2rem;
+}
+
+.note-body{
+    text-align: left;
+    white-space: pre-line;
+}

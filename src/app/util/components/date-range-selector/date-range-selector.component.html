@@ -1,0 +1,16 @@
+<app-select2 *ngIf="timeFrameSelect2Options"
+             [options]="timeFrameSelect2Options"
+             [ngModel]="selectedTimeFrame" (ngModelChange)="onSelectedTimeFrameChange($event)">
+</app-select2>
+
+<div class="paired-inputs" *ngIf="selectedTimeFrame == 'custom'">
+    <div class="input-has-icon datepick">
+        <input placeholder="Start" [owlDateTime]="dtReportStartDate" [owlDateTimeTrigger]="dtReportStartDate" [ngModel]="selectedStartDate" (ngModelChange)="onSelectedStartDate($event)">        
+        <owl-date-time #dtReportStartDate [pickerType]="'calendar'"></owl-date-time>
+    </div>
+
+    <div class="input-has-icon datepick">
+        <input placeholder="End" [owlDateTime]="dtReportEndDate" [owlDateTimeTrigger]="dtReportEndDate" [ngModel]="selectedEndDate" (ngModelChange)="onSelectedEndDate($event)">           
+        <owl-date-time #dtReportEndDate [pickerType]="'calendar'"></owl-date-time>
+    </div>
+</div>

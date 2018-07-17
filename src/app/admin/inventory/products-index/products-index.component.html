@@ -1,0 +1,59 @@
+<div class="topbar-controls patient-management">
+
+    <div class="controls-row">
+        <h2 class="page-subtitle">Products</h2>
+        
+        <input type="text" class="controls-input-search" #searchBar (keyup)="search(searchBar.value)" placeholder="Search Products...">
+
+        <button md-button class="btn tertiary green" (click)="createNewProduct()" *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditProducts"><i class="icon icon-add"></i>Product</button>
+        <button md-button class="btn tertiary blue btn-export" (click)="exportProducts()" ><i class="icon icon-export"></i>Export</button>
+    </div>
+
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">
+        <app-select2 *ngIf="productTypeSelect2Options"
+                     [options]="productTypeSelect2Options"
+                     [(ngModel)]="selectedProductTypeId">
+        </app-select2>
+
+        <app-select2 *ngIf="supplierSelect2Options"
+                     [options]="supplierSelect2Options"
+                     [(ngModel)]="selectedSupplierId"
+                     [renderOptionsAsHTML]="true" >
+        </app-select2>
+    </div>
+</div>
+
+<main class="content">
+    <table class="inventory-products-table sticky">
+        <thead>
+        <tr>
+            <th sortBy="name" [(ngModel)]="sortByModel">Product Name</th>
+            <th sortBy="ProductType.name" [(ngModel)]="sortByModel">Product Type</th>
+            <th sortBy="description" [(ngModel)]="sortByModel">Description</th>
+            <th sortBy="inventoryType" [(ngModel)]="sortByModel">Inventory Type</th>
+            <th *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditProducts"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let product of objects | async" (click)="onRowClick($event, product)">
+            <td [ngClass]="{low: product.Item.isLow}">{{product.name}}</td>
+            <td>{{product.ProductType.name}}</td>
+            <td>{{product.description}}</td>
+            <td>{{product.inventoryType | ucfirst}}</td>
+            <td class="table-action" *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditProducts">
+                <i class="icon icon-edit" (click)="editProduct(product)"></i>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listProducts()"></div>
+
+<router-outlet></router-outlet>

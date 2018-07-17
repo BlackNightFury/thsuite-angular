@@ -1,0 +1,155 @@
+<ng-container *ngIf="user">
+    <div class="overlay-closearea second" (click)="startLeaving()"></div>
+    <div class="overlay right second active not-hidden-block" [@leave]="animationStatus" (@leave.done)="cancel()">
+
+        <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+
+        <div class="section-heading">
+            <div class="svg-icon"><img src="/assets/svg/inventory.svg"/></div>
+            <div>
+                <h5 class="subtitle">{{user.firstName}} {{user.lastName}}</h5>
+                <h1 class="section-title">Permissions</h1>
+            </div>
+        </div>
+
+        <ng-container *ngIf="permissions">
+
+            <h4 class="heading form-subtitle">ADMINISTRATIVE PERMISSIONS</h4>
+
+            <div *ngIf="environment.shouldShowPatientPermissions" class="input-row togglers-row">
+                <label class="input-label dcase">Patient Management</label>
+
+                <md-button-toggle-group class="default blue" [(ngModel)]="permissions.patientManagement">
+                    <md-button-toggle value="none">None</md-button-toggle>
+                    <md-button-toggle value="view">View</md-button-toggle>
+                    <md-button-toggle value="edit">Edit</md-button-toggle>
+                </md-button-toggle-group>
+
+                <div style="margin-top: 0.5rem" *ngIf="permissions.patientManagement == 'edit'">
+                    <md-checkbox [(ngModel)]="permissions.canEditPatientGroups">Can create and edit patient groups</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canEditPatients">Can create and edit patients</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canAccessMedicalApp">Can access medical app</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canAccessPhysiciansDashboard">Can access physicians dashboard</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canAccessCaregiverDashboard">Can access caregiver dashboard</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canAccessVisitorDashboard">Can access visitor dashboard</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canDoPatientCheck">Can do patient check-in</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canReleaseBudtender">Can release budtender</md-checkbox>
+                </div>
+            </div>
+
+            <div class="input-row togglers-row">
+                <label class="input-label dcase">Inventory Management</label>
+
+                <md-button-toggle-group class="default blue" [(ngModel)]="permissions.inventoryManagement">
+                    <md-button-toggle value="none">None</md-button-toggle>
+                    <md-button-toggle value="view">View</md-button-toggle>
+                    <md-button-toggle value="edit">Edit</md-button-toggle>
+                </md-button-toggle-group>
+
+                <div style="margin-top: 0.5rem" *ngIf="permissions.inventoryManagement == 'edit'">
+                    <md-checkbox [(ngModel)]="permissions.canEditProducts">Can create and edit products</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canEditItems">Can create and edit items</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canEditProductTypes">Can create and edit product types</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canEditSuppliers">Can create and edit suppliers</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canEditBarcodes">Can create and edit barcodes</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canEditPricingTiers">Can create and edit pricing tiers</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canEditLineItems">Can edit receipts</md-checkbox>
+                </div>
+            </div>
+
+            <div class="input-row togglers-row">
+                <label class="input-label dcase">Store Management</label>
+
+                <md-button-toggle-group class="default blue" [(ngModel)]="permissions.storeManagement">
+                    <md-button-toggle value="none">None</md-button-toggle>
+                    <md-button-toggle value="view">View</md-button-toggle>
+                    <md-button-toggle value="edit">Edit</md-button-toggle>
+                </md-button-toggle-group>
+
+                <div style="margin-top: 0.5rem" *ngIf="permissions.storeManagement == 'edit'">
+                    <md-checkbox [(ngModel)]="permissions.canEditStores">Can create and edit locations</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canEditDiscounts">Can create and edit discounts</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canEditLoyaltyRewards">Can create and edit loyalty rewards</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canEditTaxes">Can create and edit taxes</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canSubmitToMetrc">Can submit to metrc</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canEditStoreSettings">Can edit store settings / emails</md-checkbox>
+                </div>
+            </div>
+
+            <div class="input-row togglers-row">
+                <label class="input-label dcase">Reports Management</label>
+
+                <md-button-toggle-group class="default blue" [(ngModel)]="permissions.reportsManagement">
+                    <md-button-toggle value="none">None</md-button-toggle>
+                    <md-button-toggle value="view">View</md-button-toggle>
+                    <md-button-toggle value="edit">Edit</md-button-toggle>
+                </md-button-toggle-group>
+            </div>
+
+            <div class="input-row togglers-row">
+                <label class="input-label dcase">Employee Management</label>
+
+                <md-button-toggle-group class="default blue" [(ngModel)]="permissions.employeeManagement">
+                    <md-button-toggle value="none">None</md-button-toggle>
+                    <md-button-toggle value="view">View</md-button-toggle>
+                    <md-button-toggle value="edit">Edit</md-button-toggle>
+                </md-button-toggle-group>
+            </div>
+
+            <div class="input-row togglers-row">
+                <label class="input-label dcase">Administrative</label>
+
+                <md-button-toggle-group class="default blue" [(ngModel)]="permissions.administrativeManagement">
+                    <md-button-toggle value="none">None</md-button-toggle>
+                    <md-button-toggle value="edit">Edit</md-button-toggle>
+                </md-button-toggle-group>
+
+                <div style="margin-top: 0.5rem" *ngIf="permissions.administrativeManagement == 'edit'">
+                    <md-checkbox [(ngModel)]="permissions.canRegisterDevice">Can register devices</md-checkbox>
+                </div>
+
+                <div style="margin-top: 0.5rem" *ngIf="permissions.administrativeManagement == 'edit'">
+                    <md-checkbox [(ngModel)]="permissions.canPersistentLogin">Persistent Login</md-checkbox>
+                </div>
+            </div>
+
+            <h4 class="heading form-subtitle">POINT OF SALE PERMISSIONS</h4>
+
+            <div class="input-row togglers-row">
+                <label class="input-label dcase">Sales</label>
+
+                <div>
+                    <md-checkbox [(ngModel)]="permissions.canScanItems">Can scan items into cart</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canManuallyAddCannabisItems">Can manually add cannabis items to cart</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canManuallyAddNonCannabisItems">Can manually add non-cannabis items to cart</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canVoidItems">Can void items</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canAcceptReturns">Can accept returns</md-checkbox>
+                </div>
+            </div>
+
+            <div class="input-row togglers-row">
+                <label class="input-label dcase">Discounts</label>
+
+                <div>
+                    <md-checkbox [(ngModel)]="permissions.canManuallyDiscount">Can apply manual discounts</md-checkbox>
+                </div>
+            </div>
+
+            <div class="input-row togglers-row">
+                <label class="input-label dcase">Patients</label>
+
+                <div>
+                    <md-checkbox [(ngModel)]="permissions.canManuallyVerifyAge">Can manually verify age</md-checkbox>
+                    <md-checkbox [(ngModel)]="permissions.canAddNotesToPatient">Can add notes to a patient's profile</md-checkbox>
+                </div>
+            </div>
+
+
+            <div class="overlay-action-buttons">
+                <button class="btn secondary grey" data-overlay-close (click)="startLeaving()"><i class="icon icon-cancel"></i>Cancel
+                </button>
+                <button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>{{this.mode == 'add' ? 'Create' : 'Save'}}</button>
+            </div>
+        </ng-container>
+    </div>
+</ng-container>

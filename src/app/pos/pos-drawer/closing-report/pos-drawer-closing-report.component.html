@@ -1,0 +1,196 @@
+<div class="container container-pos-settings pos-drawer-closing-report" id="mainPanel" *ngIf="store">
+
+    <div class="topbar-controls patient-management">
+        <div class="controls-row">
+            <h2 class="page-subtitle">Drawer Closing Report</h2>
+            <button class="btn tertiary blue flex-right btn-export" (click)="onClickExport()" ><i class="icon icon-export"></i>Print</button>
+            <div class="input-has-icon datepick">
+                <input [owlDateTime]="dtReportDate" [owlDateTimeTrigger]="dtReportDate" [(ngModel)]="selectedDate" placeholder="mm/dd/yyyy">
+                <i class="icon icon-calendar"></i>
+                <owl-date-time #dtReportDate [pickerType]="'calendar'"></owl-date-time>
+            </div>
+        </div>
+    </div>
+
+    <div class="topbar-filters">
+        <app-button-toggler [options]="modeOptions"
+                            [(ngModel)]="mode" >
+        </app-button-toggler>
+    </div>
+
+    <div *ngFor="let reportData of reportDataArray" style="width: 600px; margin: 40px auto; padding: 1rem; ">
+        <h3 *ngIf="reportData.openedAt">Drawer Opened: {{reportData.openedAt | storeTimeZone: store.timeZone: 'short'}} by {{reportData.userName}}</h3>
+        <h3 *ngIf="reportData.closedAt">Drawer Closed: {{reportData.closedAt | storeTimeZone: store.timeZone: 'short'}} by {{reportData.closedByUserName}}</h3>
+        <h3 *ngIf="!reportData.openedAt" style="font-weight: bold">All Drawers</h3>
+        <table>
+            <thead>
+            <tr style="text-align: center">
+                <th colspan="3">Sales Breakdown</th>
+            </tr>
+            <tr class="table-subheading">
+                <th>Type</th>
+                <th># Receipts</th>
+                <th class="text-right">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Total With Taxes</td>
+                <td>{{reportData.count}}</td>
+                <td class="text-right">{{reportData.total | currency:'USD':true}}</td>
+            </tr>
+            <tr>
+                <td>Total Taxes</td>
+                <td></td>
+                <td class="text-right">{{reportData.totalTaxes | currency:'USD':true}}</td>
+            </tr>
+            <tr>
+                <td>Total W/O Taxes</td>
+                <td></td>
+                <td class="text-right">{{reportData.totalWithoutTaxes | currency:'USD':true}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <table class="closing-report-table">
+            <thead>
+            <tr style="text-align: center">
+                <th colspan="3">
+                    MJ Item Category Breakdown
+                </th>
+            </tr>
+            <tr class="table-subheading">
+                <th>Type</th>
+                <th># Items Sold</th>
+                <th class="text-right">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let category of reportData.totalByProductType">
+                <td>{{category.name}}</td>
+                <td>{{category.total.count}}</td>
+                <td class="text-right">{{category.total.amount | currency:'USD':true}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <table class="closing-report-table">
+            <thead>
+            <tr style="text-align: center">
+                <th colspan="3">
+                    Tax Category Breakdown
+                </th>
+            </tr>
+            <tr class="table-subheading">
+                <th>Type</th>
+                <th># Times Applied</th>
+                <th class="text-right">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let category of reportData.totalByCannabisType">
+                <td>{{category.name}}</td>
+                <td>{{category.total.count}}</td>
+                <td class="text-right">{{category.total.amount | currency:'USD':true}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <table class="closing-report-table">
+            <thead>
+            <tr style="text-align: center">
+                <th colspan="3">
+                    Tax Type Breakdown
+                </th>
+            </tr>
+            <tr class="table-subheading">
+                <th>Type</th>
+                <th># Times Applied</th>
+                <th class="text-right">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let category of reportData.totalByTax">
+                <td>{{category.name}}</td>
+                <td>{{category.total.count}}</td>
+                <td class="text-right">{{category.total.amount | currency:'USD':true}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <table class="closing-report-table">
+            <thead>
+            <tr style="text-align: center">
+                <th colspan="3">
+                    Payment Type Breakdown
+                </th>
+            </tr>
+            <tr class="table-subheading">
+                <th>Type</th>
+                <th># Receipts</th>
+                <th class="text-right">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let category of reportData.totalByPaymentType">
+                <td>{{category.name}}</td>
+                <td>{{category.total.count}}</td>
+                <td class="text-right">{{category.total.amount | currency:'USD':true}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <table *ngIf="mode == 'user'">
+            <thead>
+            <tr style="text-align: center">
+                <th colspan="4">Cash Removal Breakdown</th>
+            </tr>
+            <tr class="table-subheading">
+                <th>Type</th>
+                <th>User</th>
+                <th># Times Applied</th>
+                <th class="text-right">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let removal of reportData.removalsByUser">
+                <td>Cash</td>
+                <td>{{removal.name}}</td>
+                <td>{{removal.total.totalDrawerRemovalsCount}}</td>
+                <td class="text-right">{{removal.total.totalDrawerRemovalsSum | currency:'USD':true}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <table *ngIf="mode != 'user'">
+            <thead>
+            <tr style="text-align: center">
+                <th colspan="3">Cash Removal Breakdown</th>
+            </tr>
+            <tr class="table-subheading">
+                <th>Type</th>
+                <th># Times Applied</th>
+                <th class="text-right">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Cash</td>
+                <td>{{reportData.totalDrawerRemovalsCount}}</td>
+                <td class="text-right">{{reportData.totalDrawerRemovalsSum | currency:'USD':true}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<router-outlet></router-outlet>

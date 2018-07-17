@@ -1,0 +1,71 @@
+.cdk-overlay-container {
+    z-index:3000 !important;
+}
+
+.owl-dt-calendar-table {
+    td {
+        padding:0;
+    }
+
+    th {
+        padding-left:0;
+        padding-right:0;
+        padding-top:0;
+        padding-bottom:0!important;
+
+        &.owl-dt-weekday{
+            padding-top:1em;
+            padding-bottom:1em !important;
+        }
+    }
+
+    .owl-dt-calendar-cell-selected {
+        background-color:$green !important;
+    }
+
+    .owl-dt-calendar-table-divider {
+        display:none;
+    }
+
+    tbody tr:hover {
+        background:none;
+        border-top: 1px solid hsl(207, 18%, 90%);
+        border-bottom: 1px solid hsl(207, 18%, 90%);
+        box-shadow:none;
+    }
+}
+
+.owl-dt-calendar-multi-year-view {
+    .owl-dt-calendar-table {
+        .owl-dt-calendar-header th {
+            text-align:center;
+            padding:0.5em!important;
+        }
+    }
+}
+
+.owl-dt-timer-hour12 {
+    color:$select-highlight;
+    border-color:$select-highlight;
+
+    .owl-dt-timer-hour12-box {
+        border-color:$select-highlight;
+        color:$select-highlight;
+
+        &:focus, &:hover, &:active {
+            .owl-dt-control-button-content {
+                background-color:$select-highlight !important;
+                color:white;
+            }
+        }
+    }   
+}
+
+.owl-dt-container-buttons{
+    color:$select-highlight !important;
+    height:50px !important;
+}
+
+.owl-dt-container-control-button:first-of-type {
+    border-right:1px solid rgba(0,0,0,0.12);
+}

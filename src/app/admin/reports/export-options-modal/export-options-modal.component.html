@@ -1,0 +1,9 @@
+<div class="wrapper">
+    <div *ngIf="!exportGenerationInProgress">
+        <button md-button class="btn secondary blue flex-right" (click)="onExportOptionsModalExportClick('csv')"><i class="icon icon-export"></i>Export CSV</button>
+        <button md-button class="btn secondary blue flex-right" (click)="onExportOptionsModalExportClick('pdf')"><i class="icon icon-export"></i>Export PDF</button>
+    </div>
+    <div *ngIf="exportGenerationInProgress">
+        Export In Progress. You should see it at any time...
+    </div>
+</div>

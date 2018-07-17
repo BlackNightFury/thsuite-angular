@@ -1,0 +1,191 @@
+<div #root class="overlay right active not-hidden-block" [@leave]="animationStatus" (@leave.done)="cancel()">
+
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><img src="/assets/svg/product_details.svg"/></div>
+        <div>
+            <h5 class="subtitle">Product Details</h5>
+            <h1 class="section-title">{{object?.name}}</h1>
+        </div>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'edit'">
+        <div class="svg-icon"><img src="/assets/svg/edit_product.svg"/></div>
+        <h1 class="section-title">Edit Product</h1>
+    </div>
+    <div class="section-heading" *ngIf="mode == 'add'">
+        <div class="svg-icon"><img src="/assets/svg/add_new_product.svg"/></div>
+        <h1 class="section-title">Add New Product</h1>
+    </div>
+
+    <ng-container *ngIf="object">
+        <md-button-toggle  (change)="toggleVariations()" [checked]="variationsShowing" style="margin-bottom: 2rem; display: flex;" *ngIf="mode != 'add'">Show Variations</md-button-toggle>
+
+        <ng-container *ngIf="mode == 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Product Type</span>
+                    <h5 class="product-info">{{object.ProductType.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Product Name</span>
+                    <h5 class="product-info">{{object.name}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Description</span>
+                    <h5 class="product-info">{{object.description}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row" *ngIf="object.inventoryType == 'weight'">
+                <div>
+                    <span class="input-label">Pricing Tier</span>
+                    <h5 class="product-info">{{object.PricingTier ? object.PricingTier.name : "None"}}</h5>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">Tags</label>
+                <app-select2 *ngIf="tagSelectOptions" [options]="tagSelectOptions" class="tags"
+                             [(ngModel)]="selectedTagIds">
+
+                </app-select2>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Eligible for Discounts</span>
+                    <h5 class="product-info">{{object.eligibleForDiscount ? 'Yes' : 'No'}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Display Product on Menu</span>
+                    <h5 class="product-info">{{object.displayOnMenu ? 'Yes' : 'No'}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <img *ngIf="object.image" [src]="object.image" style="width: 100%; height: auto"/>
+                </div>
+            </div>
+
+            <div class="overlay-action-buttons" *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditProducts">
+                <button class="btn secondary grey" (click)="remove()"><i class="icon icon-remove"></i>Remove</button>
+                <button class="btn secondary blue" (click)="edit()"><i class="icon icon-edit"></i>Edit</button>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <div class="input-row">
+                <md-select *ngIf="!errorFlags.productTypeId" placeholder="Product Type" style="width: 100%" [(ngModel)]="object.productTypeId">
+                    <ng-container *ngFor="let productTypeObservable of productTypes">
+                        <ng-template [vWaitFor]="productTypeObservable" let-productType>
+                            <md-option [value]="productType.id">{{productType.name}}</md-option>
+                        </ng-template>
+                    </ng-container>
+                </md-select>
+                <md-select *ngIf="errorFlags.productTypeId" placeholder="Product Type" style="border: 1px solid red; width: 100%" [(ngModel)]="object.productTypeId">
+                    <ng-container *ngFor="let productTypeObservable of productTypes">
+                        <ng-template [vWaitFor]="productTypeObservable" let-productType>
+                            <md-option [value]="productType.id">{{productType.name}}</md-option>
+                        </ng-template>
+                    </ng-container>
+                </md-select>
+            </div>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input *ngIf="!errorFlags.name" mdInput placeholder="Product Name" [(ngModel)]="object.name"/>
+                    <input *ngIf="errorFlags.name" style="border: 1px solid red" mdInput placeholder="Product Name" [(ngModel)]="object.name"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row">
+                <md-input-container class="default single">
+                    <input mdInput placeholder="Product Description" [(ngModel)]="object.description"/>
+                </md-input-container>
+            </div>
+
+            <div class="input-row" *ngIf="mode == 'add'">
+                <label class="input-label">Inventory Type</label>
+                <md-button-toggle-group *ngIf="!errorFlags.inventoryType" class="default blue" [(ngModel)]="object.inventoryType">
+                    <md-button-toggle value="weight">Weight</md-button-toggle>
+                    <md-button-toggle value="each">Each</md-button-toggle>
+                </md-button-toggle-group>
+                <md-button-toggle-group *ngIf="errorFlags.inventoryType" style="border: 1px solid red;" class="default blue" [(ngModel)]="object.inventoryType">
+                    <md-button-toggle value="weight">Weight</md-button-toggle>
+                    <md-button-toggle value="each">Each</md-button-toggle>
+                </md-button-toggle-group>
+            </div>
+
+            <div class="input-row" *ngIf="object.inventoryType == 'weight'">
+                <label class="input-label">Pricing Tier</label>
+
+                <app-select2 *ngIf="pricingTierSelect2Options"
+                             [options]="pricingTierSelect2Options" class="full-width"
+                             [(ngModel)]="object.pricingTierId"
+                             [class.error]="errorFlags.pricingTier"
+                             >
+                </app-select2>
+
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">Tags</label>
+                <app-select2 *ngIf="tagSelectOptions" [options]="tagSelectOptions" class="full-width"
+                             [(ngModel)]="selectedTagIds">
+
+                </app-select2>
+            </div>
+
+            <div class="input-row">
+                <md-checkbox [(ngModel)]="object.eligibleForDiscount">Eligible for Discounts</md-checkbox>
+            </div>
+
+            <div class="input-row">
+                <md-checkbox [(ngModel)]="object.displayOnMenu">Display Product on Menu</md-checkbox>
+            </div>
+
+            <div class="input-row">
+
+                <image-upload
+                    [max]="1"
+                    [preview]="false"
+                    (uploadFinished)="uploadImage($event)"
+                ></image-upload>
+
+                <img *ngIf="object.image" [src]="object.image" style="width: 100%; height: auto"/>
+
+            </div>
+
+            <div class="overlay-action-buttons">
+                <button md-button class="btn secondary grey" data-overlay-close (click)="startLeaving()"><i class="icon icon-cancel"></i>Cancel
+                </button>
+                <button md-button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>{{mode == 'add' ? 'Create' : 'Save'}}</button>
+            </div>
+        </ng-container>
+
+
+    </ng-container>
+</div>
+
+<router-outlet></router-outlet>

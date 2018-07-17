@@ -1,0 +1,80 @@
+<div class="topbar-controls">
+    <div class="controls-row">
+        <h2 class="page-subtitle">Time Clocks</h2>
+        <button class="btn tertiary blue flex-right" (click)="onClickExport()" ><i class="icon icon-export"></i>Export</button>
+    </div>
+</div>
+
+<div class="topbar-filters">
+    <div class="controls-row">        
+        <div class="time-frame-selector">
+            <app-select2 *ngIf="timeFrameSelect2Options"
+                         [options]="timeFrameSelect2Options"
+                         [(ngModel)]="selectedTimeFrame">
+            </app-select2>
+            <div class="paired-inputs" *ngIf="selectedTimeFrame == 'custom'">
+                <div class="input-has-icon datepick">
+                    <input placeholder="Start Date" [owlDateTime]="dtReportStartDate" [owlDateTimeTrigger]="dtReportStartDate" [(ngModel)]="selectedStartDate">
+                    <owl-date-time #dtReportStartDate [pickerType]="'calendar'"></owl-date-time>
+                </div>
+
+                <div class="input-has-icon datepick">
+                    <input placeholder="End Date" [owlDateTime]="dtReportEndDate" [owlDateTimeTrigger]="dtReportEndDate" [(ngModel)]="selectedEndDate">
+                    <owl-date-time #dtReportEndDate [pickerType]="'calendar'"></owl-date-time>
+                </div>
+            </div>
+        </div>
+
+        <ng-container *ngIf="employeeSelect2Options">
+            <app-select2 [options]="employeeSelect2Options" [(ngModel)]="selectedEmployeeIds"></app-select2>
+        </ng-container>
+
+        <app-button-toggler class="multiple" [options]="toggleReportTypeOptions" [(ngModel)]="reportType"></app-button-toggler>
+    </div>
+</div>
+
+<main class="content">
+    <table class="report-table time-clocks-table sticky has-subtable" *ngIf="rows">
+        <thead>
+            <tr>
+                <th class="aggregate-cell">Employee Name</th>
+                <th class="aggregate-cell">Date Range</th>
+                <th class="aggregate-cell">Hours Worked</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let row of rows">
+                <tr (click)="row.times && $event.target.parentElement.nextElementSibling.classList.toggle('toggle-hide'); $event.target.parentElement.classList.toggle('subtable-toggle--collapsed'); $event.target.parentElement.classList.toggle('subtable-toggle--expanded')" [ngClass]="{'nohover': !row.times, hide: selectedEmployeeIds.length !== 0 && !this.displayEmployee[row.id]}" class="subtable-toggle--collapsed">
+                    <td class="aggregate-cell">{{row.firstName}} {{row.lastName}}</td>
+                    <td class="aggregate-cell">{{row.startDay}} - {{row.endDay}}</td>
+                    <td class="aggregate-cell">{{(row.minutesWorked / 60 ) | number | round: 100 }}</td>
+                </tr>
+                <tr class="employee-single-clock-in-out toggle-hide" [ngClass]="{hide: selectedEmployeeIds.length !== 0 && !this.displayEmployee[row.id]}" *ngIf="row.times">
+                    <td colspan="3" class="subtable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="">Date</th>
+                                    <th class="">Time Range</th>
+                                    <th class="">Hours Worked</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let time of row.times">
+                                    <td>{{time.workDay}}</td>
+                                    <td>{{time.startHour}} - {{time.endHour}}</td>
+                                    <td>
+                                        {{(time.minutesWorked / 60) | number}}
+                                        <span class="auto-clocked-out" *ngIf="time.autoClockedOut">
+                                            Auto Clocked Out
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+</main>

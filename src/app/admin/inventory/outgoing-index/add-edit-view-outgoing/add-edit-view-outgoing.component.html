@@ -1,0 +1,50 @@
+<div class="overlay right active not-hidden-block" [@leave]="animationStatus" (@leave.done)="cancel()">
+    
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+    
+    <div class="section-heading" *ngIf="mode == 'view'">
+        <div class="svg-icon"><img src="/assets/svg/product_details.svg"/></div>
+        <div>
+            <h1 class="section-title">Transfer Details</h1>
+        </div>
+    </div>
+
+
+    <ng-container *ngIf="object">
+        <md-button-toggle (change)="togglePackages()" [checked]="packagesShowing" style="margin-bottom: 2rem; display: flex;" *ngIf="mode == 'view'">Show Packages</md-button-toggle>
+
+        <ng-container *ngIf="mode == 'view'">
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Manifest Number</span>
+                    <h5 class="product-info">{{object.ManifestNumber}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Created By</span>
+                    <h5 class="product-info">{{object.CreatedByUserName}}</h5>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div>
+                    <span class="input-label">Package Count</span>
+                    <h5 class="product-info">{{object.PackageCount}}</h5>
+                </div>
+            </div>
+
+            <!--<div class="overlay-action-buttons" *ngIf="user.Permissions.inventoryManagement == 'edit'">-->
+            <!--<button class="btn secondary grey"><i class="icon icon-remove"></i>Remove</button>-->
+            <!--<button class="btn secondary blue" (click)="edit()"><i class="icon icon-edit"></i>Edit</button>-->
+            <!--</div>-->
+        </ng-container>
+
+
+
+
+    </ng-container>
+</div>
+
+<router-outlet></router-outlet>

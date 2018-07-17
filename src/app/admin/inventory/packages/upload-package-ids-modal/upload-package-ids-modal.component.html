@@ -1,0 +1,34 @@
+<main class="modal--upload-package-ids">
+    <div style="margin-top: 1.5em;">
+        <ng-container *ngIf="!showingResult">
+            <div class="error" *ngIf="uploadError">
+                {{uploadError.message}}
+            </div>
+            <div class="upload-packages-container">
+                <label class="button-label">Select file to upload or drag and drop file into pop up</label>
+                <ng-container>
+                    <file-upload
+                        [max]="1"
+                        [buttonCaption]="'Select File'"
+                        [dropBoxMessage]="dropMessage"
+                        (onFileAdd)="setFiles($event)"
+                        [extensions]="fileUploadExtensions"
+                    ></file-upload>
+                </ng-container>
+              </div>
+              <div class="upload-packages-buttons-container overlay-action-buttons">
+                <button md-button class="btn secondary grey" (click)="close()"><i class="icon icon-cancel"></i>Cancel</button>
+                <button md-button class="btn secondary blue" (click)="uploadNewPackageIds()" [disabled]="!newPackageIdsFile"><i class="icon icon-save"></i>Upload New Package ID(s)</button>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="showingResult">
+            <div class="upload-packages-container">
+                <label class="button-label">New Package IDs from Metrc were uploaded successfully!</label>
+                <div class="upload-packages-buttons-container overlay-action-buttons">
+                    <button md-button class="btn secondary grey" (click)="reset()">Upload another file</button>
+                    <button md-button class="btn secondary blue" (click)="close()">Close</button>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</main>

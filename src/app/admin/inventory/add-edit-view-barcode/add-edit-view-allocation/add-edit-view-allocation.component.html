@@ -1,0 +1,179 @@
+<div class="overlay-closearea second double-width" (click)="startLeaving()"></div>
+<div class="overlay right second active not-hidden-block double-width" [@leave]="animationStatus" (@leave.done)="cancel()">
+
+    <i class="icon icon-close overlay-close" (click)="startLeaving()"></i>
+
+    <div class="section-heading">
+        <div class="svg-icon"><img src="/assets/svg/inventory.svg"/></div>
+        <h1 class="section-title">Allocate Inventory</h1>
+        <button class="btn secondary blue" (click)="scaleMode()" style="margin-left: 1rem;" *ngIf="mode != 'view'">Scale Mode</button>
+    </div>
+
+    <ng-container *ngIf="barcode">
+
+        <ng-container *ngIf="mode == 'view'">
+
+            <div class="detail-row">
+                <span class="input-label">Product</span>
+                <h5 class="product-info">{{barcode.ProductVariation.Product.name}}</h5>
+            </div>
+
+            <div class="detail-row">
+                <span class="input-label">Product Variation</span>
+                <h5 class="product-info">{{barcode.ProductVariation.name}}</h5>
+            </div>
+
+            <div class="detail-row">
+                <span class="input-label">Original Allocation Quantity</span>
+                <h5 class="product-info">{{barcode.allocatedInventory + " barcodes"}}</h5>
+            </div>
+
+            <div class="detail-row">
+                <span class="input-label">Remaining Allocation Quantity</span>
+                <h5 class="product-info">{{barcode.remainingInventory + " barcodes"}}</h5>
+            </div>
+
+            <div class="input-row">
+
+                <label class="input-label">Composition</label>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th class="align-right">{{barcode.ProductVariation.Product.inventoryType == 'weight' ? "Weight" : "Quantity"}}</th>
+                        <th class="align-right">Composition %</th>
+                        <th class="align-right">Original Allocation</th>
+                        <th class="align-right">Remaining Allocation</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <ng-container *ngFor="let item of barcode.ProductVariation.Items; let index = index">
+                        <tr style="cursor: default">
+                            <td>{{item.name}}</td>
+                            <td>
+                                <div style="display: flex; float: right;">
+                                    <span class="align-right" style="width: 40px; padding-left: 0;">{{item.ProductVariationItem.quantity + ' ' + item.UnitOfMeasureAbbreviation}}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; float: right;">
+                                    <span class="align-right" style="width: 60px; padding-left: 0;">{{(((item.ProductVariationItem.quantity / (barcode.ProductVariation.Items | pluck:'ProductVariationItem.quantity' | sum)) * 100) | round:2) + '%'}}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; float: right;">
+                                    <span class="align-right" style="width: 60px; padding-left: 0;">{{(item.ProductVariationItem.quantity * barcode.allocatedInventory) + ' ' + item.UnitOfMeasureAbbreviation}}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; float: right">
+                                    <span class="align-right" style="width: 60px; padding-left: 0;">{{(item.ProductVariationItem.quantity * barcode.remainingInventory) + ' ' + item.UnitOfMeasureAbbreviation}}</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr style="cursor: default; border-top: 0;" *ngIf="barcode.Packages[index]">
+                            <td colspan="3" style="padding-top: 0; font-size: 0.75em;">
+                                Package: {{barcode.Packages[index].Label}}
+                            </td>
+                            <td colspan="2" style="padding-top: 0; font-size: 0.75em;">
+                                Package Inventory Available: {{barcode.Packages[index].availableQuantity}} {{barcode.Packages[index].UnitOfMeasureAbbreviation}}
+                            </td>
+                        </tr>
+                    </ng-container>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="overlay-action-buttons">
+                <button class="btn secondary blue" (click)="deleteAllocation()">Deallocate Inventory</button>
+            </div>
+
+        </ng-container>
+
+        <ng-container *ngIf="mode != 'view'">
+
+            <ul *ngIf="errors" class="errors" style="padding: 1rem; color: red">
+                <li *ngFor="let error of errors">{{error}}</li>
+            </ul>
+
+            <div class="input-row">
+                <label class="input-label">Product</label>
+                <input [(ngModel)]="barcode.ProductVariation.Product.name" readonly style="background-color: #d7dcda;"/>
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">Product Variation</label>
+                <input [(ngModel)]="barcode.ProductVariation.name" readonly style="background-color: #d7dcda;"/>
+            </div>
+
+            <div class="input-row" style="display: flex;">
+                <label class="input-label" style="margin: auto 10px;">Allocation Quantity</label>
+                <div style="display: flex;">
+                    <input type="number" [ngClass]="{error: (!!errors.length)}" [(ngModel)]="barcode.allocatedInventory" style="width: 80%"/>
+                    <span style="margin: auto;">units</span>
+                </div>
+            </div>
+
+            <div class="input-row">
+
+                <label class="input-label">Composition</label>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th class="align-right">{{barcode.ProductVariation.Product.inventoryType == 'weight' ? "Weight" : "Quantity"}}</th>
+                        <th class="align-right">Composition %</th>
+                        <th class="align-right">Allocation</th>
+                        <th class="align-right">Inv. Available</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <ng-container *ngFor="let item of barcode.ProductVariation.Items">
+                        <tr style="cursor: default">
+                            <td>{{item.name}}</td>
+                            <td>
+                                <div style="display: flex; float: right;">
+                                    <span class="align-right" style="width: 40px; padding-left: 0;">{{item.ProductVariationItem.quantity + ' ' + item.UnitOfMeasureAbbreviation}}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; float: right;">
+                                    <span class="align-right" style="width: 60px; padding-left: 0;">{{(((item.ProductVariationItem.quantity / (barcode.ProductVariation.Items | pluck:'ProductVariationItem.quantity' | sum)) * 100) | round:2) + '%'}}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; float: right;">
+                                    <input [ngClass]="{error: quantityErrors[item.id]}" type="number" [value]="(item.ProductVariationItem.quantity) * (barcode.allocatedInventory ? barcode.allocatedInventory : 0)" class="align-right" style="width: 40px; padding-left: 0; background-color: #d7dcda;" readonly/>
+                                    <span style="margin-top: 15px; margin-left: 3px;">{{item.UnitOfMeasureAbbreviation}}</span>
+                                </div>
+                            </td>
+                            <td class="align-right" *ngIf="itemsPackagesMap[item.id]">
+                                {{"/ " + itemsPackagesMap[item.id].availableQuantity + ' ' + itemsPackagesMap[item.id].UnitOfMeasureAbbreviation + " available"}}
+                            </td>
+                        </tr>
+                    </ng-container>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="overlay-action-buttons">
+                <button class="btn secondary grey" data-overlay-close (click)="startLeaving()"><i class="icon icon-cancel"></i>Cancel
+                </button>
+                <button class="btn secondary blue" (click)="save()"><i class="icon icon-save"></i>Save Allocation</button>
+            </div>
+
+        </ng-container>
+
+    </ng-container>
+
+
+</div>
+
+
+<router-outlet></router-outlet>

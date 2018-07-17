@@ -1,0 +1,48 @@
+<div class="topbar-controls patient-management patients-active">
+
+    <div class="controls-row">
+        <h2 class="page-subtitle">Suppliers</h2>
+        
+        <input type="text" class="controls-input-search" #searchBox (keyup)="search(searchBox.value)" placeholder="Search Suppliers...">
+
+        <button md-button class="btn tertiary green" (click)="createNewSupplier()" *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditSuppliers"><i class="icon icon-add"></i>Supplier</button>
+        <!--<button md-button class="btn tertiary blue btn-export"><i class="icon icon-export"></i>Export</button>-->
+    </div>
+
+</div>
+
+<main class="content">
+    <table class="inventory-products-table sticky">
+        <thead>
+        <tr>
+            <th sortBy="name" [(ngModel)]="sortByModel">Name</th>
+            <th>License Number</th>
+            <th sortBy="streetAddress" [(ngModel)]="sortByModel">Street Address</th>
+            <th sortBy="city" [(ngModel)]="sortByModel">City</th>
+            <th sortBy="state" [(ngModel)]="sortByModel">State</th>
+            <th sortBy="phone" [(ngModel)]="sortByModel">Phone Number</th>
+            <th *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditSuppliers"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let supplier of objects | async" (click)="onRowClick($event, supplier)">
+            <td>{{supplier.name}}</td>
+            <td>{{supplier.licenseNumber}}</td>
+            <td>{{supplier.streetAddress}}</td>
+            <td>{{supplier.city}}</td>
+            <td>{{supplier.state}}</td>
+            <td>{{supplier.phone}}</td>
+            <td class="table-action" *ngIf="user.Permissions.inventoryManagement == 'edit' && user.Permissions.canEditSuppliers">
+                <i class="icon icon-edit" (click)="editSupplier(supplier)"></i>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <app-pager [numPages]="numPages" [(ngModel)] = "pageModel"></app-pager>
+</main>
+
+<div class="overlay-shadow" *ngIf="isShowingAddEdit" (click)="listSuppliers()"></div>
+
+<router-outlet></router-outlet>
